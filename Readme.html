@@ -1,0 +1,48 @@
+
+<body bgcolor="#FFFFFF">
+<h1>Enterprise Integration Patterns</h1>
+<h2>The Loan Broker MSMQ Example (Chapter 9)</h2>
+<h3>Prequisites</h3>
+<p>This example is the executable version of the example in Chapter 9 of <i>Enterprise 
+  Integraiton Patterns</i> (Addison-Wesley, ISBN 0321200683). The example is implemented 
+  in C# and requires the following components:</p>
+<ul>
+  <li>The <font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b>Microsoft 
+    .NET Framework 1.1</b></font> (<a href="http://msdn.microsoft.com/net" target="_blank">http://msdn.microsoft.com/net</a>)</li>
+  <li>The <font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b>Message 
+    Queing</b></font> component of the Windows operating system. This component 
+    is part of Windows 2000, Windows XP and Windows 2003, but is not installed 
+    by default. To install this component, enter the Control Panel, select Add 
+    or Remove Programs. On the icon bar on the left select Add/Remove Windows 
+    Components. Select the checkbox next to <font face="Verdana, Arial, Helvetica, sans-serif" size="2">Message 
+    Queueing</font>. Since this examples uses only local queues, you do not have 
+    to install the <font face="Verdana, Arial, Helvetica, sans-serif" size="2">Active 
+    Directory Integration</font> subcomponent.</li>
+  <li>Once the <font face="Verdana, Arial, Helvetica, sans-serif" size="2">Message 
+    Queing</font> component is installed, make sure the <font face="Verdana, Arial, Helvetica, sans-serif" size="2">Message 
+    Queuing</font> service is started. Open the Control Panel, select Administrative 
+    Tools, then Services. Make sure the service <font face="Verdana, Arial, Helvetica, sans-serif" size="2">Message 
+    Queuing</font> has a status of <font size="2"> <font face="Verdana, Arial, Helvetica, sans-serif"> 
+    Started</font></font>. If not, highlight the service and select <font face="Verdana, Arial, Helvetica, sans-serif" size="2">Start</font> 
+    from the <font face="Verdana, Arial, Helvetica, sans-serif" size="2">Action</font> 
+    menu.</li>
+  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b>Visual Studio 
+    .NET 2003</b></font>. While you can compile the C# files from the command 
+    line, the included solution and project files require Visual Studio .NET 2003. 
+    The sample has been tested with the Professional Edition.</li>
+</ul>
+<h3>Installation</h3>
+<p>Unzip the ZIP file into an empty directory. You should see sub-folders for 
+  the individual programs, e.g. Bank and CreditBureau.</p>
+<p>Double-click the file <font face="Courier New, Courier, mono">ComposedMessaging.sln</font>. 
+  This will start Visual Studio. Select &quot;Build Solution&quot;.</p>
+<h3>Run</h3>
+<p>Run <font face="Courier New, Courier, mono">TestLoanBroker.bat</font>. This 
+  batch script opens multiple command windows, one for each credit bureau (3) 
+  and one for each bank (5). It also opens one window for the Loan Broker process 
+  and one window for the test client. The test client sends 50 random requests 
+  to the loan broker. After it receives all 50 responses, it displays summary 
+  statistics. </p>
+<p>You can close the console windows by hitting the Enter key.</p>
+<p>&nbsp;</p>
+<p><a href="http://www.eaipatterns.com">www.eaipatterns.com</a></p>

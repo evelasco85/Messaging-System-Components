@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="BankQuoteRequest" type="BankQuoteRequest" />
+  <xs:complexType name="BankQuoteRequest">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="SSN" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="CreditScore" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="HistoryLength" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="LoanAmount" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="LoanTerm" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BankQuoteReply" type="BankQuoteReply" />
+  <xs:complexType name="BankQuoteReply">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="InterestRate" type="xs:double" />
+      <xs:element minOccurs="0" maxOccurs="1" name="QuoteID" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Run" nillable="true" type="Run" />
+  <xs:complexType name="Run" />
+</xs:schema>

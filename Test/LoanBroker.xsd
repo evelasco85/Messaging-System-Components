@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="LoanQuoteRequest" type="LoanQuoteRequest" />
+  <xs:complexType name="LoanQuoteRequest">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="SSN" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="LoanAmount" type="xs:double" />
+      <xs:element minOccurs="1" maxOccurs="1" name="LoanTerm" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LoanQuoteReply" type="LoanQuoteReply" />
+  <xs:complexType name="LoanQuoteReply">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="SSN" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="LoanAmount" type="xs:double" />
+      <xs:element minOccurs="1" maxOccurs="1" name="InterestRate" type="xs:double" />
+      <xs:element minOccurs="0" maxOccurs="1" name="QuoteID" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

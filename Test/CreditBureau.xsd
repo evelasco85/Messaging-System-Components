@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="CreditBureauRequest" type="CreditBureauRequest" />
+  <xs:complexType name="CreditBureauRequest">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="SSN" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CreditBureauReply" type="CreditBureauReply" />
+  <xs:complexType name="CreditBureauReply">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="SSN" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="CreditScore" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="HistoryLength" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Run" nillable="true" type="Run" />
+  <xs:complexType name="Run" />
+</xs:schema>
