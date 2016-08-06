@@ -15,7 +15,7 @@ namespace Gateway.Mock
 
     public class MockQueue: IMessageSender<MessageQueue, Message> , IMessageReceiver<MessageQueue, Message>
     {
-        private OnMsgEvent<Message> onMsg = new OnMsgEvent<Message>(DoNothing);
+        private MessageDelegate<Message> onMsg = new MessageDelegate<Message>(DoNothing);
 	
         public void Send(Message msg)
         {
@@ -27,7 +27,7 @@ namespace Gateway.Mock
 		
         }
 	
-        public OnMsgEvent<Message> OnMessage 
+        public MessageDelegate<Message> ReceiveMessageProcessor 
         { 
             get { return onMsg; } 
             set { onMsg = value; }

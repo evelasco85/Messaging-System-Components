@@ -30,7 +30,7 @@ namespace Bank
         public int ErrorCode;
     }
 
-    internal class Bank : RequestReplyService
+    internal class Bank : RequestReplyService_Synchronous
     {
         private readonly double PrimeRate = 3.5;
 
@@ -110,7 +110,7 @@ namespace Bank
             return replyStruct;
         }
 
-        protected override Object ProcessMessage(Object o)
+        protected override Object ProcessReceivedMessage(Object o)
         {
             BankQuoteRequest requestStruct;
             BankQuoteReply replyStruct;

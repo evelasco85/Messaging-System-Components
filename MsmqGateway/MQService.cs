@@ -6,14 +6,14 @@
  * This code is supplied as is. No warranties. 
  */
 
+using Messaging.Base;
 using Messaging.Base.Interface;
 using System;
 using System.Messaging;
 
 namespace MessageGateway
 {
-
-    public abstract class MQService
+    public abstract class MQService : QueueService<MessageQueue, Message>
     {
         static protected readonly String InvalidMessageQueueName = ".\\private$\\invalidMessageQueue";
         IMessageSender<MessageQueue, Message>invalidQueue = new MessageSenderGateway(InvalidMessageQueueName);
@@ -24,14 +24,18 @@ namespace MessageGateway
         public MQService(IMessageReceiver<MessageQueue, Message> receiver)
         {
             requestQueue = receiver;
-            Register(requestQueue);
+
+            RegisterReceiver(requestQueue);
         }
 	
         public MQService(String requestQueueName)
         {
-            MessageReceiverGateway q = new MessageReceiverGateway(requestQueueName, GetFormatter());
-            Register(q);
-            this.requestQueue = q;
+            MessageReceiverGateway receiver = new MessageReceiverGateway(requestQueueName, GetFormatter());
+
+            RegisterReceiver(receiver);
+
+            this.requestQueue = receiver;
+
             Console.WriteLine("Processing messages from " + requestQueueName);
         }
 			
@@ -63,99 +67,34 @@ namespace MessageGateway
             }
         }
 
-
-        public void Register(IMessageReceiver<MessageQueue, Message> rec)
+        public override void RegisterReceiver(IMessageReceiver<MessageQueue, Message> receiver)
         {
-            OnMsgEvent<Message> ev = new OnMsgEvent<Message>(OnMessage);
-            rec.OnMessage += ev;
+            receiver.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessageReceived);
         }
 	
-        public void Run()
+        public override void Run()
         {
             requestQueue.StartReceivingMessages();
         }
 
     
-        public void SendReply(Object outObj, Message inMsg)
+        public override void SendReply(Object responseObject, Message originalRequestMessage)
         {
-            Message outMsg = new Message(outObj);
-            outMsg.CorrelationId = inMsg.Id;
-            outMsg.AppSpecific = inMsg.AppSpecific;
+            Message responseMessage = new Message(responseObject);
+            responseMessage.CorrelationId = originalRequestMessage.Id;
+            responseMessage.AppSpecific = originalRequestMessage.AppSpecific;
 
-            if (inMsg.ResponseQueue != null) 
+            if (originalRequestMessage.ResponseQueue != null) 
             {
-                IMessageSender<MessageQueue, Message>  replyQueue = new MessageSenderGateway(inMsg.ResponseQueue);
-                replyQueue.Send(outMsg);
+                IMessageSender<MessageQueue, Message>  replyQueue = new MessageSenderGateway(originalRequestMessage.ResponseQueue);
+                replyQueue.Send(responseMessage);
             }
             else
             {
-                invalidQueue.Send(outMsg);
+                invalidQueue.Send(responseMessage);
             }
         }
 
-        protected abstract void OnMessage(Message inMsg);
-
-    }
-
-    public class RequestReplyService : MQService
-    {
-        public RequestReplyService(IMessageReceiver<MessageQueue, Message> receiver) : base(receiver) {}		
-        public RequestReplyService(String requestQueueName) : base (requestQueueName) {}
-
-        protected override Type GetRequestBodyType()
-        {
-            return typeof(System.String);
-        }
-
-        protected virtual Object ProcessMessage(Object o)
-        {
-            String body = (String)o;
-            Console.WriteLine("Received Message: " + body);
-            return body;
-        }
-
-        protected override void OnMessage(Message inMsg)
-        {
-            inMsg.Formatter =  GetFormatter();
-            Object inBody = GetTypedMessageBody(inMsg);
-            if (inBody != null) 
-            {
-                Object outBody = ProcessMessage(inBody);
-
-                if (outBody != null) 
-                {
-                    SendReply(outBody, inMsg);
-                }
-            }
-        }	
-    }
-
-    public class AsyncRequestReplyService : MQService
-    {
-        public AsyncRequestReplyService(IMessageReceiver<MessageQueue, Message> receiver) : base(receiver) {}		
-        public AsyncRequestReplyService(String requestQueueName) : base (requestQueueName) {}
-
-
-        protected override Type GetRequestBodyType()
-        {
-            return typeof(System.String);
-        }
-
-        protected virtual void ProcessMessage(Object o, Message msg)
-        {
-            String body = (String)o;
-            Console.WriteLine("Received Message: " + body);
-        }
-    
-        protected override void OnMessage(Message inMsg)
-        {
-            inMsg.Formatter =  GetFormatter();
-            Object inBody = GetTypedMessageBody(inMsg);
-            if (inBody != null) 
-            {
-                ProcessMessage(inBody, inMsg);
-            }
-
-        }	
+        public override abstract void OnMessageReceived(Message receivedMessage);
     }
 }

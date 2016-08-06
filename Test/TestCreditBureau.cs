@@ -40,7 +40,7 @@ namespace Test
             MessageReceiverGateway q = new MessageReceiverGateway(replyQueueName, GetFormatter());
 
             replyQueue = q;
-            replyQueue.OnMessage += new OnMsgEvent<Message>(OnMessage);
+            replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
 
             this.numMessages = numMessages;
             messageIDs = new Hashtable();

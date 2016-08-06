@@ -9,7 +9,7 @@ namespace Messaging.Base
     {
         IQueueGateway<TMessageQueue> _queueGateway;
 
-        public abstract OnMsgEvent<TMessage> OnMessage
+        public abstract MessageDelegate<TMessage> ReceiveMessageProcessor
         {
             get;
             set;

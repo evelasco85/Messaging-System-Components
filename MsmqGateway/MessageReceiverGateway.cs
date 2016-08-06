@@ -15,7 +15,7 @@ namespace MessageGateway{
 	public class MessageReceiverGateway :
         ReceiverGateway<MessageQueue, Message>{
 		
-		private OnMsgEvent<Message> receiver;
+		private MessageDelegate<Message> _receivedMessageProcessor;
 
         public MessageReceiverGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
         {
@@ -23,22 +23,22 @@ namespace MessageGateway{
 
         public MessageReceiverGateway(String q) : this(new MessageQueueGateway(q))
         {
-            this.receiver = new OnMsgEvent<Message>(NullImpl);
+            this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 
-        public MessageReceiverGateway(String path, OnMsgEvent<Message> receiver) : this(path)
+        public MessageReceiverGateway(String path, MessageDelegate<Message> receiveMessageDelegate) : this(path)
         {
-            this.receiver = receiver;
+            this._receivedMessageProcessor = receiveMessageDelegate;
         }
 
         public MessageReceiverGateway(MessageQueue q): this(new MessageQueueGateway(q))
         {
-			this.receiver = new OnMsgEvent<Message>(NullImpl);
+			this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
 		}
 
-        public MessageReceiverGateway(MessageQueue q, OnMsgEvent<Message> ev) : this(q)
+        public MessageReceiverGateway(MessageQueue q, MessageDelegate<Message> receiveMessageDelegate) : this(q)
         {
-            this.receiver += ev;
+            this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
         public MessageReceiverGateway(String q, IMessageFormatter formatter) : this(q)
@@ -52,19 +52,19 @@ namespace MessageGateway{
             GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
             GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
 
-            this.receiver = new OnMsgEvent<Message>(NullImpl);
+            this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 
-        public MessageReceiverGateway(String q, IMessageFormatter formatter, OnMsgEvent<Message> ev)
+        public MessageReceiverGateway(String q, IMessageFormatter formatter, MessageDelegate<Message> receiveMessageDelegate)
                : this(q, formatter)
         {
-            this.receiver += ev;
+            this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
-        public override OnMsgEvent<Message> OnMessage
+        public override MessageDelegate<Message> ReceiveMessageProcessor
         { 
-			get { return receiver; }  
-			set { receiver = value; }
+			get { return _receivedMessageProcessor; }  
+			set { _receivedMessageProcessor = value; }
 		}
 		
 		private void NullImpl(Message msg){}
@@ -81,7 +81,8 @@ namespace MessageGateway{
 		{
 			MessageQueue mq = (MessageQueue)source;
 			Message m = mq.EndReceive(asyncResult.AsyncResult);
-			receiver(m);
+
+			_receivedMessageProcessor.Invoke(m);
 			mq.BeginReceive(); 
 		}	
 	}

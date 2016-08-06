@@ -98,7 +98,7 @@ namespace LoanBroker
         public BankGateway(String bankReplyQueueName, BankConnectionManager connectionManager)
         {
             MessageReceiverGateway receiver = 
-                new MessageReceiverGateway(bankReplyQueueName, GetFormatter(), new OnMsgEvent<Message>(OnBankMessage));
+                new MessageReceiverGateway(bankReplyQueueName, GetFormatter(), new MessageDelegate<Message>(OnBankMessage));
             this.bankReplyQueue = (IMessageReceiver<MessageQueue, Message>)receiver;
             this.connectionManager = connectionManager; 
             aggregationCorrelationID = 0;

@@ -40,8 +40,8 @@ namespace MessageGateway
         }
 
 		public void Register(IMessageReceiver<MessageQueue, Message> rec){
-			OnMsgEvent<Message> ev = new OnMsgEvent<Message>(OnMessage);
-			rec.OnMessage += ev;
+			MessageDelegate<Message> ev = new MessageDelegate<Message>(OnMessage);
+			rec.ReceiveMessageProcessor += ev;
 		}
 		
 		public void Run()

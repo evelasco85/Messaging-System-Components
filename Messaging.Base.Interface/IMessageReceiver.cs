@@ -6,7 +6,7 @@ namespace Messaging.Base.Interface
 {
     public interface IMessageReceiver<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>
     {
-        OnMsgEvent<TMessage> OnMessage
+        MessageDelegate<TMessage> ReceiveMessageProcessor
         {
             get;
             set;

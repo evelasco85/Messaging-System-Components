@@ -86,6 +86,10 @@
       <Project>{04c09384-803c-46e9-8578-7afbc269a9b0}</Project>
       <Name>Messaging.Base.Interface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Messaging.Base\Messaging.Base.csproj">
+      <Project>{62819694-7de4-49ed-86d5-3bb599ecb41a}</Project>
+      <Name>Messaging.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MsmqGateway\MsmqGateway.csproj">
       <Name>MsmqGateway</Name>
       <Project>{E2DCBAAC-EA99-4C68-9523-AA69251570A8}</Project>

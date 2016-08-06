@@ -16,10 +16,10 @@ using Messaging.Base.Interface;
 namespace LoanBroker {
 
 	internal class Run{
-		private static OnMsgEvent<Message> PrintMessageDelegate = new OnMsgEvent<Message>(PrintMessage);
+		private static MessageDelegate<Message> PrintMessageDelegate = new MessageDelegate<Message>(PrintMessage);
 		
 		public static void Main(String[] args){
-			AsyncRequestReplyService broker;
+            RequestReplyService_Asynchronous broker;
 
             if (args.Length >= 4) 
             {

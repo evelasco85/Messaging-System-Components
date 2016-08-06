@@ -44,7 +44,7 @@ namespace LoanBroker
             creditRequestQueue = new MessageSenderGateway(creditRequestQueueName);
 
             MessageReceiverGateway receiver	= new MessageReceiverGateway(creditReplyQueueName, 
-                GetFormatter(), new OnMsgEvent<Message>(OnCreditResponse));
+                GetFormatter(), new MessageDelegate<Message>(OnCreditResponse));
             this.creditReplyQueue =	(IMessageReceiver<MessageQueue, Message>)receiver;
         }
 
@@ -53,7 +53,7 @@ namespace LoanBroker
             this.creditRequestQueue	= creditRequestQueue;
 
             this.creditReplyQueue =	creditReplyQueue;
-            this.creditReplyQueue.OnMessage	+= new OnMsgEvent<Message>(OnCreditResponse);
+            this.creditReplyQueue.ReceiveMessageProcessor	+= new MessageDelegate<Message>(OnCreditResponse);
         }
 
         protected IMessageFormatter	GetFormatter()
