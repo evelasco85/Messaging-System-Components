@@ -32,21 +32,11 @@ namespace MessageGateway
             _receiver = receiver;
         }
 	
-        //public MQService(String requestQueueName)
-        //{
-        //    MessageReceiverGateway receiver = new MessageReceiverGateway(requestQueueName, GetFormatter());
-
-        //    this._receiver = receiver;
-
-        //    Console.WriteLine("Processing messages from " + requestQueueName);
-        //}
-			
         public override void Run()
         {
             _receiver.StartReceivingMessages();
         }
 
-    
         public override void SendReply(Object responseObject, Message originalRequestMessage)
         {
             Message responseMessage = new Message(responseObject);

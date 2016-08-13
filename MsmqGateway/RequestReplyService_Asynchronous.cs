@@ -1,4 +1,5 @@
 ﻿using MessageGateway;
+using Messaging.Base.Constructions;
 using Messaging.Base.Interface;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace MessageGateway
 {
-    public class RequestReplyService_Asynchronous// : MQService
+    public class RequestReplyService_Asynchronous : RequestReply<Message>
     {
         IQueueService<MessageQueue, Message> _queueService;
 
@@ -31,7 +32,7 @@ namespace MessageGateway
             Console.WriteLine("Received Message: " + body);
         }
 
-        public void OnMessageReceived(Message receivedMessage)
+        public override void OnMessageReceived(Message receivedMessage)
         {
             receivedMessage.Formatter = GetFormatter();
             Object inBody = GetTypedMessageBody(receivedMessage);
