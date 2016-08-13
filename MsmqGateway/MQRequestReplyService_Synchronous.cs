@@ -8,28 +8,25 @@ using System.Text;
 
 namespace MessageGateway
 {
-    public class RequestReplyService_Synchronous : RequestReply<MessageQueue, Message>
+    public abstract class MQRequestReplyService_Synchronous : RequestReply_Synchronous<MessageQueue, Message>
     {
-        public RequestReplyService_Synchronous(IMessageReceiver<MessageQueue, Message> receiver)
+        public MQRequestReplyService_Synchronous(IMessageReceiver<MessageQueue, Message> receiver)
         {
             QueueService = new MQService(receiver);
-
-            RegisterReceiveMessageProcessor();
         }
 
-        public RequestReplyService_Synchronous(String requestQueueName)
+        public MQRequestReplyService_Synchronous(String requestQueueName)
         {
             QueueService = new MQService(new MessageReceiverGateway(requestQueueName, GetFormatter()));
-
-            RegisterReceiveMessageProcessor();
         }
 
-        protected virtual Object ProcessReceivedMessage(Object receivedMessageObject)
-        {
-            String body = (String)receivedMessageObject;
-            Console.WriteLine("Received Message: " + body);
-            return body;
-        }
+        //public virtual Object ProcessReceivedMessage(Object receivedMessageObject)
+        //{
+        //    String body = (String)receivedMessageObject;
+        //    Console.WriteLine("Received Message: " + body);
+        //    return body;
+        //}
+        //public abstract Object ProcessReceivedMessage(Object receivedMessageObject);
 
         public override void OnMessageReceived(Message receivedMessage)
         {

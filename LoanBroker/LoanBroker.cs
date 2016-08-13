@@ -76,7 +76,7 @@ namespace LoanBroker
         }
     }
 
-    internal class LoanBrokerPM : RequestReplyService_Asynchronous
+    internal class LoanBrokerPM : MQRequestReplyService_Asynchronous
     {
         protected ICreditBureauGateway creditBureauInterface;
         protected BankGateway bankInterface;
@@ -112,7 +112,7 @@ namespace LoanBroker
             return typeof(LoanQuoteRequest);
         }
 
-        protected override void ProcessReceivedMessage(Object o, Message message)
+        public override void ProcessReceivedMessage(Object o, Message message)
         {
             LoanQuoteRequest quoteRequest;
             quoteRequest = (LoanQuoteRequest)o;

@@ -27,7 +27,7 @@ namespace CreditBureau
         public int HistoryLength;
     }
 
-    internal class CreditBureau : RequestReplyService_Synchronous
+    internal class CreditBureau : MQRequestReplyService_Synchronous
     {
 
         public CreditBureau (IMessageReceiver<MessageQueue, Message> requestQueue) : base (requestQueue)
@@ -53,7 +53,7 @@ namespace CreditBureau
             return typeof(CreditBureauRequest);
         }
 
-        protected override Object ProcessReceivedMessage(Object o)
+        public override Object ProcessReceivedMessage(Object o)
         {
             CreditBureauRequest requestStruct;
 

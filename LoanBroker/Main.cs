@@ -19,7 +19,7 @@ namespace LoanBroker {
 		private static MessageDelegate<Message> PrintMessageDelegate = new MessageDelegate<Message>(PrintMessage);
 		
 		public static void Main(String[] args){
-            RequestReplyService_Asynchronous broker;
+            MQRequestReplyService_Asynchronous broker;
 
             if (args.Length >= 4) 
             {

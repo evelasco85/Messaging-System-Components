@@ -7,7 +7,7 @@
     <ProjectGuid>{04C09384-803C-46E9-8578-7AFBC269A9B0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Messaging.Base.Interface</RootNamespace>
+    <RootNamespace>Messaging.Base</RootNamespace>
     <AssemblyName>Messaging.Base.Interface</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Construction\IRequestReply.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="IMessageCore.cs" />
     <Compile Include="IQueueGateway.cs" />

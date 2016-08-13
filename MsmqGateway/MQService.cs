@@ -18,25 +18,11 @@ namespace MessageGateway
         static protected readonly String InvalidMessageQueueName = ".\\private$\\invalidMessageQueue";
         IMessageSender<MessageQueue, Message>invalidQueue = new MessageSenderGateway(InvalidMessageQueueName);
 
-        protected IMessageReceiver<MessageQueue, Message> _receiver;
-
-        public override IMessageReceiver<MessageQueue, Message> Receiver
-        {
-            get { return _receiver; }
-        }
-
         protected Type requestBodyType;
 	
-        public MQService(IMessageReceiver<MessageQueue, Message> receiver)
-        {
-            _receiver = receiver;
-        }
+        public MQService(IMessageReceiver<MessageQueue, Message> receiver) : base(receiver)
+        {}
 	
-        public override void Run()
-        {
-            _receiver.StartReceivingMessages();
-        }
-
         public override void SendReply(Object responseObject, Message originalRequestMessage)
         {
             Message responseMessage = new Message(responseObject);

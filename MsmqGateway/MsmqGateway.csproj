@@ -99,7 +99,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RequestReplyService_Asynchronous.cs" />
+    <Compile Include="MQRequestReplyService_Asynchronous.cs" />
     <Compile Include="MessageQueueGateway.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -116,7 +116,7 @@
     <Compile Include="MQService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RequestReplyService_Synchronous.cs" />
+    <Compile Include="MQRequestReplyService_Synchronous.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
