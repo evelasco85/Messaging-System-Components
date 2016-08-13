@@ -20,12 +20,6 @@ namespace MessageGateway
             QueueService = new MQService(new MessageReceiverGateway(requestQueueName, GetFormatter()));
         }
 
-        //public virtual void ProcessReceivedMessage(Object receivedMessageObject, Message msg)
-        //{
-        //    String body = (String)receivedMessageObject;
-        //    Console.WriteLine("Received Message: " + body);
-        //}
-
         public override void OnMessageReceived(Message receivedMessage)
         {
             receivedMessage.Formatter = GetFormatter();
