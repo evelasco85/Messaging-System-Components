@@ -12,12 +12,12 @@ namespace Messaging.Base.Construction
         void Run();
     }
 
-    public interface IRequestReply_Sychronous
+    public interface IRequestReply_Synchronous
     {
         Object ProcessReceivedMessage(Object receivedMessageObject);
     }
 
-    public interface IRequestReply_Asychronous<TMessage>
+    public interface IRequestReply_Asynchronous<TMessage>
     {
         void ProcessReceivedMessage(Object receivedMessageObject, TMessage msg);
     }

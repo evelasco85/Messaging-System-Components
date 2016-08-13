@@ -39,12 +39,12 @@ namespace Messaging.Base.Constructions
         }
     }
 
-    public abstract class RequestReply_Synchronous<TMessageQueue, TMessage> : RequestReply<TMessageQueue, TMessage>, IRequestReply_Sychronous
+    public abstract class RequestReply_Synchronous<TMessageQueue, TMessage> : RequestReply<TMessageQueue, TMessage>, IRequestReply_Synchronous
     {
         public abstract Object ProcessReceivedMessage(Object receivedMessageObject);
     }
 
-    public abstract class RequestReply_Asynchronous<TMessageQueue, TMessage> : RequestReply<TMessageQueue, TMessage>, IRequestReply_Asychronous<TMessage>
+    public abstract class RequestReply_Asynchronous<TMessageQueue, TMessage> : RequestReply<TMessageQueue, TMessage>, IRequestReply_Asynchronous<TMessage>
     {
         public abstract void ProcessReceivedMessage(Object receivedMessageObject, TMessage msg);
     }
