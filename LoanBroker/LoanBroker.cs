@@ -107,7 +107,7 @@ namespace LoanBroker
             bankInterface.Listen();
         }
 
-        protected override Type GetRequestBodyType()
+        public override Type GetRequestBodyType()
         {
             return typeof(LoanQuoteRequest);
         }

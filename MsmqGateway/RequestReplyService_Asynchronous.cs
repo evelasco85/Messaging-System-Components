@@ -13,11 +13,6 @@ namespace MessageGateway
         public RequestReplyService_Asynchronous(String requestQueueName) : base(requestQueueName) { }
 
 
-        protected override Type GetRequestBodyType()
-        {
-            return typeof(System.String);
-        }
-
         protected virtual void ProcessReceivedMessage(Object receivedMessageObject, Message msg)
         {
             String body = (String)receivedMessageObject;

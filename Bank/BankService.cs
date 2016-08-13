@@ -84,7 +84,7 @@ namespace Bank
             MaxLoanTerm = maxLoanTerm;
         }   
 
-        protected override Type GetRequestBodyType()
+        public override Type GetRequestBodyType()
         {
             return typeof(BankQuoteRequest);
         }

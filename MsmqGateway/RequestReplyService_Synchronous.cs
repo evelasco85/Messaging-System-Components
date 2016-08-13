@@ -12,11 +12,6 @@ namespace MessageGateway
         public RequestReplyService_Synchronous(IMessageReceiver<MessageQueue, Message> receiver) : base(receiver) { }
         public RequestReplyService_Synchronous(String requestQueueName) : base(requestQueueName) { }
 
-        protected override Type GetRequestBodyType()
-        {
-            return typeof(System.String);
-        }
-
         protected virtual Object ProcessReceivedMessage(Object receivedMessageObject)
         {
             String body = (String)receivedMessageObject;

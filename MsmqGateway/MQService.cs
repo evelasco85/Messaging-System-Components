@@ -44,7 +44,10 @@ namespace MessageGateway
             return new XmlMessageFormatter(new Type[] { GetRequestBodyType() });
         }
 
-        protected abstract Type GetRequestBodyType();
+        public virtual Type GetRequestBodyType()
+        {
+            return typeof(System.String);
+        }
 
         protected Object GetTypedMessageBody(Message msg)
         {

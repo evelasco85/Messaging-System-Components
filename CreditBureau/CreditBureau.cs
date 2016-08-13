@@ -47,7 +47,8 @@ namespace CreditBureau
         {
             return (int)(random.Next(19) + 1);
         }
-        protected override Type GetRequestBodyType()
+
+        public override Type GetRequestBodyType()
         {
             return typeof(CreditBureauRequest);
         }
