@@ -12,6 +12,8 @@ using MessageGateway;
 using Gateway.Mock;
 using CreditBureau;
 using Messaging.Base;
+using LoanBroker.Bank;
+using LoanBroker.LoanBroker;
 
 namespace LoanBroker {
 
@@ -27,11 +29,11 @@ namespace LoanBroker {
                 String creditRequestQueueName = ToPath(args[1]);
                 String creditReplyQueueName = ToPath(args[2]);
                 String bankReplyQueueName = ToPath(args[3]);
-                broker = new LoanBrokerPM(requestQueueName, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new BankConnectionManager());
+                broker = new ProcessManager(requestQueueName, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new ConnectionsManager());
             }
             else if (args.Length == 2) 
             {
-                broker = new LoanBrokerPM(ToPath(args[0]), new MockCreditBureauGatewayImp(), ToPath(args[1]), new BankConnectionManager());
+                broker = new ProcessManager(ToPath(args[0]), new MockCreditBureauGatewayImp(), ToPath(args[1]), new ConnectionsManager());
             }
             else 
             {

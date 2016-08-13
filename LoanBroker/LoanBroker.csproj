@@ -112,22 +112,27 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BankConnections.cs">
+    <Compile Include="Bank\BankQuoteAggregate.cs" />
+    <Compile Include="Bank\ConnectionsManager.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BankGateway.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BankStub.cs">
+    <Compile Include="Bank\MessageRouter.cs" />
+    <Compile Include="CreditBureau\CreditRequestProcess.cs" />
+    <Compile Include="LoanBroker\Process.cs" />
+    <Compile Include="LoanBroker\ProcessManager.cs" />
+    <Compile Include="LoanBroker\Translator.cs" />
+    <Compile Include="Models\Bank\Request_Reply_Stub.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Bank\Banks.cs" />
+    <Compile Include="Bank\Connection.cs" />
     <Compile Include="CreditBureauGateway.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="creditBureauStub.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="LoanBroker.cs">
+    <Compile Include="Models\CreditBureau\Request_Reply_Stub.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main.cs">
@@ -136,6 +141,8 @@
     <Compile Include="MockCreditBureauGateway.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\LoanBroker\Reply.cs" />
+    <Compile Include="Models\LoanBroker\Request.cs" />
     <Content Include="App.ico" />
   </ItemGroup>
   <ItemGroup>

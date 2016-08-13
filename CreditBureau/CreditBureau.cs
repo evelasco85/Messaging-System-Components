@@ -11,22 +11,10 @@ using System.Messaging;
 using System.Threading;
 using MessageGateway;
 using Messaging.Base;
+using CreditBureau.Models;
 
 namespace CreditBureau
 {
-
-    public class CreditBureauRequest 
-    {
-        public int SSN;
-    }
-
-    public class CreditBureauReply
-    {
-        public int SSN;
-        public int CreditScore;  
-        public int HistoryLength;
-    }
-
     internal class CreditBureau : MQRequestReplyService_Synchronous
     {
 

@@ -9,7 +9,7 @@
 using System;
 using System.Messaging;
 using CreditBureau;
-
+using LoanBroker.CreditBureau;
 
 namespace LoanBroker
 {

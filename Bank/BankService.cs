@@ -10,26 +10,10 @@ using System;
 using System.Messaging;
 using System.Threading;
 using MessageGateway;
+using Bank.Models;
 
 namespace Bank
 {
-
-    public struct BankQuoteRequest 
-    {
-        public int SSN;
-        public int CreditScore;
-        public int HistoryLength;
-        public int LoanAmount;
-        public int LoanTerm;
-    }
-
-    public struct BankQuoteReply
-    {
-        public double InterestRate;
-        public String QuoteID;
-        public int ErrorCode;
-    }
-
     internal class Bank : MQRequestReplyService_Synchronous
     {
         private readonly double PrimeRate = 3.5;

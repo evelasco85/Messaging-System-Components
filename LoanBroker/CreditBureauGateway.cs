@@ -12,22 +12,14 @@ using System.Collections;
 using MessageGateway;
 using CreditBureau;
 using Messaging.Base;
+using LoanBroker.CreditBureau;
 
 namespace LoanBroker
 {
-    public delegate	void OnCreditReplyEvent(CreditBureauReply creditReply, Object ACT);
-
     public interface ICreditBureauGateway
     {
         void GetCreditScore(CreditBureauRequest	quoteRequest, OnCreditReplyEvent OnCreditResponse, Object ACT);
         void Listen();
-    }
-
-    internal struct CreditRequestProcess
-    {
-        public int CorrelationID;
-        public Object ACT;
-        public OnCreditReplyEvent callback;
     }
 
     internal class CreditBureauGatewayImp :	ICreditBureauGateway
