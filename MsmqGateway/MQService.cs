@@ -13,71 +13,37 @@ using System.Messaging;
 
 namespace MessageGateway
 {
-    public abstract class MQService : QueueService<MessageQueue, Message>
+    public class MQService : QueueService<MessageQueue, Message>
     {
         static protected readonly String InvalidMessageQueueName = ".\\private$\\invalidMessageQueue";
         IMessageSender<MessageQueue, Message>invalidQueue = new MessageSenderGateway(InvalidMessageQueueName);
 
-        protected IMessageReceiver<MessageQueue, Message> requestQueue;
+        protected IMessageReceiver<MessageQueue, Message> _receiver;
+
+        public override IMessageReceiver<MessageQueue, Message> Receiver
+        {
+            get { return _receiver; }
+        }
+
         protected Type requestBodyType;
 	
         public MQService(IMessageReceiver<MessageQueue, Message> receiver)
         {
-            requestQueue = receiver;
-
-            RegisterReceiver(requestQueue);
+            _receiver = receiver;
         }
 	
-        public MQService(String requestQueueName)
-        {
-            MessageReceiverGateway receiver = new MessageReceiverGateway(requestQueueName, GetFormatter());
+        //public MQService(String requestQueueName)
+        //{
+        //    MessageReceiverGateway receiver = new MessageReceiverGateway(requestQueueName, GetFormatter());
 
-            RegisterReceiver(receiver);
+        //    this._receiver = receiver;
 
-            this.requestQueue = receiver;
-
-            Console.WriteLine("Processing messages from " + requestQueueName);
-        }
+        //    Console.WriteLine("Processing messages from " + requestQueueName);
+        //}
 			
-        protected virtual IMessageFormatter GetFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { GetRequestBodyType() });
-        }
-
-        public virtual Type GetRequestBodyType()
-        {
-            return typeof(System.String);
-        }
-
-        protected Object GetTypedMessageBody(Message msg)
-        {
-            try 
-            {
-                if (msg.Body.GetType(). Equals(GetRequestBodyType())) 
-                {
-                    return msg.Body;
-                }
-                else
-                { 
-                    Console.WriteLine("Illegal message format.");
-                    return null;
-                }
-            }
-            catch (Exception e) 
-            {
-                Console.WriteLine("Illegal message format" + e.Message);    
-                return null;
-            }
-        }
-
-        public override void RegisterReceiver(IMessageReceiver<MessageQueue, Message> receiver)
-        {
-            receiver.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessageReceived);
-        }
-	
         public override void Run()
         {
-            requestQueue.StartReceivingMessages();
+            _receiver.StartReceivingMessages();
         }
 
     
@@ -97,7 +63,5 @@ namespace MessageGateway
                 invalidQueue.Send(responseMessage);
             }
         }
-
-        public override abstract void OnMessageReceived(Message receivedMessage);
     }
 }

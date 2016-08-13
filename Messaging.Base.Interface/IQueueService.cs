@@ -6,9 +6,10 @@ namespace Messaging.Base.Interface
 {
     public interface IQueueService<TMessageQueue, TMessage>
     {
-        void RegisterReceiver(IMessageReceiver<TMessageQueue, TMessage> receiver);
+        IMessageReceiver<TMessageQueue, TMessage> Receiver { get; }
+        //void RegisterReceiver(IMessageReceiver<TMessageQueue, TMessage> receiver);
         void Run();
         void SendReply(Object responseObject, TMessage originalRequestMessage);
-        void OnMessageReceived(TMessage receivedMessage);
+        //void OnMessageReceived(TMessage receivedMessage);
     }
 }
