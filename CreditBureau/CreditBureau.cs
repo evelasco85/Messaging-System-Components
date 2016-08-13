@@ -10,7 +10,7 @@ using System;
 using System.Messaging;
 using System.Threading;
 using MessageGateway;
-using Messaging.Base.Interface;
+using Messaging.Base;
 
 namespace CreditBureau
 {

@@ -11,7 +11,7 @@ namespace Gateway.Mock
 
     using System.Messaging;
     using MessageGateway;
-    using Messaging.Base.Interface;
+    using Messaging.Base;
 
     public class MockQueue: IMessageSender<MessageQueue, Message> , IMessageReceiver<MessageQueue, Message>
     {

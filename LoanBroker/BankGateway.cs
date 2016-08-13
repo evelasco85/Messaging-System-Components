@@ -11,7 +11,7 @@ using System.Messaging;
 using System.Collections;
 using MessageGateway;
 using Bank;
-using Messaging.Base.Interface;
+using Messaging.Base;
 
 namespace LoanBroker
 {

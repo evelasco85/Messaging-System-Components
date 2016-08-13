@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Messaging.Base.Interface
+namespace Messaging.Base
 {
     public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>
     {

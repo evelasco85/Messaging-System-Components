@@ -11,7 +11,7 @@ using System.Messaging;
 using MessageGateway;
 using Gateway.Mock;
 using CreditBureau;
-using Messaging.Base.Interface;
+using Messaging.Base;
 
 namespace LoanBroker {
 

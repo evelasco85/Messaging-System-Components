@@ -12,7 +12,7 @@ using System.Collections;
 using System.Threading;
 using MessageGateway;
 using LoanBroker;
-using Messaging.Base.Interface;
+using Messaging.Base;
 
 namespace Test
 {

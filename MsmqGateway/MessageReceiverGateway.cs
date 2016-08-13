@@ -8,7 +8,6 @@
 
 using System.Messaging;
 using System;
-using Messaging.Base.Interface;
 using Messaging.Base;
 
 namespace MessageGateway{

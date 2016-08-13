@@ -7,7 +7,6 @@
  */
 
 using Messaging.Base;
-using Messaging.Base.Interface;
 using System;
 using System.Messaging;
 

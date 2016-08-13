@@ -1,6 +1,6 @@
 ﻿using MessageGateway;
+using Messaging.Base;
 using Messaging.Base.Constructions;
-using Messaging.Base.Interface;
 using System;
 using System.Collections.Generic;
 using System.Messaging;

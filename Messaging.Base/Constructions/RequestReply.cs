@@ -1,5 +1,4 @@
 ﻿using Messaging.Base.Construction;
-using Messaging.Base.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;

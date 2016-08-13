@@ -6,7 +6,7 @@
  * This code is supplied as is. No warranties. 
  */
 
-using Messaging.Base.Interface;
+using Messaging.Base;
 using System;
 using System.Messaging;
 using System.Threading;

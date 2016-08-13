@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Messaging.Base.Interface
+namespace Messaging.Base
 {
     public interface IQueueGateway<TMessageQueue> : IMessageCore<TMessageQueue>
     {
