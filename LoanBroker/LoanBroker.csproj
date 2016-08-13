@@ -138,7 +138,7 @@
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MockCreditBureauGateway.cs">
+    <Compile Include="CreditBureauGateway_Mock.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\LoanBroker\Reply.cs" />
