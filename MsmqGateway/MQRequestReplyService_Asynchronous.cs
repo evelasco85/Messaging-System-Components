@@ -24,13 +24,14 @@ namespace MessageGateway
         {
             receivedMessage.Formatter = GetFormatter();
             Object inBody = GetTypedMessageBody(receivedMessage);
+
             if (inBody != null)
             {
-                ProcessReceivedMessage(inBody, receivedMessage);
+                ProcessRequestMessage(inBody, receivedMessage);
             }
         }
 
-        protected virtual IMessageFormatter GetFormatter()
+        public virtual IMessageFormatter GetFormatter()
         {
             return new XmlMessageFormatter(new Type[] { GetRequestBodyType() });
         }
@@ -40,7 +41,7 @@ namespace MessageGateway
             return typeof(System.String);
         }
 
-        protected Object GetTypedMessageBody(Message msg)
+        Object GetTypedMessageBody(Message msg)
         {
             try
             {

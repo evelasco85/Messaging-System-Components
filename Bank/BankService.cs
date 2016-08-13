@@ -110,7 +110,7 @@ namespace Bank
             return replyStruct;
         }
 
-        public override Object ProcessReceivedMessage(Object o)
+        public override Object ProcessRequestMessage(Object o)
         {
             BankQuoteRequest requestStruct;
             BankQuoteReply replyStruct;

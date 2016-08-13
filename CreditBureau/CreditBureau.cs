@@ -53,7 +53,7 @@ namespace CreditBureau
             return typeof(CreditBureauRequest);
         }
 
-        public override Object ProcessReceivedMessage(Object o)
+        public override Object ProcessRequestMessage(Object o)
         {
             CreditBureauRequest requestStruct;
 

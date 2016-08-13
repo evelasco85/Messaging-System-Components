@@ -14,11 +14,11 @@ namespace Messaging.Base.Construction
 
     public interface IRequestReply_Synchronous
     {
-        Object ProcessReceivedMessage(Object receivedMessageObject);
+        Object ProcessRequestMessage(Object receivedMessageObject);
     }
 
     public interface IRequestReply_Asynchronous<TMessage>
     {
-        void ProcessReceivedMessage(Object receivedMessageObject, TMessage msg);
+        void ProcessRequestMessage(Object receivedMessageObject, TMessage msg);
     }
 }
