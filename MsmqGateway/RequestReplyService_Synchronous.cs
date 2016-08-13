@@ -8,22 +8,20 @@ using System.Text;
 
 namespace MessageGateway
 {
-    public class RequestReplyService_Synchronous : RequestReply<Message>
+    public class RequestReplyService_Synchronous : RequestReply<MessageQueue, Message>
     {
-        IQueueService<MessageQueue, Message> _queueService;
-
-        public RequestReplyService_Synchronous(IMessageReceiver<MessageQueue, Message> receiver)// : base(receiver)
+        public RequestReplyService_Synchronous(IMessageReceiver<MessageQueue, Message> receiver)
         {
-            _queueService = new MQService(receiver);
+            QueueService = new MQService(receiver);
 
-            _queueService.Receiver.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessageReceived);
+            RegisterReceiveMessageProcessor();
         }
 
-        public RequestReplyService_Synchronous(String requestQueueName)// : base(requestQueueName)
+        public RequestReplyService_Synchronous(String requestQueueName)
         {
-            _queueService = new MQService(new MessageReceiverGateway(requestQueueName, GetFormatter()));
+            QueueService = new MQService(new MessageReceiverGateway(requestQueueName, GetFormatter()));
 
-            _queueService.Receiver.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessageReceived);
+            RegisterReceiveMessageProcessor();
         }
 
         protected virtual Object ProcessReceivedMessage(Object receivedMessageObject)
@@ -43,7 +41,7 @@ namespace MessageGateway
 
                 if (outBody != null)
                 {
-                    _queueService.SendReply(outBody, receivedMessage);
+                    QueueService.SendReply(outBody, receivedMessage);
                 }
             }
         }
@@ -77,16 +75,6 @@ namespace MessageGateway
                 Console.WriteLine("Illegal message format" + e.Message);
                 return null;
             }
-        }
-
-        public void Run()
-        {
-            _queueService.Run();
-        }
-
-        public void SendReply(Object responseObject, Message originalRequestMessage)
-        {
-            _queueService.SendReply(responseObject, originalRequestMessage);
         }
     }
 }
