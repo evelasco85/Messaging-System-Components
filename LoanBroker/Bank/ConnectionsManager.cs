@@ -12,6 +12,10 @@ using System.Collections;
 using MessageGateway;
 using Messaging.Base;
 using LoanBroker.Bank;
+using Messaging.Base.Routing;
+using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace LoanBroker.Bank
 {
@@ -40,23 +44,21 @@ namespace LoanBroker.Bank
     // Modified connection manager that sends requetsts to Bank 5 only if there are not other takers
     internal class ConnectionsManager
     {
-        static protected Connection[] banks = {new Bank1(), new Bank2(), new Bank3(), new Bank4() };
+        static protected IRecipientList<Connection, MessageQueue, Message> bankRecipientList = new RecipientList<Connection, MessageQueue, Message>(
+            (recipient => recipient.Queue),
+            new Bank1(), new Bank2(), new Bank3(), new Bank4()
+            );
         static protected Connection catchAll = new Bank5();
 
         public IMessageSender<MessageQueue, Message> [] GetEligibleBankQueues(int CreditScore, int HistoryLength, int LoanAmount)
         {
-            ArrayList lenders = new ArrayList();
+            IList<IMessageSender<MessageQueue, Message>> recipientList = bankRecipientList
+                .GetRecipients(recipient => recipient.CanHandleLoanRequest(CreditScore, HistoryLength, LoanAmount));
 
-            for (int index = 0; index < banks.Length; index++) 
-            {
-                if (banks[index].CanHandleLoanRequest(CreditScore, HistoryLength, LoanAmount))
-                    lenders.Add(banks[index].Queue);
-            }
-            if (lenders.Count == 0)
-                lenders.Add(catchAll.Queue);
-            IMessageSender<MessageQueue, Message> [] lenderArray = (IMessageSender<MessageQueue, Message>  [])Array.CreateInstance(typeof(IMessageSender<MessageQueue, Message> ), lenders.Count);
-            lenders.CopyTo(lenderArray);
-            return lenderArray;
+            if (recipientList.Count == 0)
+                recipientList.Add(catchAll.Queue);
+
+            return recipientList.ToArray();
         }
     }
 }
