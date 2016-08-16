@@ -2,13 +2,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using Messaging.Base.Routing;
 
 namespace LoanBroker.Bank
 {
-    internal class BankQuoteAggregate
+    internal class BankQuoteAggregate : Aggregate<int, BankQuoteReply, BankQuoteReply>
     {
-        protected int ID;
         protected int expectedMessages;
         protected Object ACT;
         protected OnBestQuoteEvent callback;
@@ -19,8 +20,11 @@ namespace LoanBroker.Bank
         protected BankQuoteReply bestReply = null;
 
         public BankQuoteAggregate(int ID, int expectedMessages, OnBestQuoteEvent callback, Object ACT)
+            : base(
+            ID,
+            (x => x.Count == expectedMessages)
+            )
         {
-            this.ID = ID;
             this.expectedMessages = expectedMessages;
             this.callback = callback;
             this.ACT = ACT;
@@ -42,12 +46,8 @@ namespace LoanBroker.Bank
                     }
                 }
             }
-            receivedMessages.Add(reply);
-        }
 
-        public bool IsComplete()
-        {
-            return receivedMessages.Count == expectedMessages;
+            this.AddValue(reply);
         }
 
         public BankQuoteReply getBestResult()

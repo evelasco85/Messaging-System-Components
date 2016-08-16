@@ -6,10 +6,15 @@ namespace Messaging.Base.Routing
 {
     public class Aggregate<TKey, TValue, TAggregatedValue>
     {
-        public TKey Key { get; set; }
-        public TValue Value { get; set; }
+        private TKey _Key;
 
-        IList<TValue> _valueList = new List<TValue>();
+        public TKey Key
+        {
+            get { return _Key; }
+            set { _Key = value; }
+        }
+
+        public IList<TValue> _valueList = new List<TValue>();
         private Func<IList<TValue>, bool> _aggregateCompletionCondition;
 
         public Aggregate(TKey key, Func<IList<TValue>, bool> aggregateCompletionCondition)
@@ -17,6 +22,7 @@ namespace Messaging.Base.Routing
             if(aggregateCompletionCondition == null)
                 throw new ArgumentNullException("'aggregateCompletionCondition' parameter is required");
 
+            _Key = key;
             _aggregateCompletionCondition = aggregateCompletionCondition;
         }
 
@@ -30,12 +36,12 @@ namespace Messaging.Base.Routing
             return _aggregateCompletionCondition(_valueList);
         }
 
-        public TAggregatedValue GetAggregatedValue()
-        {
-            TAggregatedValue value = default(TAggregatedValue);
+        //public TAggregatedValue GetAggregatedValue()
+        //{
+        //    TAggregatedValue value = default(TAggregatedValue);
 
-            return value;
-        }
+        //    return value;
+        //}
     }
 
     public class Aggregator
