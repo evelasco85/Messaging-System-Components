@@ -22,7 +22,7 @@ namespace LoanBroker.Bank
         public BankQuoteAggregate(int ID, int expectedMessages, OnBestQuoteEvent callback, Object ACT)
             : base(
             ID,
-            (x => x.Count == expectedMessages)
+            (aggregatedValues => aggregatedValues.Count == expectedMessages)
             )
         {
             this.expectedMessages = expectedMessages;

@@ -14,7 +14,7 @@ namespace Messaging.Base.Routing
             set { _Key = value; }
         }
 
-        public IList<TValue> _valueList = new List<TValue>();
+        IList<TValue> _aggregatedValues = new List<TValue>();
         private Func<IList<TValue>, bool> _aggregateCompletionCondition;
 
         public Aggregate(TKey key, Func<IList<TValue>, bool> aggregateCompletionCondition)
@@ -28,12 +28,12 @@ namespace Messaging.Base.Routing
 
         public void AddValue(TValue value)
         {
-            _valueList.Add(value);
+            _aggregatedValues.Add(value);
         }
 
         public bool IsComplete()
         {
-            return _aggregateCompletionCondition(_valueList);
+            return _aggregateCompletionCondition(_aggregatedValues);
         }
 
         //public TAggregatedValue GetAggregatedValue()
