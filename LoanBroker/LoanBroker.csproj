@@ -127,7 +127,7 @@
     <Compile Include="LoanBroker\Process.cs" />
     <Compile Include="LoanBroker\ProcessManager.cs" />
     <Compile Include="LoanBroker\Translator.cs" />
-    <Compile Include="Models\Bank\Request_Reply_Stub.cs">
+    <Compile Include="Bank\Model\Request_Reply_Stub.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bank\Banks.cs" />
@@ -135,7 +135,7 @@
     <Compile Include="CreditBureauGateway.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\CreditBureau\Request_Reply_Stub.cs">
+    <Compile Include="CreditBureau\Model\Request_Reply_Stub.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main.cs">
@@ -144,8 +144,8 @@
     <Compile Include="CreditBureauGateway_Mock.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\LoanBroker\Reply.cs" />
-    <Compile Include="Models\LoanBroker\Request.cs" />
+    <Compile Include="LoanBroker\Model\Reply.cs" />
+    <Compile Include="LoanBroker\Model\Request.cs" />
     <Content Include="App.ico" />
   </ItemGroup>
   <ItemGroup>
