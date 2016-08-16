@@ -22,7 +22,8 @@ namespace LoanBroker
         protected IMessageReceiver<MessageQueue, Message> bankReplyQueue;
         protected ConnectionsManager connectionManager;
 
-        protected IDictionary aggregateBuffer = (IDictionary)(new Hashtable());
+        IAggregator<int, BankQuoteReply, BankQuoteReply, BankQuoteAggregate> _aggregator = new Aggregator<int, BankQuoteReply, BankQuoteReply, BankQuoteAggregate>();
+
         protected int aggregationCorrelationID;
 
         public BankGateway(String bankReplyQueueName, ConnectionsManager connectionManager)
@@ -44,7 +45,7 @@ namespace LoanBroker
             bankReplyQueue.StartReceivingMessages();
         }
 
-        public void GetBestQuote(BankQuoteRequest quoteRequest, OnNotifyAggregationCompletion<BankQuoteReply> onBestQuoteEvent, Object ACT)
+        public void GetBestQuote(BankQuoteRequest quoteRequest, OnNotifyAggregationCompletion<BankQuoteReply> onBestQuoteEvent)
         {
 
             Message requestMessage = new Message(quoteRequest);
@@ -53,9 +54,8 @@ namespace LoanBroker
             IMessageSender<MessageQueue, Message> [] eligibleBanks = 
                 connectionManager.GetEligibleBankQueues(quoteRequest.CreditScore, quoteRequest.HistoryLength, 
                 quoteRequest.LoanAmount);
-        
-            aggregateBuffer.Add(aggregationCorrelationID, 
-                new BankQuoteAggregate(aggregationCorrelationID, eligibleBanks.Length, onBestQuoteEvent));
+
+            _aggregator.AddAggregate(aggregationCorrelationID, new BankQuoteAggregate(aggregationCorrelationID, eligibleBanks.Length, onBestQuoteEvent));
             aggregationCorrelationID++;
 
             MessageRouter.SendToRecipientList(requestMessage, eligibleBanks);
@@ -67,6 +67,7 @@ namespace LoanBroker
             msg.Formatter =  GetFormatter();
 
             BankQuoteReply replyStruct;
+
             try 
             {
                 if (msg.Body is BankQuoteReply) 
@@ -75,15 +76,16 @@ namespace LoanBroker
                     int aggregationCorrelationID = msg.AppSpecific;
                     Console.WriteLine("Quote {0:0.00}% {1} {2}", 
                         replyStruct.InterestRate, replyStruct.QuoteID, replyStruct.ErrorCode);
-                    if (aggregateBuffer.Contains(aggregationCorrelationID))
+                    if (_aggregator.Contains(aggregationCorrelationID))
                     {
-                        BankQuoteAggregate aggregate = 
-                            (BankQuoteAggregate)(aggregateBuffer[aggregationCorrelationID]);
+                        BankQuoteAggregate aggregate = _aggregator.GetAggregate(aggregationCorrelationID);
+
                         aggregate.AggregateValue(replyStruct);
+
                         if (aggregate.IsComplete()) 
                         {
                             aggregate.NotifyAggregationCompletion();
-                            aggregateBuffer.Remove(aggregationCorrelationID);
+                            _aggregator.RemoveAggregate(aggregationCorrelationID);
                         }
                     }
                     else 

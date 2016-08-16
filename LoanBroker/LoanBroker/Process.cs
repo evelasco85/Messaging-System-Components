@@ -41,7 +41,7 @@ namespace LoanBroker.LoanBroker
             Console.WriteLine("Received Credit Score -- SSN {0} Score {1} Length {2}",
                 creditReply.SSN, creditReply.CreditScore, creditReply.HistoryLength);
             BankQuoteRequest bankRequest = Translator.GetBankQuoteRequest(loanRequest, creditReply);
-            bankInterface.GetBestQuote(bankRequest, new OnNotifyAggregationCompletion<BankQuoteReply>(OnBestQuote), null);
+            bankInterface.GetBestQuote(bankRequest, new OnNotifyAggregationCompletion<BankQuoteReply>(OnBestQuote));
         }
 
         private void OnBestQuote(BankQuoteReply bestQuote)
