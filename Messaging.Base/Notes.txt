@@ -1,0 +1,3 @@
+﻿[Pattern Notes]
+*BankGateway.cs uses a 'Scatter-Gather' pattern implementation
+*'Scatter-Gather' = 'Recipient List' + 'Aggregator' 
