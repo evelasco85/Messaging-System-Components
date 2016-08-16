@@ -2,6 +2,7 @@
 using CreditBureau;
 using LoanBroker.CreditBureau;
 using LoanBroker.Models.LoanBroker;
+using Messaging.Base.Routing;
 using System;
 using System.Collections.Generic;
 using System.Messaging;
@@ -40,10 +41,10 @@ namespace LoanBroker.LoanBroker
             Console.WriteLine("Received Credit Score -- SSN {0} Score {1} Length {2}",
                 creditReply.SSN, creditReply.CreditScore, creditReply.HistoryLength);
             BankQuoteRequest bankRequest = Translator.GetBankQuoteRequest(loanRequest, creditReply);
-            bankInterface.GetBestQuote(bankRequest, new OnBestQuoteEvent(OnBestQuote), null);
+            bankInterface.GetBestQuote(bankRequest, new OnNotifyAggregationCompletion<BankQuoteReply>(OnBestQuote), null);
         }
 
-        private void OnBestQuote(BankQuoteReply bestQuote, Object act)
+        private void OnBestQuote(BankQuoteReply bestQuote)
         {
             LoanQuoteReply quoteReply = Translator.GetLoanQuoteReply(loanRequest, bestQuote);
             Console.WriteLine("Best quote {0} {1}", quoteReply.InterestRate, quoteReply.QuoteID);

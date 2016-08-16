@@ -13,11 +13,10 @@ using MessageGateway;
 using Bank;
 using Messaging.Base;
 using LoanBroker.Bank;
+using Messaging.Base.Routing;
 
 namespace LoanBroker
 {
-    internal delegate void OnBestQuoteEvent(BankQuoteReply bestQuote, Object ACT);
-
     internal class BankGateway
     {
         protected IMessageReceiver<MessageQueue, Message> bankReplyQueue;
@@ -45,7 +44,7 @@ namespace LoanBroker
             bankReplyQueue.StartReceivingMessages();
         }
 
-        public void GetBestQuote(BankQuoteRequest quoteRequest, OnBestQuoteEvent onBestQuoteEvent, Object ACT)
+        public void GetBestQuote(BankQuoteRequest quoteRequest, OnNotifyAggregationCompletion<BankQuoteReply> onBestQuoteEvent, Object ACT)
         {
 
             Message requestMessage = new Message(quoteRequest);
@@ -56,7 +55,7 @@ namespace LoanBroker
                 quoteRequest.LoanAmount);
         
             aggregateBuffer.Add(aggregationCorrelationID, 
-                new BankQuoteAggregate(aggregationCorrelationID, eligibleBanks.Length, onBestQuoteEvent, ACT));
+                new BankQuoteAggregate(aggregationCorrelationID, eligibleBanks.Length, onBestQuoteEvent));
             aggregationCorrelationID++;
 
             MessageRouter.SendToRecipientList(requestMessage, eligibleBanks);
@@ -80,10 +79,10 @@ namespace LoanBroker
                     {
                         BankQuoteAggregate aggregate = 
                             (BankQuoteAggregate)(aggregateBuffer[aggregationCorrelationID]);
-                        aggregate.AddMessage(replyStruct);
+                        aggregate.AggregateValue(replyStruct);
                         if (aggregate.IsComplete()) 
                         {
-                            aggregate.NotifyBestResult();
+                            aggregate.NotifyAggregationCompletion();
                             aggregateBuffer.Remove(aggregationCorrelationID);
                         }
                     }
