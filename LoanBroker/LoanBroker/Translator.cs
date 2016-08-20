@@ -8,7 +8,7 @@ using System.Text;
 
 namespace LoanBroker.LoanBroker
 {
-    internal class TranslatorFactory
+    internal class Translator
 
     {
         static LoanQuoteReplyTranslator _loanQuoteReplyTranslator = new LoanQuoteReplyTranslator();
