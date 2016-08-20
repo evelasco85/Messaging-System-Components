@@ -32,7 +32,7 @@ namespace LoanBroker.LoanBroker
             this.loanRequest = loanRequest;
             this.message = msg;
 
-            CreditBureauRequest creditRequest = Translator.GetCreditBureaurequest(loanRequest);
+            CreditBureauRequest creditRequest = TranslatorFactory.GetCreditBureaurequest(loanRequest);
             creditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply), null);
         }
 
@@ -40,13 +40,13 @@ namespace LoanBroker.LoanBroker
         {
             Console.WriteLine("Received Credit Score -- SSN {0} Score {1} Length {2}",
                 creditReply.SSN, creditReply.CreditScore, creditReply.HistoryLength);
-            BankQuoteRequest bankRequest = Translator.GetBankQuoteRequest(loanRequest, creditReply);
+            BankQuoteRequest bankRequest = TranslatorFactory.GetBankQuoteRequest(loanRequest, creditReply);
             bankInterface.GetBestQuote(bankRequest, new OnNotifyAggregationCompletion<BankQuoteReply>(OnBestQuote));
         }
 
         private void OnBestQuote(BankQuoteReply bestQuote)
         {
-            LoanQuoteReply quoteReply = Translator.GetLoanQuoteReply(loanRequest, bestQuote);
+            LoanQuoteReply quoteReply = TranslatorFactory.GetLoanQuoteReply(loanRequest, bestQuote);
             Console.WriteLine("Best quote {0} {1}", quoteReply.InterestRate, quoteReply.QuoteID);
             broker.SendReply(quoteReply, message);
             broker.OnProcessComplete(processID);

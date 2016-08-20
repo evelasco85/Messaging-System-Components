@@ -49,6 +49,7 @@
     <Compile Include="Routing\IAggregate.cs" />
     <Compile Include="Routing\IAggregator.cs" />
     <Compile Include="Routing\IRecipientList.cs" />
+    <Compile Include="Transformation\ITranslator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

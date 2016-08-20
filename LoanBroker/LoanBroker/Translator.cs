@@ -1,5 +1,6 @@
 ﻿using Bank;
 using CreditBureau;
+using LoanBroker.LoanBroker.Translators;
 using LoanBroker.Models.LoanBroker;
 using System;
 using System.Collections.Generic;
@@ -7,46 +8,37 @@ using System.Text;
 
 namespace LoanBroker.LoanBroker
 {
-    internal class Translator
+    internal class TranslatorFactory
+
     {
+        static LoanQuoteReplyTranslator _loanQuoteReplyTranslator = new LoanQuoteReplyTranslator();
+        static BankQuoteRequestTranslator _bankQuoteRequestTranslator = new BankQuoteRequestTranslator();
+        static CreditBureauRequestTranslator _CreditBureauRequestTranslator = new CreditBureauRequestTranslator();
+
         public static CreditBureauRequest GetCreditBureaurequest(LoanQuoteRequest loanRequest)
         {
-            CreditBureauRequest creditRequest = new CreditBureauRequest();
-            creditRequest.SSN = loanRequest.SSN;
-            return creditRequest;
+            return _CreditBureauRequestTranslator.Translate(new CreditBureauRequestTranslator.Inputs
+            {
+                LoanRequest = loanRequest,
+            });
         }
 
         public static BankQuoteRequest GetBankQuoteRequest(LoanQuoteRequest loanRequest, CreditBureauReply creditReply)
         {
-            if (loanRequest.SSN != creditReply.SSN)
-                return null;
-
-            BankQuoteRequest bankRequest = new BankQuoteRequest();
-            bankRequest.LoanAmount = System.Convert.ToInt32(loanRequest.LoanAmount);
-            bankRequest.SSN = loanRequest.SSN;
-            bankRequest.LoanTerm = loanRequest.LoanTerm;
-            bankRequest.CreditScore = creditReply.CreditScore;
-            bankRequest.HistoryLength = creditReply.HistoryLength;
-            return bankRequest;
+            return _bankQuoteRequestTranslator.Translate(new BankQuoteRequestTranslator.Inputs
+            {
+                LoanRequest = loanRequest,
+                CreditReply = creditReply
+            });
         }
 
         public static LoanQuoteReply GetLoanQuoteReply(LoanQuoteRequest loanRequest, BankQuoteReply bestQuote)
         {
-
-            LoanQuoteReply quoteReply = new LoanQuoteReply();
-            quoteReply.SSN = loanRequest.SSN;
-            quoteReply.LoanAmount = Math.Floor(loanRequest.LoanAmount);
-            if (bestQuote != null)
+            return _loanQuoteReplyTranslator.Translate(new LoanQuoteReplyTranslator.Inputs
             {
-                quoteReply.InterestRate = bestQuote.InterestRate;
-                quoteReply.QuoteID = bestQuote.QuoteID;
-            }
-            else
-            {
-                quoteReply.InterestRate = 0.0;
-                quoteReply.QuoteID = "ERROR: No Qualifying Quotes";
-            }
-            return quoteReply;
+                 LoanRequest = loanRequest,
+                 BestQuote = bestQuote
+            });
         }
     }
 }

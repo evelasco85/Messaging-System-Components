@@ -138,6 +138,9 @@
     <Compile Include="CreditBureau\Model\Request_Reply_Stub.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LoanBroker\Translators\BankQuoteRequestTranslator.cs" />
+    <Compile Include="LoanBroker\Translators\CreditBureauRequestTranslator.cs" />
+    <Compile Include="LoanBroker\Translators\LoanQuoteReplyTranslator.cs" />
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -158,6 +161,7 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />

@@ -47,6 +47,7 @@
     <Compile Include="Routing\Aggregator.cs" />
     <Compile Include="Routing\RecipientList.cs" />
     <Compile Include="SenderGateway.cs" />
+    <Compile Include="Transformation\Translator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Messaging.Base.Interface\Messaging.Base.Interface.csproj">
