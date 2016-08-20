@@ -99,5 +99,10 @@ namespace LoanBroker
                 Console.WriteLine("Exception: {0}", e.ToString());    
             }
         }
+
+        public int GetOutstandingAggregateCount()
+        {
+            return _aggregator.GetAggregateCount();
+        }
     }
 }

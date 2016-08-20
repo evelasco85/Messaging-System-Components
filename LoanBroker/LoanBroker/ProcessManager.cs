@@ -60,6 +60,7 @@ namespace LoanBroker.LoanBroker
         public void OnProcessComplete(String processID)
         {
             activeProcesses.Remove(processID);
+            Console.WriteLine("Current outstanding aggregate count: {0}", bankInterface.GetOutstandingAggregateCount());
         }
     }
 }

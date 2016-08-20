@@ -9,6 +9,11 @@ namespace Messaging.Base.Routing
     {
         Dictionary<TKey, IAggregate<TKey, TValue, TAggregatedValue>> _aggregates = new Dictionary<TKey, IAggregate<TKey, TValue, TAggregatedValue>>();
 
+        public int GetAggregateCount()
+        {
+            return _aggregates.Count;
+        }
+
         public void AddAggregate(TKey key, TAggregate aggregate)
         {
             _aggregates.Add(key, aggregate);

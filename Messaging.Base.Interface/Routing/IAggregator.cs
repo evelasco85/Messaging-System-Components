@@ -14,5 +14,6 @@ namespace Messaging.Base.Routing
         TAggregate GetAggregate(TKey key);
         void RemoveAggregate(TKey key);
         void RemoveAggregate(IAggregate<TKey, TValue, TAggregatedValue> aggregate);
+        int GetAggregateCount();
     }
 }
