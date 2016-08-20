@@ -85,7 +85,7 @@ namespace LoanBroker
                         if (aggregate.IsComplete()) 
                         {
                             aggregate.NotifyAggregationCompletion();
-                            _aggregator.RemoveAggregate(aggregationCorrelationID);
+                            _aggregator.RemoveAggregate(aggregate);
                         }
                     }
                     else 

@@ -32,5 +32,13 @@ namespace Messaging.Base.Routing
             if (Contains(key))
                 _aggregates.Remove(key);
         }
+
+        public void RemoveAggregate(IAggregate<TKey, TValue, TAggregatedValue> aggregate)
+        {
+            if (aggregate == null)
+                return;
+
+            RemoveAggregate(aggregate.Key);
+        }
     }
 }

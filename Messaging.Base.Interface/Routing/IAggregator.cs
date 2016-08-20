@@ -13,5 +13,6 @@ namespace Messaging.Base.Routing
         bool Contains(TKey key);
         TAggregate GetAggregate(TKey key);
         void RemoveAggregate(TKey key);
+        void RemoveAggregate(IAggregate<TKey, TValue, TAggregatedValue> aggregate);
     }
 }
