@@ -6,36 +6,50 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.Routing
 {
-    public delegate void NotifyManagerDelegate<TKey, TData>(IProcess<TKey, TData> process);
+    public delegate void NotifyManagerDelegate<TKey, TData, TManager>(IProcess<TKey, TData, TManager> process);
 
-    public interface IProcess<TKey, TData>
+    public interface IProcess<TKey, TData, TManager>
     {
+        TManager Manager { get; set; }
         TKey GetKey();
         TData GetProcessData();
         void UpdateManager();
-        IProcessManager<TKey, TData> ProcessManager { get; set; }
+        IProcessManager<TKey, TData, TManager> ProcessManager { get; set; }
+        TManager GetManager();
     }
 
-    public interface IProcessManager<TKey, TData>
+    public interface IProcessManager<TKey, TData, TManager>
     {
-        NotifyManagerDelegate<TKey, TData> ManagerNotifier { get; set; }
-        void AddProcess(IProcess<TKey, TData> process);
+        NotifyManagerDelegate<TKey, TData, TManager> ManagerNotifier { get; set; }
+        void AddProcess(IProcess<TKey, TData, TManager> process);
         void RemoveProcess(TKey key);
-        void RemoveProcess(IProcess<TKey, TData> process);
+        void RemoveProcess(IProcess<TKey, TData, TManager> process);
     }
 
-    public abstract class Process<TKey, TData> : IProcess<TKey, TData>
+    public abstract class Process<TKey, TData, TManager> : IProcess<TKey, TData, TManager>
     {
-        NotifyManagerDelegate<TKey, TData> _managerNotifier;
+        
+        NotifyManagerDelegate<TKey, TData, TManager> _managerNotifier;
 
-        public IProcessManager<TKey, TData> ProcessManager { get; set; }
+        TManager _manager;
+        public TManager Manager
+        {
+            get { return _manager; }
+            set { _manager = value; }
+        }
 
+        public IProcessManager<TKey, TData, TManager> ProcessManager { get; set; }
         public abstract TKey GetKey();
         public abstract TData GetProcessData();
 
-        public Process(NotifyManagerDelegate<TKey, TData> managerNotifier)
+        public Process(NotifyManagerDelegate<TKey, TData, TManager> managerNotifier)
         {
             _managerNotifier = managerNotifier;
+        }
+
+        public TManager GetManager()
+        {
+            return _manager;
         }
 
         public void UpdateManager()
@@ -45,23 +59,31 @@ namespace Messaging.Base.Routing
         }
     }
 
-    public class ProcessManager<TKey, TData> : IProcessManager<TKey, TData>
+    public class ProcessManager<TKey, TData, TManager> : IProcessManager<TKey, TData, TManager>
     {
-        private NotifyManagerDelegate<TKey, TData> _managerNotifier;
-        IDictionary<TKey, IProcess<TKey, TData>> _processes = new Dictionary<TKey, IProcess<TKey, TData>>();
+        private NotifyManagerDelegate<TKey, TData, TManager> _managerNotifier;
+        IDictionary<TKey, IProcess<TKey, TData, TManager>> _processes = new Dictionary<TKey, IProcess<TKey, TData, TManager>>();
 
-        public NotifyManagerDelegate<TKey, TData> ManagerNotifier
+        public NotifyManagerDelegate<TKey, TData, TManager> ManagerNotifier
         {
             get { return _managerNotifier; }
             set { _managerNotifier = value; }
         }
 
-        public void AddProcess(IProcess<TKey, TData> process)
+        TManager _manager;
+
+        public ProcessManager(TManager manager)
+        {
+            _manager = manager;
+        }
+
+        public void AddProcess(IProcess<TKey, TData, TManager> process)
         {
             if((process == null) || (_processes.ContainsKey(process.GetKey())))
                 return;
 
             process.ProcessManager = this;
+            process.Manager = _manager;
 
             _processes.Add(process.GetKey(), process);
         }
@@ -74,7 +96,7 @@ namespace Messaging.Base.Routing
             _processes.Remove(key);
         }
 
-        public void RemoveProcess(IProcess<TKey, TData> process)
+        public void RemoveProcess(IProcess<TKey, TData, TManager> process)
         {
             if (process == null)
                 return;

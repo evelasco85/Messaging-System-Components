@@ -15,7 +15,7 @@ namespace LoanBroker.LoanBroker
         public ICreditBureauGateway creditBureauInterface;
         public BankGateway bankInterface;
 
-        IProcessManager<string, Process> _manager;
+        IProcessManager<string, Process, ProcessManager> _manager;
 
         public ProcessManager(System.String requestQueueName,
             String creditRequestQueueName, String creditReplyQueueName,
@@ -42,8 +42,8 @@ namespace LoanBroker.LoanBroker
             bankInterface = new BankGateway(bankReplyQueueName, connectionManager);
             bankInterface.Listen();
 
-            _manager = new ProcessManager<string, Process>();
-            _manager.ManagerNotifier = new NotifyManagerDelegate<string, Process>(ProcessNotification);
+            _manager = new ProcessManager<string, Process, ProcessManager>(this);
+            _manager.ManagerNotifier = new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification);
         }
 
         public override Type GetRequestBodyType()
@@ -59,7 +59,7 @@ namespace LoanBroker.LoanBroker
             String processID = message.Id;
             Process newProcess =
                 new Process(
-                    new NotifyManagerDelegate<string, Process>(ProcessNotification),
+                    new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification),
                     this,
                     processID, creditBureauInterface,
                 bankInterface, quoteRequest, message);
@@ -67,7 +67,7 @@ namespace LoanBroker.LoanBroker
             _manager.AddProcess(newProcess);
         }
 
-        void ProcessNotification(IProcess<string, Process> process)
+        void ProcessNotification(IProcess<string, Process, ProcessManager> process)
         {
             _manager.RemoveProcess(process);
             Console.WriteLine("Current outstanding aggregate count: {0}", bankInterface.GetOutstandingAggregateCount());
