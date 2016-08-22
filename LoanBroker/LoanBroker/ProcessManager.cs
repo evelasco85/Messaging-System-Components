@@ -12,24 +12,18 @@ namespace LoanBroker.LoanBroker
 {
     internal class ProcessManager : MQRequestReplyService_Asynchronous
     {
-        protected ICreditBureauGateway creditBureauInterface;
-        protected BankGateway bankInterface;
+        public ICreditBureauGateway creditBureauInterface;
+        public BankGateway bankInterface;
 
-        IProcessManager<string, Process> _manager = new ProcessManager<string, Process>();
+        IProcessManager<string, Process> _manager;
 
         public ProcessManager(System.String requestQueueName,
             String creditRequestQueueName, String creditReplyQueueName,
             String bankReplyQueueName, ConnectionsManager connectionManager)
             : base(requestQueueName)
         {
-            creditBureauInterface = (ICreditBureauGateway)
-                (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName));
-            creditBureauInterface.Listen();
-
-            bankInterface = new BankGateway(bankReplyQueueName, connectionManager);
-            bankInterface.Listen();
-
-            _manager.ManagerNotifier = new NotifyManagerDelegate<string, Process>(ProcessNotification);
+            Initialize(((ICreditBureauGateway) (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName))),
+                bankReplyQueueName, connectionManager);
         }
 
         public ProcessManager(String requestQueueName,
@@ -37,12 +31,18 @@ namespace LoanBroker.LoanBroker
             String bankReplyQueueName, ConnectionsManager connectionManager)
             : base(requestQueueName)
         {
+            Initialize(creditBureau, bankReplyQueueName, connectionManager);
+        }
+
+        void Initialize(ICreditBureauGateway creditBureau, String bankReplyQueueName, ConnectionsManager connectionManager)
+        {
             creditBureauInterface = creditBureau;
             creditBureauInterface.Listen();
 
             bankInterface = new BankGateway(bankReplyQueueName, connectionManager);
             bankInterface.Listen();
 
+            _manager = new ProcessManager<string, Process>();
             _manager.ManagerNotifier = new NotifyManagerDelegate<string, Process>(ProcessNotification);
         }
 
