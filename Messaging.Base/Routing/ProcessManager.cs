@@ -11,6 +11,8 @@ namespace Messaging.Base.Routing
     public interface IProcess<TKey, TProcessData>
     {
         TKey GetKey();
+        TProcessData GetProcessData();
+        void PerformNotifyManager();
         IProcessManager<TKey, TProcessData> ProcessManager { get; set; }
         NotifyManagerDelegate<TKey, TProcessData> NotifyManager { get; set; }
     }
@@ -29,6 +31,13 @@ namespace Messaging.Base.Routing
         public NotifyManagerDelegate<TKey, TProcessData> NotifyManager { get; set; }
 
         public abstract TKey GetKey();
+        public abstract TProcessData GetProcessData();
+
+        public void PerformNotifyManager()
+        {
+            if (NotifyManager != null)
+                NotifyManager(this);
+        }
     }
 
     public class ProcessManager<TKey, TProcessData> : IProcessManager<TKey, TProcessData>

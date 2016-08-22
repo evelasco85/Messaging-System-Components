@@ -10,10 +10,20 @@ using System.Text;
 
 namespace LoanBroker.LoanBroker
 {
-    internal class Process
+    internal class Process : Process<string, Process>
     {
+        public override string GetKey()
+        {
+            return processID;
+        }
+
+        public override Process GetProcessData()
+        {
+            return this;
+        }
+
         protected ProcessManager broker;
-        protected String processID;
+        public String processID;
         protected LoanQuoteRequest loanRequest;
         protected Message message;
 
@@ -50,6 +60,8 @@ namespace LoanBroker.LoanBroker
             Console.WriteLine("Best quote {0} {1}", quoteReply.InterestRate, quoteReply.QuoteID);
             broker.SendReply(quoteReply, message);
             broker.OnProcessComplete(processID);
+
+            PerformNotifyManager();
         }
     }
 }
