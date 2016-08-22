@@ -22,7 +22,8 @@ namespace LoanBroker.LoanBroker
             String bankReplyQueueName, ConnectionsManager connectionManager)
             : base(requestQueueName)
         {
-            Initialize(((ICreditBureauGateway) (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName))),
+            Initialize(
+                ((ICreditBureauGateway) (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName))),
                 bankReplyQueueName, connectionManager);
         }
 
@@ -42,8 +43,11 @@ namespace LoanBroker.LoanBroker
             bankInterface = new BankGateway(bankReplyQueueName, connectionManager);
             bankInterface.Listen();
 
-            _manager = new ProcessManager<string, Process, ProcessManager>(this);
-            _manager.ManagerNotifier = new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification);
+            _manager = new ProcessManager<string, Process, ProcessManager>(
+                this,
+                new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification)
+                );
+            //_manager.ManagerNotifier = new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification);
         }
 
         public override Type GetRequestBodyType()
@@ -61,8 +65,10 @@ namespace LoanBroker.LoanBroker
                 new Process(
                     new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification),
                     this,
-                    processID, creditBureauInterface,
-                bankInterface, quoteRequest, message);
+                    processID,
+                    creditBureauInterface,
+                    bankInterface,
+                    quoteRequest, message);
 
             _manager.AddProcess(newProcess);
         }

@@ -20,7 +20,6 @@ namespace Messaging.Base.Routing
 
     public interface IProcessManager<TKey, TData, TManager>
     {
-        NotifyManagerDelegate<TKey, TData, TManager> ManagerNotifier { get; set; }
         void AddProcess(IProcess<TKey, TData, TManager> process);
         void RemoveProcess(TKey key);
         void RemoveProcess(IProcess<TKey, TData, TManager> process);
@@ -64,17 +63,12 @@ namespace Messaging.Base.Routing
         private NotifyManagerDelegate<TKey, TData, TManager> _managerNotifier;
         IDictionary<TKey, IProcess<TKey, TData, TManager>> _processes = new Dictionary<TKey, IProcess<TKey, TData, TManager>>();
 
-        public NotifyManagerDelegate<TKey, TData, TManager> ManagerNotifier
-        {
-            get { return _managerNotifier; }
-            set { _managerNotifier = value; }
-        }
-
         TManager _manager;
 
-        public ProcessManager(TManager manager)
+        public ProcessManager(TManager manager, NotifyManagerDelegate<TKey, TData, TManager> managerNotifier)
         {
             _manager = manager;
+            _managerNotifier = managerNotifier;
         }
 
         public void AddProcess(IProcess<TKey, TData, TManager> process)
