@@ -22,18 +22,22 @@ namespace LoanBroker.LoanBroker
             return this;
         }
 
+        String processID;
+
         protected ProcessManager broker;
-        public String processID;
         protected LoanQuoteRequest loanRequest;
         protected Message message;
 
         protected ICreditBureauGateway creditBureauInterface;
         protected BankGateway bankInterface;
 
-        public Process(ProcessManager broker, String processID,
+        public Process(NotifyManagerDelegate<string, Process> managerNotifier,
+            ProcessManager broker,
+            String processID,
             ICreditBureauGateway creditBureauGateway,
             BankGateway bankGateway,
             LoanQuoteRequest loanRequest, Message msg)
+            : base(managerNotifier)
         {
             this.broker = broker;
             this.creditBureauInterface = creditBureauGateway;
@@ -59,9 +63,8 @@ namespace LoanBroker.LoanBroker
             LoanQuoteReply quoteReply = Translator.GetLoanQuoteReply(loanRequest, bestQuote);
             Console.WriteLine("Best quote {0} {1}", quoteReply.InterestRate, quoteReply.QuoteID);
             broker.SendReply(quoteReply, message);
-            broker.OnProcessComplete(processID);
 
-            PerformNotifyManager();
+            UpdateManager();
         }
     }
 }

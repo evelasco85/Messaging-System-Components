@@ -14,9 +14,8 @@ namespace LoanBroker.LoanBroker
     {
         protected ICreditBureauGateway creditBureauInterface;
         protected BankGateway bankInterface;
-        protected IDictionary activeProcesses = (IDictionary)(new Hashtable());
 
-        //IProcessManager<string, Process> _manager = new ProcessManager<string, Process>();
+        IProcessManager<string, Process> _manager = new ProcessManager<string, Process>();
 
         public ProcessManager(System.String requestQueueName,
             String creditRequestQueueName, String creditReplyQueueName,
@@ -30,8 +29,7 @@ namespace LoanBroker.LoanBroker
             bankInterface = new BankGateway(bankReplyQueueName, connectionManager);
             bankInterface.Listen();
 
-            //////////////
-            //_manager.ManagerNotifier = new NotifyManagerDelegate<string, Process>(ProcessNotification);
+            _manager.ManagerNotifier = new NotifyManagerDelegate<string, Process>(ProcessNotification);
         }
 
         public ProcessManager(String requestQueueName,
@@ -45,8 +43,7 @@ namespace LoanBroker.LoanBroker
             bankInterface = new BankGateway(bankReplyQueueName, connectionManager);
             bankInterface.Listen();
 
-            //////////
-            //_manager.ManagerNotifier = new NotifyManagerDelegate<string, Process>(ProcessNotification);
+            _manager.ManagerNotifier = new NotifyManagerDelegate<string, Process>(ProcessNotification);
         }
 
         public override Type GetRequestBodyType()
@@ -61,26 +58,18 @@ namespace LoanBroker.LoanBroker
 
             String processID = message.Id;
             Process newProcess =
-                new Process(this, processID, creditBureauInterface,
+                new Process(
+                    new NotifyManagerDelegate<string, Process>(ProcessNotification),
+                    this,
+                    processID, creditBureauInterface,
                 bankInterface, quoteRequest, message);
-            activeProcesses.Add(processID, newProcess);
 
-            ///////////
-            //_manager.AddProcess(newProcess);
+            _manager.AddProcess(newProcess);
         }
 
-        ///////////
         void ProcessNotification(IProcess<string, Process> process)
         {
-            //activeProcesses.Remove(process.GetProcessData().processID);
-            //_manager.RemoveProcess(process.GetProcessData().processID);
-            //_manager.RemoveProcess(process);
-            Console.WriteLine("Current outstanding aggregate count: {0}", bankInterface.GetOutstandingAggregateCount());
-        }
-
-        public void OnProcessComplete(String processID)
-        {
-            activeProcesses.Remove(processID);
+            _manager.RemoveProcess(process);
             Console.WriteLine("Current outstanding aggregate count: {0}", bankInterface.GetOutstandingAggregateCount());
         }
     }

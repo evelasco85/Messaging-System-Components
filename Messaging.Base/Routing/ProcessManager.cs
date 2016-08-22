@@ -6,59 +6,62 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.Routing
 {
-    public delegate void NotifyManagerDelegate<TKey, TProcessData>(IProcess<TKey, TProcessData> process);
+    public delegate void NotifyManagerDelegate<TKey, TData>(IProcess<TKey, TData> process);
 
-    public interface IProcess<TKey, TProcessData>
+    public interface IProcess<TKey, TData>
     {
         TKey GetKey();
-        TProcessData GetProcessData();
-        void PerformNotifyManager();
-        IProcessManager<TKey, TProcessData> ProcessManager { get; set; }
-        NotifyManagerDelegate<TKey, TProcessData> NotifyManager { get; set; }
+        TData GetProcessData();
+        void UpdateManager();
+        IProcessManager<TKey, TData> ProcessManager { get; set; }
     }
 
-    public interface IProcessManager<TKey, TProcessData>
+    public interface IProcessManager<TKey, TData>
     {
-        NotifyManagerDelegate<TKey, TProcessData> ManagerNotifier { get; set; }
-        void AddProcess(IProcess<TKey, TProcessData> process);
+        NotifyManagerDelegate<TKey, TData> ManagerNotifier { get; set; }
+        void AddProcess(IProcess<TKey, TData> process);
         void RemoveProcess(TKey key);
-        void RemoveProcess(IProcess<TKey, TProcessData> process);
+        void RemoveProcess(IProcess<TKey, TData> process);
     }
 
-    public abstract class Process<TKey, TProcessData> : IProcess<TKey, TProcessData>
+    public abstract class Process<TKey, TData> : IProcess<TKey, TData>
     {
-        public IProcessManager<TKey, TProcessData> ProcessManager { get; set; }
-        public NotifyManagerDelegate<TKey, TProcessData> NotifyManager { get; set; }
+        NotifyManagerDelegate<TKey, TData> _managerNotifier;
+
+        public IProcessManager<TKey, TData> ProcessManager { get; set; }
 
         public abstract TKey GetKey();
-        public abstract TProcessData GetProcessData();
+        public abstract TData GetProcessData();
 
-        public void PerformNotifyManager()
+        public Process(NotifyManagerDelegate<TKey, TData> managerNotifier)
         {
-            if (NotifyManager != null)
-                NotifyManager(this);
+            _managerNotifier = managerNotifier;
+        }
+
+        public void UpdateManager()
+        {
+            if (_managerNotifier != null)
+                _managerNotifier(this);
         }
     }
 
-    public class ProcessManager<TKey, TProcessData> : IProcessManager<TKey, TProcessData>
+    public class ProcessManager<TKey, TData> : IProcessManager<TKey, TData>
     {
-        private NotifyManagerDelegate<TKey, TProcessData> _managerNotifier;
+        private NotifyManagerDelegate<TKey, TData> _managerNotifier;
+        IDictionary<TKey, IProcess<TKey, TData>> _processes = new Dictionary<TKey, IProcess<TKey, TData>>();
 
-        IDictionary<TKey, IProcess<TKey, TProcessData>> _processes = new Dictionary<TKey, IProcess<TKey, TProcessData>>();
-
-        public NotifyManagerDelegate<TKey, TProcessData> ManagerNotifier
+        public NotifyManagerDelegate<TKey, TData> ManagerNotifier
         {
             get { return _managerNotifier; }
             set { _managerNotifier = value; }
         }
 
-        public void AddProcess(IProcess<TKey, TProcessData> process)
+        public void AddProcess(IProcess<TKey, TData> process)
         {
             if((process == null) || (_processes.ContainsKey(process.GetKey())))
                 return;
 
             process.ProcessManager = this;
-            process.NotifyManager = _managerNotifier;
 
             _processes.Add(process.GetKey(), process);
         }
@@ -71,7 +74,7 @@ namespace Messaging.Base.Routing
             _processes.Remove(key);
         }
 
-        public void RemoveProcess(IProcess<TKey, TProcessData> process)
+        public void RemoveProcess(IProcess<TKey, TData> process)
         {
             if (process == null)
                 return;
