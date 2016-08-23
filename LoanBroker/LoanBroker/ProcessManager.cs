@@ -20,22 +20,16 @@ namespace LoanBroker.LoanBroker
         public ProcessManager(System.String requestQueueName,
             String creditRequestQueueName, String creditReplyQueueName,
             String bankReplyQueueName, ConnectionsManager connectionManager)
-            : base(requestQueueName)
-        {
-            Initialize(
-                ((ICreditBureauGateway) (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName))),
-                bankReplyQueueName, connectionManager);
-        }
+            :this(requestQueueName,
+                 (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName)),
+                 bankReplyQueueName,
+                 connectionManager)
+        {}
 
         public ProcessManager(String requestQueueName,
             ICreditBureauGateway creditBureau,
             String bankReplyQueueName, ConnectionsManager connectionManager)
             : base(requestQueueName)
-        {
-            Initialize(creditBureau, bankReplyQueueName, connectionManager);
-        }
-
-        void Initialize(ICreditBureauGateway creditBureau, String bankReplyQueueName, ConnectionsManager connectionManager)
         {
             creditBureauInterface = creditBureau;
             creditBureauInterface.Listen();

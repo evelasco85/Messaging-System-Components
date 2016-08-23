@@ -47,7 +47,7 @@ namespace LoanBroker.LoanBroker
 
             CreditBureauRequest creditRequest = Translator.GetCreditBureaurequest(loanRequest);
             _creditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply), null);
-            //this.GetManager().creditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply), null);
+            //this.GetProcessor().creditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply), null);
         }
 
         private void OnCreditReply(CreditBureauReply creditReply, Object act)
