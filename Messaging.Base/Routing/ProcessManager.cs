@@ -6,59 +6,6 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.Routing
 {
-    public delegate void NotifyManagerDelegate<TKey, TData, TProcessor>(IProcess<TKey, TData, TProcessor> process);
-
-    public interface IProcess<TKey, TData, TProcessor>
-    {
-        TProcessor Processor { get; set; }
-        TKey GetKey();
-        TData GetProcessData();
-        void UpdateManager();
-        IProcessManager<TKey, TData, TProcessor> ProcessManager { get; set; }
-        NotifyManagerDelegate<TKey, TData, TProcessor> ManagerNotifier { get; set; }
-        TProcessor GetProcessor();
-    }
-
-    public interface IProcessManager<TKey, TData, TProcessor>
-    {
-        void AddProcess(IProcess<TKey, TData, TProcessor> process);
-        void RemoveProcess(TKey key);
-        void RemoveProcess(IProcess<TKey, TData, TProcessor> process);
-    }
-
-    public abstract class Process<TKey, TData, TProcessor> : IProcess<TKey, TData, TProcessor>
-    {
-        NotifyManagerDelegate<TKey, TData, TProcessor> _managerNotifier;
-
-        public NotifyManagerDelegate<TKey, TData, TProcessor> ManagerNotifier
-        {
-            get { return _managerNotifier; }
-            set { _managerNotifier = value; }
-        }
-
-        TProcessor _processor;
-        public TProcessor Processor
-        {
-            get { return _processor; }
-            set { _processor = value; }
-        }
-
-        public IProcessManager<TKey, TData, TProcessor> ProcessManager { get; set; }
-        public abstract TKey GetKey();
-        public abstract TData GetProcessData();
-
-        public TProcessor GetProcessor()
-        {
-            return _processor;
-        }
-
-        public void UpdateManager()
-        {
-            if (_managerNotifier != null)
-                _managerNotifier(this);
-        }
-    }
-
     public class ProcessManager<TKey, TData, TProcessor> : IProcessManager<TKey, TData, TProcessor>
     {
         private NotifyManagerDelegate<TKey, TData, TProcessor> _managerNotifier;
@@ -68,6 +15,9 @@ namespace Messaging.Base.Routing
 
         public ProcessManager(TProcessor processor, NotifyManagerDelegate<TKey, TData, TProcessor> managerNotifier)
         {
+            if (processor == null)
+                throw new ArgumentNullException("'processor' parameter requires a value");
+
             _processor = processor;
             _managerNotifier = managerNotifier;
         }

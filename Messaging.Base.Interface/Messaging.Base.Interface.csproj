@@ -48,6 +48,8 @@
     <Compile Include="IQueueService.cs" />
     <Compile Include="Routing\IAggregate.cs" />
     <Compile Include="Routing\IAggregator.cs" />
+    <Compile Include="Routing\IProcess.cs" />
+    <Compile Include="Routing\IProcessManager.cs" />
     <Compile Include="Routing\IRecipientList.cs" />
     <Compile Include="Transformation\ITranslator.cs" />
   </ItemGroup>

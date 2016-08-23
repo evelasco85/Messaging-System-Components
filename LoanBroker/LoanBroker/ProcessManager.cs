@@ -57,13 +57,11 @@ namespace LoanBroker.LoanBroker
             Process newProcess =
                 new Process(
                     new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification),
-                    this,
-                    processID,
-                    creditBureauInterface,
-                    bankInterface,
-                    quoteRequest, message);
+                    processID, quoteRequest, message);
 
             _manager.AddProcess(newProcess);
+
+            newProcess.StartProcess();
         }
 
         void ProcessNotification(IProcess<string, Process, ProcessManager> process)
