@@ -47,7 +47,6 @@ namespace LoanBroker.LoanBroker
                 this,
                 new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification)
                 );
-            //_manager.ManagerNotifier = new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification);
         }
 
         public override Type GetRequestBodyType()
