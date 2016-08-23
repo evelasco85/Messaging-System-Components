@@ -15,6 +15,7 @@ namespace Messaging.Base.Routing
         TData GetProcessData();
         void UpdateManager();
         IProcessManager<TKey, TData, TProcessor> ProcessManager { get; set; }
+        NotifyManagerDelegate<TKey, TData, TProcessor> ManagerNotifier { get; set; }
         TProcessor GetProcessor();
     }
 
@@ -27,8 +28,13 @@ namespace Messaging.Base.Routing
 
     public abstract class Process<TKey, TData, TProcessor> : IProcess<TKey, TData, TProcessor>
     {
-        
         NotifyManagerDelegate<TKey, TData, TProcessor> _managerNotifier;
+
+        public NotifyManagerDelegate<TKey, TData, TProcessor> ManagerNotifier
+        {
+            get { return _managerNotifier; }
+            set { _managerNotifier = value; }
+        }
 
         TProcessor _processor;
         public TProcessor Processor
@@ -40,11 +46,6 @@ namespace Messaging.Base.Routing
         public IProcessManager<TKey, TData, TProcessor> ProcessManager { get; set; }
         public abstract TKey GetKey();
         public abstract TData GetProcessData();
-
-        public Process(NotifyManagerDelegate<TKey, TData, TProcessor> managerNotifier)
-        {
-            _managerNotifier = managerNotifier;
-        }
 
         public TProcessor GetProcessor()
         {
@@ -78,6 +79,7 @@ namespace Messaging.Base.Routing
 
             process.ProcessManager = this;
             process.Processor = _processor;
+            process.ManagerNotifier = _managerNotifier;
 
             _processes.Add(process.GetKey(), process);
         }

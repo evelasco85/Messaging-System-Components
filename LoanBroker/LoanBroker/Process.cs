@@ -36,7 +36,6 @@ namespace LoanBroker.LoanBroker
             ICreditBureauGateway creditBureauGateway,
             BankGateway bankGateway,
             LoanQuoteRequest loanRequest, Message msg)
-            : base(managerNotifier)
         {
             this._broker = broker;
             this._creditBureauInterface = creditBureauGateway;
