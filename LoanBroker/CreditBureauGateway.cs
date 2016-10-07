@@ -18,7 +18,7 @@ namespace LoanBroker
 {
     public interface ICreditBureauGateway
     {
-        void GetCreditScore(CreditBureauRequest	quoteRequest, OnCreditReplyEvent OnCreditResponse, Object ACT);
+        void GetCreditScore(CreditBureauRequest	quoteRequest, OnCreditReplyEvent OnCreditResponse);
         void Listen();
     }
 
@@ -59,14 +59,13 @@ namespace LoanBroker
         }
 
         public void	GetCreditScore(CreditBureauRequest quoteRequest, 
-            OnCreditReplyEvent OnCreditResponse,	Object ACT)
+            OnCreditReplyEvent OnCreditResponse)
         {
             Message	requestMessage = new Message(quoteRequest);
-            requestMessage.ResponseQueue = creditReplyQueue.GetQueue();
+            requestMessage.ResponseQueue = creditReplyQueue.GetQueue();//Return Address
             requestMessage.AppSpecific = random.Next();
 	
             CreditRequestProcess processInstance = new CreditRequestProcess();
-            processInstance.ACT	= ACT;
             processInstance.callback = OnCreditResponse;
             processInstance.CorrelationID =	requestMessage.AppSpecific;
 
@@ -91,7 +90,7 @@ namespace LoanBroker
                     {
                         CreditRequestProcess processInstance = 
                             (CreditRequestProcess)(activeProcesses[CorrelationID]);
-                        processInstance.callback(replyStruct, processInstance.ACT);
+                        processInstance.callback(replyStruct);
                         activeProcesses.Remove(CorrelationID);
                     }
                     else { Console.WriteLine("Incoming credit response does	not	match any request"); }

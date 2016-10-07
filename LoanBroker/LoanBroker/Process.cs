@@ -37,10 +37,10 @@ namespace LoanBroker.LoanBroker
         {
             CreditBureauRequest creditRequest = Translator.GetCreditBureaurequest(_loanRequest);
 
-            processor.CreditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply), null);
+            processor.CreditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply));
         }
 
-        private void OnCreditReply(CreditBureauReply creditReply, Object act)
+        private void OnCreditReply(CreditBureauReply creditReply)
         {
             Console.WriteLine("Received Credit Score -- SSN {0} Score {1} Length {2}",
                 creditReply.SSN, creditReply.CreditScore, creditReply.HistoryLength);

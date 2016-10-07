@@ -22,13 +22,13 @@ namespace LoanBroker
         public MockCreditBureauGatewayImp() 
         { }
 
-        public void GetCreditScore(CreditBureauRequest quoteRequest, OnCreditReplyEvent OnCreditResponse, Object ACT)
+        public void GetCreditScore(CreditBureauRequest quoteRequest, OnCreditReplyEvent OnCreditResponse)
         {
             CreditBureauReply  reply = new CreditBureauReply();
             reply.CreditScore =  (int)(random.Next(600) + 300);
             reply.HistoryLength = (int)(random.Next(19) + 1);
             reply.SSN = quoteRequest.SSN;
-            OnCreditResponse(reply, ACT);
+            OnCreditResponse(reply);
         }
 
         public void Listen()

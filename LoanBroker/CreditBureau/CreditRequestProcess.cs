@@ -5,12 +5,11 @@ using System.Text;
 
 namespace LoanBroker.CreditBureau
 {
-    public delegate void OnCreditReplyEvent(CreditBureauReply creditReply, Object ACT);
+    public delegate void OnCreditReplyEvent(CreditBureauReply creditReply);
 
     internal struct CreditRequestProcess
     {
         public int CorrelationID;
-        public Object ACT;
         public OnCreditReplyEvent callback;
     }
 }
