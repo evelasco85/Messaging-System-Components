@@ -47,7 +47,6 @@
     <Compile Include="ReceiverGateway.cs" />
     <Compile Include="Routing\Aggregate.cs" />
     <Compile Include="Routing\Aggregator.cs" />
-    <Compile Include="Routing\Process.cs" />
     <Compile Include="Routing\ProcessManager.cs" />
     <Compile Include="Routing\RecipientList.cs" />
     <Compile Include="SenderGateway.cs" />
