@@ -7,10 +7,17 @@ namespace Messaging.Base
     public abstract class QueueService<TMessageQueue, TMessage> : IQueueService<TMessageQueue, TMessage>
     {
         IMessageReceiver<TMessageQueue, TMessage> _receiver;
+        private IMessageSender<TMessageQueue, TMessage> _invalidQueue;
 
-        public QueueService(IMessageReceiver<TMessageQueue, TMessage> receiver)
+        public IMessageSender<TMessageQueue, TMessage> InvalidQueue
+        {
+            get { return _invalidQueue; }
+        }
+
+        public QueueService(IMessageReceiver<TMessageQueue, TMessage> receiver, IMessageSender<TMessageQueue, TMessage> invalidQueue)
         {
             _receiver = receiver;
+            _invalidQueue = invalidQueue;
         }
 
         public IMessageReceiver<TMessageQueue, TMessage> Receiver

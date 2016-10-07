@@ -15,11 +15,11 @@ namespace MessageGateway
     public class MQService : QueueService<MessageQueue, Message>
     {
         static protected readonly String InvalidMessageQueueName = ".\\private$\\invalidMessageQueue";
-        IMessageSender<MessageQueue, Message>invalidQueue = new MessageSenderGateway(InvalidMessageQueueName);
 
         protected Type requestBodyType;
-	
-        public MQService(IMessageReceiver<MessageQueue, Message> receiver) : base(receiver)
+
+        public MQService(IMessageReceiver<MessageQueue, Message> receiver)
+            : base(receiver,  new MessageSenderGateway(InvalidMessageQueueName))
         {}
 	
         public override void SendReply(Object responseObject, Message originalRequestMessage)
@@ -35,7 +35,7 @@ namespace MessageGateway
             }
             else
             {
-                invalidQueue.Send(responseMessage);
+                this.InvalidQueue.Send(responseMessage);
             }
         }
     }
