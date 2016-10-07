@@ -10,7 +10,7 @@ using System.Text;
 
 namespace LoanBroker.LoanBroker
 {
-    internal class Process : Process<string, Process, ProcessManager>
+    internal class Process : Process<string, LoanBroker.Process, LoanBroker.ProcessManager>
     {
         public override string GetKey()
         {
@@ -26,8 +26,7 @@ namespace LoanBroker.LoanBroker
         LoanQuoteRequest _loanRequest;
         Message _message;
 
-        public Process(NotifyManagerDelegate<string, Process, ProcessManager> managerNotifier,
-            String processID, LoanQuoteRequest loanRequest, Message msg)
+        public Process(String processID, LoanQuoteRequest loanRequest, Message msg) 
         {
             this._processID = processID;
             this._loanRequest = loanRequest;

@@ -39,7 +39,7 @@ namespace LoanBroker.LoanBroker
 
             _manager = new ProcessManager<string, Process, ProcessManager>(
                 this,
-                new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification)
+                ChildProcessNotification
                 );
         }
 
@@ -54,17 +54,14 @@ namespace LoanBroker.LoanBroker
             quoteRequest = (LoanQuoteRequest)o;
 
             String processID = message.Id;
-            Process newProcess =
-                new Process(
-                    new NotifyManagerDelegate<string, Process, ProcessManager>(ProcessNotification),
-                    processID, quoteRequest, message);
+            Process newProcess = new Process(processID, quoteRequest, message);
 
             _manager.AddProcess(newProcess);
 
             newProcess.StartProcess();
         }
 
-        void ProcessNotification(IProcess<string, Process, ProcessManager> process)
+        void ChildProcessNotification(IProcess<string, Process, ProcessManager> process)
         {
             _manager.RemoveProcess(process);
             Console.WriteLine("Current outstanding aggregate count: {0}", bankInterface.GetOutstandingAggregateCount());
