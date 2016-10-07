@@ -52,6 +52,7 @@
     <Compile Include="Routing\IAggregator.cs" />
     <Compile Include="Routing\IProcessManager.cs" />
     <Compile Include="Routing\IRecipientList.cs" />
+    <Compile Include="Routing\IMessageRouter.cs" />
     <Compile Include="Transformation\ITranslator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

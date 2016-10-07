@@ -68,7 +68,9 @@ namespace LoanBroker
             _aggregator.AddAggregate(aggregationCorrelationID, new BankQuoteAggregate(aggregationCorrelationID, eligibleBanks.Length, onBestQuoteEvent));
             aggregationCorrelationID++;
 
-            MessageRouter.SendToRecipientList(requestMessage, eligibleBanks);
+            MessageRouter
+                .GetInstance()
+                .SendToRecipent(requestMessage, eligibleBanks);
         }
 
 
