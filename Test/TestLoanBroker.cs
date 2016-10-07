@@ -13,6 +13,7 @@ using System.Threading;
 using MessageGateway;
 using LoanBroker;
 using Messaging.Base;
+using Messaging.Base.Constructions;
 
 namespace Test
 {
@@ -28,10 +29,10 @@ namespace Test
         protected IDictionary messageBuffer;
         protected IDictionary sentTimeBuffer;
         protected double AggregateResponseTime  = 0;
-
         protected Random random = new Random();
-
         protected DateTime startTime;
+
+        IReturnAddress<Message> _loanBroakerReturnAddress;
 
         protected IMessageFormatter GetFormatter()
         {
@@ -46,6 +47,12 @@ namespace Test
 
             replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
+
+            _loanBroakerReturnAddress = new ReturnAddress<MessageQueue, Message>(replyQueue,
+                (MessageQueue queue, ref Message message) =>
+                {
+                    message.ResponseQueue = queue;
+                });
 
             this.numMessages = numMessages;
             messageBuffer = new Hashtable();
@@ -70,7 +77,8 @@ namespace Test
 
                 Message msg = new Message(req);
                 msg.AppSpecific = count;
-                msg.ResponseQueue = replyQueue.GetQueue();
+
+                _loanBroakerReturnAddress.SetMessageReturnAddress(ref msg);
 
                 requestQueue.Send(msg);
                 Console.WriteLine("Sent Request {0} {1:c} MsgID = {2}", req.SSN, req.LoanAmount, msg.Id);

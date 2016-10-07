@@ -12,6 +12,7 @@ using System.Collections;
 using MessageGateway;
 using Bank;
 using Messaging.Base;
+using Messaging.Base.Constructions;
 
 namespace Test
 {
@@ -20,12 +21,12 @@ namespace Test
 
         protected IMessageSender<MessageQueue, Message>  requestQueue;
         protected MessageReceiverGateway replyQueue;
-
         protected int numMessages;
+        protected IDictionary messageIDs;
 
         private Random random = new Random();
-
-        protected IDictionary messageIDs;
+        IReturnAddress<Message> _bankReturnAddress;
+        
 
         protected IMessageFormatter GetFormatter()
         {
@@ -40,6 +41,11 @@ namespace Test
 
             replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
+            _bankReturnAddress = new ReturnAddress<MessageQueue, Message>(replyQueue,
+               (MessageQueue queue, ref Message message) =>
+               {
+                   message.ResponseQueue = queue;
+               });
 
             this.numMessages = numMessages;
             messageIDs = new Hashtable();
@@ -60,7 +66,8 @@ namespace Test
 
                 Message msg = new Message(req);
                 msg.AppSpecific = count;
-                msg.ResponseQueue = replyQueue.GetQueue();
+
+                _bankReturnAddress.SetMessageReturnAddress(ref msg);
 
                 requestQueue.Send(msg);
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);

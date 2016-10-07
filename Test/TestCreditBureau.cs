@@ -13,6 +13,7 @@ using System.Threading;
 using MessageGateway;
 using CreditBureau;
 using Messaging.Base;
+using Messaging.Base.Constructions;
 
 namespace Test
 {
@@ -21,12 +22,11 @@ namespace Test
 
         protected IMessageSender<MessageQueue, Message>  requestQueue;
         protected MessageReceiverGateway replyQueue;
-
         protected int numMessages;
-
         protected IDictionary messageIDs;
-
         protected Random random = new Random();
+
+        IReturnAddress<Message> _creditReturnAddress;
 
         protected IMessageFormatter GetFormatter()
         {
@@ -41,6 +41,11 @@ namespace Test
 
             replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
+            _creditReturnAddress = new ReturnAddress<MessageQueue, Message>(replyQueue,
+               (MessageQueue queue, ref Message message) =>
+               {
+                   message.ResponseQueue = queue;
+               });
 
             this.numMessages = numMessages;
             messageIDs = new Hashtable();
@@ -60,7 +65,8 @@ namespace Test
 
                 Message msg = new Message(req);
                 msg.AppSpecific = random.Next();
-                msg.ResponseQueue = replyQueue.GetQueue();
+                
+                _creditReturnAddress.SetMessageReturnAddress(ref msg);
 
                 requestQueue.Send(msg);
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);

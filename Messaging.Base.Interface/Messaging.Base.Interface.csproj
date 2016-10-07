@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Construction\IRequestReply.cs" />
+    <Compile Include="Construction\IReturnAddress.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="IMessageCore.cs" />
     <Compile Include="IQueueGateway.cs" />

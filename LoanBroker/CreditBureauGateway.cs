@@ -13,6 +13,7 @@ using MessageGateway;
 using CreditBureau;
 using Messaging.Base;
 using LoanBroker.CreditBureau;
+using Messaging.Base.Constructions;
 
 namespace LoanBroker
 {
@@ -26,26 +27,39 @@ namespace LoanBroker
     {
         protected IMessageSender<MessageQueue, Message>  creditRequestQueue;
         protected IMessageReceiver<MessageQueue, Message> creditReplyQueue;
-
         protected IDictionary activeProcesses =	(IDictionary)(new Hashtable());
+
+        IReturnAddress<Message> _creditReturnAddress;
 
         protected Random random	= new Random();
 
         public CreditBureauGatewayImp(String creditRequestQueueName, String	creditReplyQueueName)
         {
-            creditRequestQueue = new MessageSenderGateway(creditRequestQueueName);
+            MessageDelegate<Message> responseDelegate = new MessageDelegate<Message>(OnCreditResponse);
 
-            MessageReceiverGateway receiver	= new MessageReceiverGateway(creditReplyQueueName, 
-                GetFormatter(), new MessageDelegate<Message>(OnCreditResponse));
-            this.creditReplyQueue =	(IMessageReceiver<MessageQueue, Message>)receiver;
+            Initialize(
+                new MessageSenderGateway(creditRequestQueueName),
+                new MessageReceiverGateway(creditReplyQueueName, GetFormatter(), responseDelegate),
+                responseDelegate);
         }
 
         public CreditBureauGatewayImp(IMessageSender<MessageQueue, Message>  creditRequestQueue, IMessageReceiver<MessageQueue, Message> creditReplyQueue)
         {
-            this.creditRequestQueue	= creditRequestQueue;
+            Initialize(creditRequestQueue, creditReplyQueue, new MessageDelegate<Message>(OnCreditResponse));
+        }
 
-            this.creditReplyQueue =	creditReplyQueue;
-            this.creditReplyQueue.ReceiveMessageProcessor	+= new MessageDelegate<Message>(OnCreditResponse);
+        void Initialize(IMessageSender<MessageQueue, Message> creditRequestQueue,
+            IMessageReceiver<MessageQueue, Message> creditReplyQueue, MessageDelegate<Message> responseDelegate)
+        {
+            this.creditRequestQueue = creditRequestQueue;
+            this.creditReplyQueue = creditReplyQueue;
+            this.creditReplyQueue.ReceiveMessageProcessor += responseDelegate;
+
+            _creditReturnAddress = new ReturnAddress<MessageQueue, Message>(creditReplyQueue,
+                (MessageQueue queue, ref Message message) =>
+                {
+                    message.ResponseQueue = queue;
+                });
         }
 
         protected IMessageFormatter	GetFormatter()
@@ -62,8 +76,11 @@ namespace LoanBroker
             OnCreditReplyEvent OnCreditResponse)
         {
             Message	requestMessage = new Message(quoteRequest);
-            requestMessage.ResponseQueue = creditReplyQueue.GetQueue();//Return Address
-            requestMessage.AppSpecific = random.Next();
+
+            _creditReturnAddress.SetMessageReturnAddress(ref requestMessage);
+            //requestMessage.ResponseQueue = creditReplyQueue.GetQueue();//Return Address
+
+            requestMessage.AppSpecific = random.Next();//Correlation Identifier
 	
             CreditRequestProcess processInstance = new CreditRequestProcess();
             processInstance.callback = OnCreditResponse;

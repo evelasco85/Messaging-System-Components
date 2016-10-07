@@ -38,7 +38,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constructions\CorrelationManager.cs" />
     <Compile Include="Constructions\RequestReply.cs" />
+    <Compile Include="Constructions\ReturnAddress.cs" />
     <Compile Include="QueueGateway.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueService.cs" />

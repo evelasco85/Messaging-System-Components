@@ -14,6 +14,7 @@ using Bank;
 using Messaging.Base;
 using LoanBroker.Bank;
 using Messaging.Base.Routing;
+using Messaging.Base.Constructions;
 
 namespace LoanBroker
 {
@@ -25,6 +26,7 @@ namespace LoanBroker
         IAggregator<int, BankQuoteReply, BankQuoteReply, BankQuoteAggregate> _aggregator = new Aggregator<int, BankQuoteReply, BankQuoteReply, BankQuoteAggregate>();
 
         protected int aggregationCorrelationID;
+        IReturnAddress<Message> _bankReturnAddress;
 
         public BankGateway(String bankReplyQueueName, ConnectionsManager connectionManager)
         {
@@ -33,6 +35,12 @@ namespace LoanBroker
             this.bankReplyQueue = (IMessageReceiver<MessageQueue, Message>)receiver;
             this.connectionManager = connectionManager; 
             aggregationCorrelationID = 0;
+
+            _bankReturnAddress = new ReturnAddress<MessageQueue, Message>(bankReplyQueue,
+                (MessageQueue queue, ref Message message) =>
+                {
+                    message.ResponseQueue = queue;
+                });
         }
 
         protected IMessageFormatter GetFormatter()
@@ -47,10 +55,12 @@ namespace LoanBroker
 
         public void GetBestQuote(BankQuoteRequest quoteRequest, OnNotifyAggregationCompletion<BankQuoteReply> onBestQuoteEvent)
         {
-
             Message requestMessage = new Message(quoteRequest);
+
+            _bankReturnAddress.SetMessageReturnAddress(ref requestMessage);
+
             requestMessage.AppSpecific = aggregationCorrelationID;
-            requestMessage.ResponseQueue = bankReplyQueue.GetQueue();
+            
             IMessageSender<MessageQueue, Message> [] eligibleBanks = 
                 connectionManager.GetEligibleBankQueues(quoteRequest.CreditScore, quoteRequest.HistoryLength, 
                 quoteRequest.LoanAmount);
