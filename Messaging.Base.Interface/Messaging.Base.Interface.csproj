@@ -48,7 +48,6 @@
     <Compile Include="IMessageSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IQueueService.cs" />
-    <Compile Include="Routing\IAggregate.cs" />
     <Compile Include="Routing\IAggregator.cs" />
     <Compile Include="Routing\IProcessManager.cs" />
     <Compile Include="Routing\IRecipientList.cs" />
