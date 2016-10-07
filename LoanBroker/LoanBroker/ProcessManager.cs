@@ -12,8 +12,8 @@ namespace LoanBroker.LoanBroker
 {
     internal class ProcessManager : MQRequestReplyService_Asynchronous
     {
-        public ICreditBureauGateway creditBureauInterface;
-        public BankGateway bankInterface;
+        public ICreditBureauGateway CreditBureauInterface { get; private set; }
+        public BankGateway BankInterface { get; private set; }
 
         IProcessManager<string, Process, ProcessManager> _manager;
 
@@ -31,11 +31,11 @@ namespace LoanBroker.LoanBroker
             String bankReplyQueueName, ConnectionsManager connectionManager)
             : base(requestQueueName)
         {
-            creditBureauInterface = creditBureau;
-            creditBureauInterface.Listen();
+            CreditBureauInterface = creditBureau;
+            CreditBureauInterface.Listen();
 
-            bankInterface = new BankGateway(bankReplyQueueName, connectionManager);
-            bankInterface.Listen();
+            BankInterface = new BankGateway(bankReplyQueueName, connectionManager);
+            BankInterface.Listen();
 
             _manager = new ProcessManager<string, Process, ProcessManager>(
                 this,
@@ -64,7 +64,7 @@ namespace LoanBroker.LoanBroker
         void ChildProcessNotification(IProcess<string, Process, ProcessManager> process)
         {
             _manager.RemoveProcess(process);
-            Console.WriteLine("Current outstanding aggregate count: {0}", bankInterface.GetOutstandingAggregateCount());
+            Console.WriteLine("Current outstanding aggregate count: {0}", BankInterface.GetOutstandingAggregateCount());
         }
     }
 }

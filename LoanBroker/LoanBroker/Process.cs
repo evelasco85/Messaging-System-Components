@@ -37,7 +37,7 @@ namespace LoanBroker.LoanBroker
         {
             CreditBureauRequest creditRequest = Translator.GetCreditBureaurequest(_loanRequest);
 
-            processor.creditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply), null);
+            processor.CreditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply), null);
         }
 
         private void OnCreditReply(CreditBureauReply creditReply, Object act)
@@ -46,7 +46,7 @@ namespace LoanBroker.LoanBroker
                 creditReply.SSN, creditReply.CreditScore, creditReply.HistoryLength);
             BankQuoteRequest bankRequest = Translator.GetBankQuoteRequest(_loanRequest, creditReply);
 
-            this.GetProcessor().bankInterface.GetBestQuote(bankRequest, new OnNotifyAggregationCompletion<BankQuoteReply>(OnBestQuote));
+            this.GetProcessor().BankInterface.GetBestQuote(bankRequest, new OnNotifyAggregationCompletion<BankQuoteReply>(OnBestQuote));
         }
 
         private void OnBestQuote(BankQuoteReply bestQuote)
