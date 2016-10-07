@@ -23,10 +23,10 @@ namespace Test
         protected IMessageSender<MessageQueue, Message>  requestQueue;
         protected MessageReceiverGateway replyQueue;
         protected int numMessages;
-        protected IDictionary messageIDs;
         protected Random random = new Random();
 
         IReturnAddress<Message> _creditReturnAddress;
+        ICorrelationManager<int, Message> _correlationManager = new CorrelationManager<int, Message>();
 
         protected IMessageFormatter GetFormatter()
         {
@@ -48,7 +48,6 @@ namespace Test
                });
 
             this.numMessages = numMessages;
-            messageIDs = new Hashtable();
 
             Console.WriteLine("Sending {0} messages to {1}. Expecting replies on {2}", numMessages, requestQueueName, replyQueueName);
         }
@@ -70,7 +69,7 @@ namespace Test
 
                 requestQueue.Send(msg);
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);
-                messageIDs.Add(msg.AppSpecific, msg); 
+                _correlationManager.AddEntity(msg.AppSpecific, msg);
 
                 Thread.Sleep(200);
             }
@@ -88,10 +87,11 @@ namespace Test
                 {
                     CreditBureauReply reply = (CreditBureauReply)msg.Body;
                     Console.WriteLine("Received response: {0} {1} {2}", reply.SSN, reply.CreditScore, reply.HistoryLength);
-                    if (messageIDs.Contains(msg.AppSpecific))
+
+                    if (_correlationManager.EntityExists(msg.AppSpecific))
                     {
                         Console.WriteLine("  Matched to request");
-                        messageIDs.Remove(msg.AppSpecific);
+                        _correlationManager.RemoveEntity(msg.AppSpecific);
                     }
                     else
                         Console.WriteLine("  UNMATCHED response: {0}", msg.CorrelationId);

@@ -22,10 +22,10 @@ namespace Test
         protected IMessageSender<MessageQueue, Message>  requestQueue;
         protected MessageReceiverGateway replyQueue;
         protected int numMessages;
-        protected IDictionary messageIDs;
 
         private Random random = new Random();
         IReturnAddress<Message> _bankReturnAddress;
+        ICorrelationManager<string, Message> _correlationManager = new CorrelationManager<string, Message>();
         
 
         protected IMessageFormatter GetFormatter()
@@ -48,7 +48,6 @@ namespace Test
                });
 
             this.numMessages = numMessages;
-            messageIDs = new Hashtable();
 
             Console.WriteLine("Sending {0} messages to {1}. Expecting replies on {2}", numMessages, requestQueueName, replyQueueName);
         }
@@ -71,7 +70,7 @@ namespace Test
 
                 requestQueue.Send(msg);
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);
-                messageIDs.Add(msg.Id, msg); 
+                _correlationManager.AddEntity(msg.Id, msg);
             }
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");
@@ -87,10 +86,11 @@ namespace Test
                 {
                     BankQuoteReply reply = (BankQuoteReply)msg.Body;
                     Console.WriteLine("Received response: {0} {1} {2}", reply.ErrorCode, reply.InterestRate, reply.QuoteID);
-                    if (messageIDs.Contains(msg.CorrelationId))
+
+                    if (_correlationManager.EntityExists(msg.CorrelationId))
                     {
                         Console.WriteLine("  Matched to request");
-                        messageIDs.Remove(msg.CorrelationId);
+                        _correlationManager.RemoveEntity(msg.CorrelationId);
                     }
                     else
                         Console.WriteLine("  UNMATCHED response: {0}", msg.CorrelationId);

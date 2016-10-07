@@ -27,11 +27,10 @@ namespace LoanBroker
     {
         protected IMessageSender<MessageQueue, Message>  creditRequestQueue;
         protected IMessageReceiver<MessageQueue, Message> creditReplyQueue;
-        protected IDictionary activeProcesses =	(IDictionary)(new Hashtable());
+        protected Random random = new Random();
 
         IReturnAddress<Message> _creditReturnAddress;
-
-        protected Random random	= new Random();
+        ICorrelationManager<int, CreditRequestProcess> _correlationManager = new CorrelationManager<int, CreditRequestProcess>();
 
         public CreditBureauGatewayImp(String creditRequestQueueName, String	creditReplyQueueName)
         {
@@ -77,18 +76,15 @@ namespace LoanBroker
         {
             Message	requestMessage = new Message(quoteRequest);
 
+            requestMessage.AppSpecific = random.Next();
+            
             _creditReturnAddress.SetMessageReturnAddress(ref requestMessage);
-            //requestMessage.ResponseQueue = creditReplyQueue.GetQueue();//Return Address
-
-            requestMessage.AppSpecific = random.Next();//Correlation Identifier
-	
-            CreditRequestProcess processInstance = new CreditRequestProcess();
-            processInstance.callback = OnCreditResponse;
-            processInstance.CorrelationID =	requestMessage.AppSpecific;
-
+            _correlationManager.AddEntity(requestMessage.AppSpecific,
+                new CreditRequestProcess
+                {
+                    callback = OnCreditResponse,
+                });
             creditRequestQueue.Send(requestMessage);
-
-            activeProcesses.Add(processInstance.CorrelationID, processInstance);
         }
 
         private	void OnCreditResponse(Message msg)
@@ -103,12 +99,13 @@ namespace LoanBroker
                     replyStruct	= (CreditBureauReply)msg.Body;
                     int	CorrelationID =	msg.AppSpecific;
 
-                    if (activeProcesses.Contains(CorrelationID))
+                    if (_correlationManager.EntityExists(CorrelationID))
                     {
-                        CreditRequestProcess processInstance = 
-                            (CreditRequestProcess)(activeProcesses[CorrelationID]);
-                        processInstance.callback(replyStruct);
-                        activeProcesses.Remove(CorrelationID);
+                        _correlationManager
+                            .GetEntity(CorrelationID)
+                            .callback(replyStruct);
+
+                        _correlationManager.RemoveEntity(CorrelationID);
                     }
                     else { Console.WriteLine("Incoming credit response does	not	match any request"); }
                 }

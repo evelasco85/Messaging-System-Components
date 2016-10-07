@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Construction\ICorrelationManager.cs" />
     <Compile Include="Construction\IRequestReply.cs" />
     <Compile Include="Construction\IReturnAddress.cs" />
     <Compile Include="Delegates.cs" />

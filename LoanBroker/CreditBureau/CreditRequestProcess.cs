@@ -9,7 +9,6 @@ namespace LoanBroker.CreditBureau
 
     internal struct CreditRequestProcess
     {
-        public int CorrelationID;
         public OnCreditReplyEvent callback;
     }
 }
