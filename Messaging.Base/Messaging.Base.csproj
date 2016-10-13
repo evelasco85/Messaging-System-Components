@@ -50,6 +50,10 @@
     <Compile Include="Routing\ProcessManager.cs" />
     <Compile Include="Routing\RecipientList.cs" />
     <Compile Include="SenderGateway.cs" />
+    <Compile Include="System Management\SmartProxy\MessageConsumer.cs" />
+    <Compile Include="System Management\SmartProxy\SmartProxyBase.cs" />
+    <Compile Include="System Management\SmartProxy\SmartProxyReplyConsumer.cs" />
+    <Compile Include="System Management\SmartProxy\SmartProxyRequestConsumer.cs" />
     <Compile Include="Transformation\Translator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,8 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="00-NOTES.txt" />
-    <Content Include="01-TODO.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

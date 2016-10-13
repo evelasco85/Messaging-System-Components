@@ -164,6 +164,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />
-    <PostBuildEvent />
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
