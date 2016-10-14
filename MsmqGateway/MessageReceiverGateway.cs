@@ -81,7 +81,9 @@ namespace MessageGateway{
 			MessageQueue mq = (MessageQueue)source;
 			Message m = mq.EndReceive(asyncResult.AsyncResult);
 
-			_receivedMessageProcessor.Invoke(m);
+            if(_receivedMessageProcessor != null)
+                _receivedMessageProcessor.Invoke(m);
+
 			mq.BeginReceive(); 
 		}	
 	}

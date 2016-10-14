@@ -12,17 +12,17 @@ namespace Messaging.Base.System_Management.SmartProxy
         void Process();
     }
 
-    public class SmartProxyBase<TMessageQueue, TMessage> : ISmartProxyBase
+    public class SmartProxyBase<TMessageQueue, TMessage, TJournal> : ISmartProxyBase
     {
-        ISmartProxyRequestConsumer<TMessageQueue, TMessage> _requestConsumer;
-        ISmartProxyReplyConsumer<TMessageQueue, TMessage> _replyConsumer;
-        IList<MessageReferenceData<TMessageQueue, TMessage>> _referenceData;
+        ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> _requestConsumer;
+        ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> _replyConsumer;
+        IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> _referenceData;
 
         public SmartProxyBase(
-            ISmartProxyRequestConsumer<TMessageQueue, TMessage> requestConsumer,
-            ISmartProxyReplyConsumer<TMessageQueue, TMessage> replyConsumer)
+            ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> requestConsumer,
+            ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> replyConsumer)
         {
-            _referenceData = new SynchronizedCollection<MessageReferenceData<TMessageQueue, TMessage>>();
+            _referenceData = new SynchronizedCollection<MessageReferenceData<TMessageQueue, TMessage, TJournal>>();
 
             _requestConsumer = requestConsumer;
             _replyConsumer = replyConsumer;

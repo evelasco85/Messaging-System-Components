@@ -6,33 +6,32 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public class MessageReferenceData<TMessageQueue, TMessage>
+    public class MessageReferenceData<TMessageQueue, TMessage, TJournal>
     {
-        public string ID { get; set; }
-        public string CorrID { get; set; }
-        public IMessageSender<TMessageQueue, TMessage> ReplyQueue { get; set; }
+        public TJournal Journal { get; set; }       //Correlation and Id
+        public IMessageSender<TMessageQueue, TMessage> ReplyAddress { get; set; }
     }
 
-    public interface IMessageConsumer<TMessageQueue, TMessage>
+    public interface IMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
-        IList<MessageReferenceData<TMessageQueue, TMessage>> ReferenceData { get; set; }
+        IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> ReferenceData { get; set; }
 
         void Process();
         void ProcessMessage(TMessage message);
-        MessageReferenceData<TMessageQueue, TMessage> GetReferenceData(TMessage message);
-
+        MessageReferenceData<TMessageQueue, TMessage, TJournal> ConstructJournalReference(TMessage message);
+        MessageReferenceData<TMessageQueue, TMessage, TJournal> GetJournalReference(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage message);
     }
 
-    public abstract class MessageConsumer<TMessageQueue, TMessage> : IMessageConsumer<TMessageQueue, TMessage>
+    public abstract class MessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
         private IMessageCore<TMessageQueue> _messageQueue;
 
-        IList<MessageReferenceData<TMessageQueue, TMessage>> _referenceData;
+        IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> _references;
 
-        public IList<MessageReferenceData<TMessageQueue, TMessage>> ReferenceData
+        public IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> ReferenceData
         {
-            get { return _referenceData; }
-            set { _referenceData = value; }
+            get { return _references; }
+            set { _references = value; }
         }
 
         public MessageConsumer(IMessageSender<TMessageQueue, TMessage> sender)
@@ -54,6 +53,8 @@ namespace Messaging.Base.System_Management.SmartProxy
         }
 
         public abstract void ProcessMessage(TMessage message);
-        public abstract MessageReferenceData<TMessageQueue, TMessage> GetReferenceData(TMessage message);
+
+        public abstract MessageReferenceData<TMessageQueue, TMessage, TJournal> ConstructJournalReference(TMessage message);
+        public abstract MessageReferenceData<TMessageQueue, TMessage, TJournal> GetJournalReference(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage message);
     }
 }

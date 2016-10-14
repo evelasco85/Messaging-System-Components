@@ -7,33 +7,27 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface ISmartProxyRequestConsumer<TMessageQueue, TMessage> : IMessageConsumer<TMessageQueue, TMessage>
+    public interface ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
         void AnalyzeMessage(TMessage message);
     }
 
-    public abstract class SmartProxyRequestConsumer<TMessageQueue, TMessage> : MessageConsumer<TMessageQueue, TMessage>, ISmartProxyRequestConsumer<TMessageQueue, TMessage>
+    public abstract class SmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal>
     {
-        private IMessageSender<TMessageQueue, TMessage> _serviceRequest;
-        //private IMessageSender<TMessageQueue, TMessage> _serviceReply;
-        
+        private IMessageSender<TMessageQueue, TMessage> _serviceRequestSender;
 
         public SmartProxyRequestConsumer(
-            IMessageReceiver<TMessageQueue, TMessage> request,
-            IMessageSender<TMessageQueue, TMessage> serviceRequest
-            //,IMessageSender<TMessageQueue, TMessage> serviceReply
-            ) : base(request)
+            IMessageReceiver<TMessageQueue, TMessage> requestReceiver,
+            IMessageSender<TMessageQueue, TMessage> serviceRequestSender
+            ) : base(requestReceiver)
         {
-            _serviceRequest = serviceRequest;
-            //_serviceReply = serviceReply;
+            _serviceRequestSender = serviceRequestSender;
         }
 
-        public override void ProcessMessage(TMessage message)
+        public override void ProcessMessage(TMessage message)       //Received message from client
         {
-            MessageReferenceData<TMessageQueue, TMessage> reference = GetReferenceData(message);
-
-            _serviceRequest.Send(message);
-            ReferenceData.Add(reference);
+            _serviceRequestSender.Send(message);        //Forward message to destination(service)
+            ReferenceData.Add(ConstructJournalReference(message));               //store message reference
             AnalyzeMessage(message);
         }
 
