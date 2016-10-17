@@ -58,7 +58,7 @@ namespace LoanBroker
             _creditReturnAddress = new MQReturnAddress(creditReplyQueue);
         }
 
-        protected IMessageFormatter	GetFormatter()
+        public static IMessageFormatter	GetFormatter()
         {
             return new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
         }

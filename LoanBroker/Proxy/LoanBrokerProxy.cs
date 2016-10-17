@@ -11,7 +11,7 @@ using Messaging.Base;
 using Messaging.Base.Constructions;
 using Messaging.Base.System_Management.SmartProxy;
 
-namespace Test
+namespace LoanBroker
 {
     public class ProxyJournal
     {
@@ -19,9 +19,14 @@ namespace Test
         public int AppSpecific { get; set; }
     }
 
+    public class SummaryStat
+    {
+        public ArrayList PerformanceStats { get; set; }
+        public ArrayList QueueStats { get; set; }
+    }
+
     public class LoanBrokerProxy : SmartProxyBase<MessageQueue, Message, ProxyJournal>, IDisposable
     {
-        private IMessageReceiver<MessageQueue, Message> _input;
         private IMessageSender<MessageQueue, Message> _controlBus;
 
         ArrayList _performanceStats;
@@ -39,17 +44,21 @@ namespace Test
         }
 
         public LoanBrokerProxy(
-            MessageReceiverGateway input,
-            ISmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal> requestConsumer,
-            ISmartProxyReplyConsumer<MessageQueue, Message, ProxyJournal> replyConsumer,
+            IMessageReceiver<MessageQueue, Message> input,
+            IMessageSender<MessageQueue, Message> serviceRequestSender,
+            IReturnAddress<Message> returnAddress,
+            IMessageSender<MessageQueue, Message> output,
+            IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             IMessageSender<MessageQueue, Message> controlBus,
-            int interval): base(requestConsumer, replyConsumer)
+            int interval): base(
+                new LoanBrokerProxyRequestConsumer(input, serviceRequestSender, returnAddress, output, null),
+                new LoanBrokerProxyReplyConsumer(serviceReplyReceiver, null, null)
+            )
         {
             _performanceStats = ArrayList.Synchronized(new ArrayList());
             _queueStats = ArrayList.Synchronized(new ArrayList());
 
             _controlBus = controlBus;
-            _input = input;
             _interval = interval;
         }
 
@@ -83,11 +92,13 @@ namespace Test
 
             if (_controlBus != null)
             {
-                Message message = new Message(new Tuple<ArrayList, ArrayList>(
-                    currentQueueStats, currentPerformanceStats
-                    ));
+                SummaryStat stat = new SummaryStat
+                {
+                    PerformanceStats = currentPerformanceStats,
+                    QueueStats = currentQueueStats
+                };
 
-                //_controlBus.Send(message);
+                //_controlBus.GetQueue().Send(stat);
             }
         }
     }

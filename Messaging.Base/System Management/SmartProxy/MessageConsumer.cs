@@ -56,8 +56,10 @@ namespace Messaging.Base.System_Management.SmartProxy
 
         public void Process()
         {
-            if(_messageQueue.GetType() == typeof(IMessageReceiver<TMessageQueue, TMessage>))
-                ((IMessageReceiver<TMessageQueue, TMessage>)_messageQueue).StartReceivingMessages();
+            IMessageReceiver<TMessageQueue, TMessage> receiver = ((IMessageReceiver<TMessageQueue, TMessage>)_messageQueue);
+
+            if(receiver != null)
+                receiver.StartReceivingMessages();
         }
 
         public abstract void ProcessMessage(TMessage message);

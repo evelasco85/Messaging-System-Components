@@ -17,7 +17,8 @@ namespace LoanBroker.LoanBroker
 
         IProcessManager<string, Process, ProcessManager> _manager;
 
-        public ProcessManager(System.String requestQueueName,
+        public ProcessManager(
+            String requestQueueName,
             String creditRequestQueueName, String creditReplyQueueName,
             String bankReplyQueueName, ConnectionsManager connectionManager)
             :this(requestQueueName,
@@ -26,7 +27,8 @@ namespace LoanBroker.LoanBroker
                  connectionManager)
         {}
 
-        public ProcessManager(String requestQueueName,
+        public ProcessManager(
+            String requestQueueName,
             ICreditBureauGateway creditBureau,
             String bankReplyQueueName, ConnectionsManager connectionManager)
             : base(requestQueueName)

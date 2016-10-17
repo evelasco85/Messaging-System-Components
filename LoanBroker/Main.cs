@@ -14,12 +14,13 @@ using CreditBureau;
 using Messaging.Base;
 using LoanBroker.Bank;
 using LoanBroker.LoanBroker;
+using MsmqGateway;
 
 namespace LoanBroker {
 
 	internal class Run{
-		private static MessageDelegate<Message> PrintMessageDelegate = new MessageDelegate<Message>(PrintMessage);
-		
+        private static LoanBrokerProxy _loanBrokerProxy;
+
 		public static void Main(String[] args){
             MQRequestReplyService_Asynchronous broker;
 
@@ -29,7 +30,26 @@ namespace LoanBroker {
                 String creditRequestQueueName = ToPath(args[1]);
                 String creditReplyQueueName = ToPath(args[2]);
                 String bankReplyQueueName = ToPath(args[3]);
+
                 broker = new ProcessManager(requestQueueName, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new ConnectionsManager());
+
+                //string proxyRequestQueue = ".\\private$\\broker_loanrequestqueue";
+                //string proxyReplyQueue = ".\\private$\\broker_loanreplyqueue";
+
+                //_loanBrokerProxy = new LoanBrokerProxy(
+                //    new MessageReceiverGateway(requestQueueName, GetFormatter()),
+                //    new MessageSenderGateway(proxyRequestQueue),
+                //    new MQReturnAddress(new MessageReceiverGateway(proxyReplyQueue)),
+                //    new MessageSenderGateway(bankReplyQueueName),
+                //    new MessageReceiverGateway(proxyReplyQueue),
+                //    new MessageSenderGateway(".\\private$\\controlbus"),
+                //    5);
+                //broker = new ProcessManager(proxyRequestQueue, creditRequestQueueName, creditReplyQueueName, proxyReplyQueue, new ConnectionsManager());
+
+                //_loanBrokerProxy.Process();
+
+                
+                
             }
             else if (args.Length == 2) 
             {
@@ -47,6 +67,11 @@ namespace LoanBroker {
             Console.WriteLine("Press Enter to exit...");
             Console.ReadLine();
 		}
+
+        static IMessageFormatter GetFormatter()
+        {
+            return new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) });
+        }
 				
 		private static String ToPath(String arg){
 			return ".\\private$\\" + arg;

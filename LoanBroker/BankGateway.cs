@@ -40,7 +40,7 @@ namespace LoanBroker
             _bankReturnAddress = new MQReturnAddress(bankReplyQueue);
         }
 
-        protected IMessageFormatter GetFormatter()
+        public static IMessageFormatter GetFormatter()
         {
             return new XmlMessageFormatter(new Type[] {typeof(BankQuoteReply)});
         }

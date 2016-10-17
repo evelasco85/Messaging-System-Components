@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
 
-namespace Test.Proxy
+namespace LoanBroker
 {
     public class LoanBrokerProxyReplyConsumer : SmartProxyReplyConsumer<MessageQueue, Message, ProxyJournal>
     {

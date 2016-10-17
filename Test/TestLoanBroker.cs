@@ -14,6 +14,7 @@ using MessageGateway;
 using LoanBroker;
 using Messaging.Base;
 using Messaging.Base.Constructions;
+using Messaging.Base.System_Management.SmartProxy;
 using MsmqGateway;
 
 namespace Test
@@ -21,8 +22,7 @@ namespace Test
 
     public class TestLoanBroker
     {
-
-        protected IMessageSender<MessageQueue, Message>  requestQueue;
+        protected IMessageSender<MessageQueue, Message> requestQueue;
         protected MessageReceiverGateway replyQueue;
 
         protected int numMessages;
@@ -43,20 +43,17 @@ namespace Test
         public TestLoanBroker(String requestQueueName, String replyQueueName, int numMessages)
         {
             requestQueue = new MessageSenderGateway(requestQueueName);
-
-            MessageReceiverGateway q = new MessageReceiverGateway(replyQueueName, GetFormatter());
-
-            replyQueue = q;
+            replyQueue = new MessageReceiverGateway(replyQueueName, GetFormatter());
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
 
             _loanBroakerReturnAddress = new MQReturnAddress(replyQueue);
 
+            
             this.numMessages = numMessages;
             messageBuffer = new Hashtable();
             sentTimeBuffer = new Hashtable();
 
             Console.WriteLine("Sending {0} messages to {1}. Expecting replies on {2}", numMessages, requestQueueName, replyQueueName);
-
         }
 
 
@@ -65,12 +62,12 @@ namespace Test
             replyQueue.StartReceivingMessages();
             startTime = DateTime.Now;
 
-            for (int count = 1; count <= numMessages; count++) 
+            for (int count = 1; count <= numMessages; count++)
             {
-                LoanBroker.LoanQuoteRequest req = new LoanQuoteRequest();
+                LoanQuoteRequest req = new LoanQuoteRequest();
                 req.SSN = count;
-                req.LoanAmount = random.Next(20)*5000 + 25000;
-                req.LoanTerm = random.Next(72)+12;
+                req.LoanAmount = random.Next(20) * 5000 + 25000;
+                req.LoanTerm = random.Next(72) + 12;
 
                 Message msg = new Message(req);
                 msg.AppSpecific = count;
@@ -79,7 +76,7 @@ namespace Test
 
                 requestQueue.Send(msg);
                 Console.WriteLine("Sent Request {0} {1:c} MsgID = {2}", req.SSN, req.LoanAmount, msg.Id);
-                messageBuffer.Add(msg.Id, msg); 
+                messageBuffer.Add(msg.Id, msg);
                 sentTimeBuffer.Add(msg.Id, DateTime.Now);
 
                 Thread.Sleep(100);
@@ -88,25 +85,25 @@ namespace Test
             Console.WriteLine("Press 'n' to show number of outstanding messages.");
             Console.WriteLine("Press 'l' to list all outstanding messages.");
             Console.WriteLine("Press Enter to exit.");
-            
-            for (;;) 
+
+            for (; ; )
             {
                 String s = Console.ReadLine();
                 if (s.Length == 0)
                     break;
                 char c = s[0];
-                if (c == 'n') 
+                if (c == 'n')
                 {
                     Console.WriteLine("{0} messages outstanding", messageBuffer.Count);
                 }
                 else if (c == 'l')
                 {
                     IDictionaryEnumerator e = messageBuffer.GetEnumerator();
-                    while (e.MoveNext()) 
+                    while (e.MoveNext())
                     {
                         Console.WriteLine("{0}", e.Key);
                         Message msg = (Message)e.Value;
-                        if (msg.Body is LoanQuoteRequest) 
+                        if (msg.Body is LoanQuoteRequest)
                         {
                             LoanQuoteRequest req = (LoanQuoteRequest)msg.Body;
                             Console.WriteLine("   {0} {1:c} {2}", req.SSN, req.LoanAmount, req.LoanTerm);
@@ -120,9 +117,9 @@ namespace Test
         private void OnMessage(Message msg)
         {
             msg.Formatter = GetFormatter();
-            try 
+            try
             {
-                if (msg.Body is LoanQuoteReply) 
+                if (msg.Body is LoanQuoteReply)
                 {
                     LoanQuoteReply reply = (LoanQuoteReply)msg.Body;
                     Console.WriteLine("Received response: {0} {1:c} {2} {3}", reply.SSN, reply.LoanAmount, reply.InterestRate, reply.QuoteID);
@@ -135,7 +132,7 @@ namespace Test
                         Console.WriteLine("  Matched to request - {0:f} seconds", duration.TotalSeconds);
                         messageBuffer.Remove(msg.CorrelationId);
 
-                        if (messageBuffer.Count == 0) 
+                        if (messageBuffer.Count == 0)
                         {
                             Console.WriteLine("=== Total elapsed time: {0} secs", DateTime.Now - startTime);
                             Console.WriteLine("=== average response time {0:f} secs", AggregateResponseTime / numMessages);
@@ -144,14 +141,14 @@ namespace Test
                     else
                         Console.WriteLine("  UNMATCHED response: {0}", msg.CorrelationId);
                 }
-                else 
+                else
                 {
                     Console.WriteLine("INVALID message received!!");
                 }
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
-                Console.WriteLine("Exception: {0}", e.ToString());    
+                Console.WriteLine("Exception: {0}", e.ToString());
             }
         }
 

@@ -10,19 +10,20 @@ using Messaging.Base.Constructions;
 using Messaging.Base.System_Management.SmartProxy;
 using MsmqGateway;
 
-namespace Test.Proxy
+namespace LoanBroker
 {
-    public class LoanBrokerRequestConsumer : SmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal>
+    public class LoanBrokerProxyRequestConsumer : SmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal>
     {
         ArrayList _queueStats;
 
-        public LoanBrokerRequestConsumer(
+        public LoanBrokerProxyRequestConsumer(
             IMessageReceiver<MessageQueue, Message> requestReceiver,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
-            IMessageSender<MessageQueue, Message> replySender,
+            IReturnAddress<Message> returnAddress,
+            IMessageSender<MessageQueue, Message> output,
             ArrayList queueStats
             )
-            : base(requestReceiver, serviceRequestSender, replySender)
+            : base(requestReceiver, serviceRequestSender, returnAddress, output)
 
         {
             _queueStats = queueStats;

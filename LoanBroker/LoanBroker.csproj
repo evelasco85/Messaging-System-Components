@@ -148,6 +148,9 @@
     </Compile>
     <Compile Include="LoanBroker\Model\Reply.cs" />
     <Compile Include="LoanBroker\Model\Request.cs" />
+    <Compile Include="Proxy\LoanBrokerProxy.cs" />
+    <Compile Include="Proxy\LoanBrokerProxyReplyConsumer.cs" />
+    <Compile Include="Proxy\LoanBrokerProxyRequestConsumer.cs" />
     <Content Include="App.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -160,9 +163,7 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Proxy\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />
