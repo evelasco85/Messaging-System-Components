@@ -40,5 +40,10 @@ namespace LoanBroker
                 ((journal.CorrelationId == message.CorrelationId) &&
                 (journal.AppSpecific == message.AppSpecific));
         }
+
+        public override void SendMessage(MessageQueue queue, Message message)
+        {
+            queue.Send(message);
+        }
     }
 }

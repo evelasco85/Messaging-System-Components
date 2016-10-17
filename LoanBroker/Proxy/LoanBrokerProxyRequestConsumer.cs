@@ -20,10 +20,9 @@ namespace LoanBroker
             IMessageReceiver<MessageQueue, Message> requestReceiver,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
             IReturnAddress<Message> returnAddress,
-            IMessageSender<MessageQueue, Message> output,
             ArrayList queueStats
             )
-            : base(requestReceiver, serviceRequestSender, returnAddress, output)
+            : base(requestReceiver, serviceRequestSender, returnAddress)
 
         {
             _queueStats = queueStats;
@@ -41,6 +40,11 @@ namespace LoanBroker
         public override void AnalyzeMessage(Message message)
         {
             _queueStats.Add(this.ReferenceData.Count);
+        }
+
+        public override MessageQueue GetReturnAddress(Message message)
+        {
+            return message.ResponseQueue;
         }
     }
 }

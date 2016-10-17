@@ -81,6 +81,7 @@ namespace LoanBroker
                 {
                     callback = OnCreditResponse,
                 });
+
             creditRequestQueue.Send(requestMessage);
         }
 

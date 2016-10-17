@@ -24,13 +24,13 @@ namespace LoanBroker.LoanBroker
 
         String _processID;
         LoanQuoteRequest _loanRequest;
-        Message _message;
+        Message _originalMessage;
 
-        public Process(String processID, LoanQuoteRequest loanRequest, Message msg) 
+        public Process(String processID, LoanQuoteRequest loanRequest, Message originalMessage) 
         {
             this._processID = processID;
             this._loanRequest = loanRequest;
-            this._message = msg;
+            this._originalMessage = originalMessage;
         }
 
         public override void StartProcess(ProcessManager processor)
@@ -54,7 +54,7 @@ namespace LoanBroker.LoanBroker
             LoanQuoteReply quoteReply = Translator.GetLoanQuoteReply(_loanRequest, bestQuote);
             Console.WriteLine("Best quote {0} {1}", quoteReply.InterestRate, quoteReply.QuoteID);
 
-            this.GetProcessor().SendReply(quoteReply, _message);
+            this.GetProcessor().SendReply(quoteReply, _originalMessage);
 
             UpdateManager();
         }

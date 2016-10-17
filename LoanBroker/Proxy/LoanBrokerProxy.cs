@@ -29,8 +29,8 @@ namespace LoanBroker
     {
         private IMessageSender<MessageQueue, Message> _controlBus;
 
-        ArrayList _performanceStats;
-        ArrayList _queueStats;
+        static ArrayList _performanceStats = ArrayList.Synchronized(new ArrayList());
+        static ArrayList _queueStats = ArrayList.Synchronized(new ArrayList());
         private Timer _timer;
         private int _interval;
 
@@ -47,17 +47,13 @@ namespace LoanBroker
             IMessageReceiver<MessageQueue, Message> input,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
             IReturnAddress<Message> returnAddress,
-            IMessageSender<MessageQueue, Message> output,
             IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             IMessageSender<MessageQueue, Message> controlBus,
             int interval): base(
-                new LoanBrokerProxyRequestConsumer(input, serviceRequestSender, returnAddress, output, null),
-                new LoanBrokerProxyReplyConsumer(serviceReplyReceiver, null, null)
+                new LoanBrokerProxyRequestConsumer(input, serviceRequestSender, returnAddress, _queueStats),
+                new LoanBrokerProxyReplyConsumer(serviceReplyReceiver, _queueStats, _performanceStats)
             )
         {
-            _performanceStats = ArrayList.Synchronized(new ArrayList());
-            _queueStats = ArrayList.Synchronized(new ArrayList());
-
             _controlBus = controlBus;
             _interval = interval;
         }

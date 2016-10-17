@@ -27,7 +27,7 @@ namespace Messaging.Base.System_Management.SmartProxy
     public class MessageReferenceData<TMessageQueue, TMessage, TJournal>
     {
         public TJournal Journal { get; set; }       //Correlation and Id
-        public IMessageSender<TMessageQueue, TMessage> ReplyAddress { get; set; }
+        public TMessageQueue OriginalReturnAddress { get; set; }
     }
 
     public abstract class MessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>

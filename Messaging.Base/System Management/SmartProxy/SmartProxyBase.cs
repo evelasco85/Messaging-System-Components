@@ -23,7 +23,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> requestConsumer,
             ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> replyConsumer)
         {
-            _referenceData = new SynchronizedCollection<MessageReferenceData<TMessageQueue, TMessage, TJournal>>();
+            _referenceData = new List<MessageReferenceData<TMessageQueue, TMessage, TJournal>>();
 
             _requestConsumer = requestConsumer;
             _replyConsumer = replyConsumer;

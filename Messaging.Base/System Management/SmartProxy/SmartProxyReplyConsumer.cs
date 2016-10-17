@@ -22,6 +22,7 @@ namespace Messaging.Base.System_Management.SmartProxy
         public override void ProcessMessage(TMessage message)       //Received reply from service
         {
             Func<TJournal, bool> journalLookupCondition = GetJournalLookupCondition(message);
+
             MessageReferenceData<TMessageQueue, TMessage, TJournal> matchedReferenceData = this.ReferenceData
                 .Where(reference => journalLookupCondition(reference.Journal))
                 .DefaultIfEmpty(null)
@@ -30,7 +31,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             if (matchedReferenceData != null)
             {
                 AnalyzeMessage(this.ReferenceData, message);
-                matchedReferenceData.ReplyAddress.Send(message);
+                SendMessage(matchedReferenceData.OriginalReturnAddress, message);
                 ReferenceData.Remove(matchedReferenceData);
             }
             else
@@ -41,5 +42,6 @@ namespace Messaging.Base.System_Management.SmartProxy
 
         public abstract void AnalyzeMessage(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage replyMessage);
         public abstract Func<TJournal, bool> GetJournalLookupCondition(TMessage message);
+        public abstract void SendMessage(TMessageQueue queue, TMessage message);
     }
 }

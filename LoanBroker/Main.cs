@@ -15,6 +15,7 @@ using Messaging.Base;
 using LoanBroker.Bank;
 using LoanBroker.LoanBroker;
 using MsmqGateway;
+using LoanBroker.Models.LoanBroker;
 
 namespace LoanBroker {
 
@@ -31,25 +32,27 @@ namespace LoanBroker {
                 String creditReplyQueueName = ToPath(args[2]);
                 String bankReplyQueueName = ToPath(args[3]);
 
-                broker = new ProcessManager(requestQueueName, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new ConnectionsManager());
+                //broker = new ProcessManager(requestQueueName, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new ConnectionsManager());
 
-                //string proxyRequestQueue = ".\\private$\\broker_loanrequestqueue";
-                //string proxyReplyQueue = ".\\private$\\broker_loanreplyqueue";
+                string proxyRequestQueue = ".\\private$\\broker_loanrequestqueue";
+                string proxyReplyQueue = ".\\private$\\broker_loanreplyqueue";
 
-                //_loanBrokerProxy = new LoanBrokerProxy(
-                //    new MessageReceiverGateway(requestQueueName, GetFormatter()),
-                //    new MessageSenderGateway(proxyRequestQueue),
-                //    new MQReturnAddress(new MessageReceiverGateway(proxyReplyQueue)),
-                //    new MessageSenderGateway(bankReplyQueueName),
-                //    new MessageReceiverGateway(proxyReplyQueue),
-                //    new MessageSenderGateway(".\\private$\\controlbus"),
-                //    5);
-                //broker = new ProcessManager(proxyRequestQueue, creditRequestQueueName, creditReplyQueueName, proxyReplyQueue, new ConnectionsManager());
+                IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
+                    proxyReplyQueue,
+                    GetLoanReplyFormatter()
+                    );
 
-                //_loanBrokerProxy.Process();
+                _loanBrokerProxy = new LoanBrokerProxy(
+                    new MessageReceiverGateway(requestQueueName, GetLoanRequestFormatter()),
+                    new MessageSenderGateway(proxyRequestQueue),
+                    new MQReturnAddress(proxyReplyReceiver),
+                    proxyReplyReceiver,
+                    new MessageSenderGateway(".\\private$\\controlbus"),
+                    5);
 
-                
-                
+                _loanBrokerProxy.Process();
+
+                broker = new ProcessManager(proxyRequestQueue, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new ConnectionsManager());
             }
             else if (args.Length == 2) 
             {
@@ -68,12 +71,16 @@ namespace LoanBroker {
             Console.ReadLine();
 		}
 
-        static IMessageFormatter GetFormatter()
+        static IMessageFormatter GetLoanRequestFormatter()
         {
-            return new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) });
+            return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteRequest) });
         }
-				
-		private static String ToPath(String arg){
+        static IMessageFormatter GetLoanReplyFormatter()
+        {
+            return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
+        }
+
+        private static String ToPath(String arg){
 			return ".\\private$\\" + arg;
 		}
 		

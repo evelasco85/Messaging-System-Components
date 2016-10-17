@@ -50,13 +50,13 @@ namespace LoanBroker.LoanBroker
             return typeof(LoanQuoteRequest);
         }
 
-        public override void ProcessRequestMessage(Object o, Message message)
+        public override void ProcessRequestMessage(Object o, Message incomingMessage)
         {
             LoanQuoteRequest quoteRequest;
             quoteRequest = (LoanQuoteRequest)o;
 
-            String processID = message.Id;
-            Process newProcess = new Process(processID, quoteRequest, message);
+            String processID = incomingMessage.Id;
+            Process newProcess = new Process(processID, quoteRequest, incomingMessage);
 
             _manager.AddProcess(newProcess);
 
