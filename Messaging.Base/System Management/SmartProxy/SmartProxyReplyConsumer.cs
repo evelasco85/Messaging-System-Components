@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
+    public interface ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : IReplyMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
         void AnalyzeMessage(MessageReferenceData<TMessageQueue, TMessage, TJournal> referenceData, TMessage replyMessage);
     }

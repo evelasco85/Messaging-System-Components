@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
+    public interface ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : IRequestMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
         void AnalyzeMessage(TMessage message);
     }
@@ -24,10 +24,10 @@ namespace Messaging.Base.System_Management.SmartProxy
             _serviceRequestSender = serviceRequestSender;
         }
 
-        public override void ProcessMessage(TMessage message)       //Received message from client
+        public override void ProcessMessage(TMessage message)               //Received message from client
         {
-            _serviceRequestSender.Send(message);        //Forward message to destination(service)
-            ReferenceData.Add(ConstructJournalReference(message));               //store message reference
+            _serviceRequestSender.Send(message);                            //Forward message to destination(service)
+            ReferenceData.Add(ConstructJournalReference(message));          //store message reference
             AnalyzeMessage(message);
         }
 

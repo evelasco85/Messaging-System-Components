@@ -6,20 +6,28 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public class MessageReferenceData<TMessageQueue, TMessage, TJournal>
-    {
-        public TJournal Journal { get; set; }       //Correlation and Id
-        public IMessageSender<TMessageQueue, TMessage> ReplyAddress { get; set; }
-    }
-
     public interface IMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
         IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> ReferenceData { get; set; }
 
         void Process();
         void ProcessMessage(TMessage message);
+    }
+
+    public interface IRequestMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
+    {
         MessageReferenceData<TMessageQueue, TMessage, TJournal> ConstructJournalReference(TMessage message);
+    }
+
+    public interface IReplyMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
+    {
         MessageReferenceData<TMessageQueue, TMessage, TJournal> GetJournalReference(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage message);
+    }
+
+    public class MessageReferenceData<TMessageQueue, TMessage, TJournal>
+    {
+        public TJournal Journal { get; set; }       //Correlation and Id
+        public IMessageSender<TMessageQueue, TMessage> ReplyAddress { get; set; }
     }
 
     public abstract class MessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
