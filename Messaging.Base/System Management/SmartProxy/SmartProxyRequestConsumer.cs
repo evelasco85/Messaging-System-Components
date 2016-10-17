@@ -31,15 +31,17 @@ namespace Messaging.Base.System_Management.SmartProxy
         {
             _serviceRequestSender.Send(message);                            //Forward message to destination(service)
 
-            MessageReferenceData<TMessageQueue, TMessage, TJournal> refData = ConstructJournalReference(message);       //store message reference
-
-            refData.ReplyAddress = _serviceReplySender;
-
+            MessageReferenceData<TMessageQueue, TMessage, TJournal> refData = new MessageReferenceData<TMessageQueue, TMessage, TJournal>
+            {
+                Journal = ConstructJournalReference(message),       //store message reference
+                ReplyAddress = _serviceReplySender
+            };
+                
             ReferenceData.Add(refData);          
             AnalyzeMessage(message);
         }
 
         public abstract void AnalyzeMessage(TMessage message);
-        public abstract MessageReferenceData<TMessageQueue, TMessage, TJournal> ConstructJournalReference(TMessage message);
+        public abstract TJournal ConstructJournalReference(TMessage message);
     }
 }

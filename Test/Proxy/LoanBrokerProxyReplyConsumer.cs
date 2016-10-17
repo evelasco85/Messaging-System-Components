@@ -33,14 +33,11 @@ namespace Test.Proxy
             _queueStats.Add(references.Count);
         }
 
-        public override MessageReferenceData<MessageQueue, Message, ProxyJournal> GetJournalReference(IList<MessageReferenceData<MessageQueue, Message, ProxyJournal>> references, Message message)
+        public override Func<ProxyJournal, bool> GetJournalLookupCondition(Message message)
         {
-            return references
-                .Where(reference => 
-                    (reference.Journal.CorrelationId == message.CorrelationId) && 
-                    (reference.Journal.AppSpecific == message.AppSpecific))
-                .DefaultIfEmpty(null)
-                .FirstOrDefault();
+            return (journal) =>
+                ((journal.CorrelationId == message.CorrelationId) &&
+                (journal.AppSpecific == message.AppSpecific));
         }
     }
 }

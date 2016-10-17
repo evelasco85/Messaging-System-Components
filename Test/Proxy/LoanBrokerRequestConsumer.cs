@@ -28,19 +28,13 @@ namespace Test.Proxy
             _queueStats = queueStats;
         }
 
-        public override MessageReferenceData<MessageQueue, Message, ProxyJournal> ConstructJournalReference(Message message)
+        public override ProxyJournal ConstructJournalReference(Message message)
         {
-            MessageReferenceData<MessageQueue, Message, ProxyJournal> data = new MessageReferenceData
-                <MessageQueue, Message, ProxyJournal>
+            return new ProxyJournal
             {
-                Journal = new ProxyJournal
-                {
-                    AppSpecific = message.AppSpecific,
-                    CorrelationId = message.Id,
-                },
+                AppSpecific = message.AppSpecific,
+                CorrelationId = message.Id,
             };
-
-            return data;
         }
 
         public override void AnalyzeMessage(Message message)

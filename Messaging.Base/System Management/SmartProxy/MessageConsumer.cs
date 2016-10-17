@@ -16,12 +16,12 @@ namespace Messaging.Base.System_Management.SmartProxy
 
     public interface IRequestMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
-        MessageReferenceData<TMessageQueue, TMessage, TJournal> ConstructJournalReference(TMessage message);
+        TJournal ConstructJournalReference(TMessage message);
     }
 
     public interface IReplyMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
-        MessageReferenceData<TMessageQueue, TMessage, TJournal> GetJournalReference(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage message);
+        Func<TJournal, bool> GetJournalLookupCondition(TMessage message);
     }
 
     public class MessageReferenceData<TMessageQueue, TMessage, TJournal>
