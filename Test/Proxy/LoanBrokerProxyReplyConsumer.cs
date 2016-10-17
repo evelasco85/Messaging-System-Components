@@ -14,12 +14,13 @@ namespace Test.Proxy
     {
         private ArrayList _queueStats;
         private ArrayList _performanceStats;
+
         public LoanBrokerProxyReplyConsumer
             (
-            IMessageReceiver<MessageQueue, Message> replyReceiver,
+            IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             ArrayList queueStats,
             ArrayList performanceStats
-            ) : base(replyReceiver)
+            ) : base(serviceReplyReceiver)
         {
             _queueStats = queueStats;
             _performanceStats = performanceStats;

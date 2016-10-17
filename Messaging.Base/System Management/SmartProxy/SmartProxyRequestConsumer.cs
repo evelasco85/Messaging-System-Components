@@ -15,16 +15,16 @@ namespace Messaging.Base.System_Management.SmartProxy
     public abstract class SmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal>
     {
         private IMessageSender<TMessageQueue, TMessage> _serviceRequestSender;
-        private IMessageSender<TMessageQueue, TMessage> _serviceReplySender;
+        private IMessageSender<TMessageQueue, TMessage> _replySender;
 
         public SmartProxyRequestConsumer(
             IMessageReceiver<TMessageQueue, TMessage> requestReceiver,
             IMessageSender<TMessageQueue, TMessage> serviceRequestSender,
-            IMessageSender<TMessageQueue, TMessage> serviceReplySender
+            IMessageSender<TMessageQueue, TMessage> replySender
             ) : base(requestReceiver)
         {
             _serviceRequestSender = serviceRequestSender;
-            _serviceReplySender = serviceReplySender;
+            _replySender = replySender;
         }
 
         public override void ProcessMessage(TMessage message)               //Received message from client
@@ -34,7 +34,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             MessageReferenceData<TMessageQueue, TMessage, TJournal> refData = new MessageReferenceData<TMessageQueue, TMessage, TJournal>
             {
                 Journal = ConstructJournalReference(message),       //store message reference
-                ReplyAddress = _serviceReplySender
+                ReplyAddress = _replySender
             };
                 
             ReferenceData.Add(refData);          

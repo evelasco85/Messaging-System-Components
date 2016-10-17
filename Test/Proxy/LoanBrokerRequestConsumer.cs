@@ -19,10 +19,10 @@ namespace Test.Proxy
         public LoanBrokerRequestConsumer(
             IMessageReceiver<MessageQueue, Message> requestReceiver,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
-            IMessageSender<MessageQueue, Message> serviceReplySender,
+            IMessageSender<MessageQueue, Message> replySender,
             ArrayList queueStats
             )
-            : base(requestReceiver, serviceRequestSender, serviceReplySender)
+            : base(requestReceiver, serviceRequestSender, replySender)
 
         {
             _queueStats = queueStats;

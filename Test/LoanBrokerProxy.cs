@@ -42,7 +42,7 @@ namespace Test
             MessageReceiverGateway input,
             ISmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal> requestConsumer,
             ISmartProxyReplyConsumer<MessageQueue, Message, ProxyJournal> replyConsumer,
-            MessageSenderGateway controlBus,
+            IMessageSender<MessageQueue, Message> controlBus,
             int interval): base(requestConsumer, replyConsumer)
         {
             _performanceStats = ArrayList.Synchronized(new ArrayList());
