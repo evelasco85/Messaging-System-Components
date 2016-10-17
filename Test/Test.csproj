@@ -124,9 +124,12 @@
     <Compile Include="LoanBroker.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LoanBrokerProxy.cs" />
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Proxy\LoanBrokerProxyReplyConsumer.cs" />
+    <Compile Include="Proxy\LoanBrokerRequestConsumer.cs" />
     <Compile Include="TestBank.cs">
       <SubType>Code</SubType>
     </Compile>

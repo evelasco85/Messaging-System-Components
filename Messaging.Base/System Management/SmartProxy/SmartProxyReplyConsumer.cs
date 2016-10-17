@@ -8,7 +8,7 @@ namespace Messaging.Base.System_Management.SmartProxy
 {
     public interface ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : IReplyMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
-        void AnalyzeMessage(MessageReferenceData<TMessageQueue, TMessage, TJournal> referenceData, TMessage replyMessage);
+        void AnalyzeMessage(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage replyMessage);
     }
 
     public abstract class SmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal>
@@ -26,9 +26,8 @@ namespace Messaging.Base.System_Management.SmartProxy
 
             if (matchedReferenceData != null)
             {
-                AnalyzeMessage(matchedReferenceData, message);
+                AnalyzeMessage(this.ReferenceData, message);
                 matchedReferenceData.ReplyAddress.Send(message);
-
                 ReferenceData.Remove(matchedReferenceData);
             }
             else
@@ -37,6 +36,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             }
         }
 
-        public abstract void AnalyzeMessage(MessageReferenceData<TMessageQueue, TMessage, TJournal> referenceData, TMessage replyMessage);
+        public abstract void AnalyzeMessage(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage replyMessage);
+        public abstract MessageReferenceData<TMessageQueue, TMessage, TJournal> GetJournalReference(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage message);
     }
 }

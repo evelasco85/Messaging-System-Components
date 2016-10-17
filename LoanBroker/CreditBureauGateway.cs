@@ -14,6 +14,7 @@ using CreditBureau;
 using Messaging.Base;
 using LoanBroker.CreditBureau;
 using Messaging.Base.Constructions;
+using MsmqGateway;
 
 namespace LoanBroker
 {
@@ -54,11 +55,7 @@ namespace LoanBroker
             this.creditReplyQueue = creditReplyQueue;
             this.creditReplyQueue.ReceiveMessageProcessor += responseDelegate;
 
-            _creditReturnAddress = new ReturnAddress<MessageQueue, Message>(creditReplyQueue,
-                (MessageQueue queue, ref Message message) =>
-                {
-                    message.ResponseQueue = queue;
-                });
+            _creditReturnAddress = new MQReturnAddress(creditReplyQueue);
         }
 
         protected IMessageFormatter	GetFormatter()

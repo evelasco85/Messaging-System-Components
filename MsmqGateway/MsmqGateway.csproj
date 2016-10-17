@@ -116,6 +116,7 @@
     <Compile Include="MQProcessor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MQReturnAddress.cs" />
     <Compile Include="MQService.cs">
       <SubType>Code</SubType>
     </Compile>

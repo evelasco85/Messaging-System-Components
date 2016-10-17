@@ -15,6 +15,7 @@ using Messaging.Base;
 using LoanBroker.Bank;
 using Messaging.Base.Routing;
 using Messaging.Base.Constructions;
+using MsmqGateway;
 
 namespace LoanBroker
 {
@@ -36,11 +37,7 @@ namespace LoanBroker
             this.connectionManager = connectionManager; 
             aggregationCorrelationID = 0;
 
-            _bankReturnAddress = new ReturnAddress<MessageQueue, Message>(bankReplyQueue,
-                (MessageQueue queue, ref Message message) =>
-                {
-                    message.ResponseQueue = queue;
-                });
+            _bankReturnAddress = new MQReturnAddress(bankReplyQueue);
         }
 
         protected IMessageFormatter GetFormatter()

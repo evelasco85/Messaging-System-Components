@@ -13,6 +13,7 @@ using MessageGateway;
 using Bank;
 using Messaging.Base;
 using Messaging.Base.Constructions;
+using MsmqGateway;
 
 namespace Test
 {
@@ -41,11 +42,7 @@ namespace Test
 
             replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
-            _bankReturnAddress = new ReturnAddress<MessageQueue, Message>(replyQueue,
-               (MessageQueue queue, ref Message message) =>
-               {
-                   message.ResponseQueue = queue;
-               });
+            _bankReturnAddress = new MQReturnAddress(replyQueue);
 
             this.numMessages = numMessages;
 

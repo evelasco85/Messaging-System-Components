@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Messaging;
+using System.Text;
+using System.Threading.Tasks;
+using Messaging.Base;
+using Messaging.Base.Constructions;
+
+namespace MsmqGateway
+{
+    public class MQReturnAddress : ReturnAddress<MessageQueue, Message>
+    {
+        public MQReturnAddress(IMessageCore<MessageQueue> messageReplyQueue) : base(messageReplyQueue,
+            (MessageQueue queue, ref Message message) =>
+            {
+                message.ResponseQueue = queue;
+            })
+        {
+        }
+    }
+}

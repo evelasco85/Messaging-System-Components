@@ -14,6 +14,7 @@ using MessageGateway;
 using LoanBroker;
 using Messaging.Base;
 using Messaging.Base.Constructions;
+using MsmqGateway;
 
 namespace Test
 {
@@ -48,11 +49,7 @@ namespace Test
             replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
 
-            _loanBroakerReturnAddress = new ReturnAddress<MessageQueue, Message>(replyQueue,
-                (MessageQueue queue, ref Message message) =>
-                {
-                    message.ResponseQueue = queue;
-                });
+            _loanBroakerReturnAddress = new MQReturnAddress(replyQueue);
 
             this.numMessages = numMessages;
             messageBuffer = new Hashtable();

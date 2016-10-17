@@ -14,6 +14,7 @@ using MessageGateway;
 using CreditBureau;
 using Messaging.Base;
 using Messaging.Base.Constructions;
+using MsmqGateway;
 
 namespace Test
 {
@@ -41,11 +42,7 @@ namespace Test
 
             replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
-            _creditReturnAddress = new ReturnAddress<MessageQueue, Message>(replyQueue,
-               (MessageQueue queue, ref Message message) =>
-               {
-                   message.ResponseQueue = queue;
-               });
+            _creditReturnAddress = new MQReturnAddress(replyQueue);
 
             this.numMessages = numMessages;
 

@@ -61,8 +61,5 @@ namespace Messaging.Base.System_Management.SmartProxy
         }
 
         public abstract void ProcessMessage(TMessage message);
-
-        public abstract MessageReferenceData<TMessageQueue, TMessage, TJournal> ConstructJournalReference(TMessage message);
-        public abstract MessageReferenceData<TMessageQueue, TMessage, TJournal> GetJournalReference(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage message);
     }
 }

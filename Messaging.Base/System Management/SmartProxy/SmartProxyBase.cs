@@ -16,7 +16,8 @@ namespace Messaging.Base.System_Management.SmartProxy
     {
         ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> _requestConsumer;
         ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> _replyConsumer;
-        IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> _referenceData;
+        
+        protected IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> _referenceData;
 
         public SmartProxyBase(
             ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> requestConsumer,

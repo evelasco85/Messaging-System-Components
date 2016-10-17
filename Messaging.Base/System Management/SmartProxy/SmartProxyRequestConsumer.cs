@@ -15,23 +15,31 @@ namespace Messaging.Base.System_Management.SmartProxy
     public abstract class SmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal>
     {
         private IMessageSender<TMessageQueue, TMessage> _serviceRequestSender;
+        private IMessageSender<TMessageQueue, TMessage> _serviceReplySender;
 
         public SmartProxyRequestConsumer(
             IMessageReceiver<TMessageQueue, TMessage> requestReceiver,
-            IMessageSender<TMessageQueue, TMessage> serviceRequestSender
+            IMessageSender<TMessageQueue, TMessage> serviceRequestSender,
+            IMessageSender<TMessageQueue, TMessage> serviceReplySender
             ) : base(requestReceiver)
         {
             _serviceRequestSender = serviceRequestSender;
+            _serviceReplySender = serviceReplySender;
         }
 
         public override void ProcessMessage(TMessage message)               //Received message from client
         {
             _serviceRequestSender.Send(message);                            //Forward message to destination(service)
-            ReferenceData.Add(ConstructJournalReference(message));          //store message reference
+
+            MessageReferenceData<TMessageQueue, TMessage, TJournal> refData = ConstructJournalReference(message);       //store message reference
+
+            refData.ReplyAddress = _serviceReplySender;
+
+            ReferenceData.Add(refData);          
             AnalyzeMessage(message);
         }
 
         public abstract void AnalyzeMessage(TMessage message);
-        
+        public abstract MessageReferenceData<TMessageQueue, TMessage, TJournal> ConstructJournalReference(TMessage message);
     }
 }
