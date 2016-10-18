@@ -36,7 +36,7 @@ namespace LoanBroker
             _performanceStats.Add(duration.TotalSeconds);
             _queueStats.Add(this.ReferenceData.Count);
 
-            Console.WriteLine("--->processing time: {0:f}", duration.TotalSeconds);
+            Console.WriteLine("--->service reply processing time: {0:f}", duration.TotalSeconds);
 
             if(_controlBus != null)
                 //_controlBus.Send(duration.TotalSeconds.ToString() + "," + this.ReferenceData.Count);
