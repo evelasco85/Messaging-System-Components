@@ -37,8 +37,11 @@ namespace LoanBroker
         public override Func<ProxyJournal, bool> GetJournalLookupCondition(Message message)
         {
             return (journal) =>
-                ((journal.CorrelationId == message.CorrelationId) &&
-                (journal.AppSpecific == message.AppSpecific));
+            {
+                return ((journal.CorrelationId == message.CorrelationId) &&
+                        (journal.AppSpecific == message.AppSpecific))
+                    ;
+            };
         }
 
         public override void SendMessage(MessageQueue queue, Message message)

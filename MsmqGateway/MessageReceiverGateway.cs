@@ -50,6 +50,7 @@ namespace MessageGateway{
             GetQueue().MessageReadPropertyFilter.Id = true;
             GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
             GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
+            GetQueue().MessageReadPropertyFilter.SentTime = true;
 
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }

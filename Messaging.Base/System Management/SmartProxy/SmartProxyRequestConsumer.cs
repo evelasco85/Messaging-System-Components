@@ -32,17 +32,17 @@ namespace Messaging.Base.System_Management.SmartProxy
 
         public override void ProcessMessage(TMessage message)               //Received message from client
         {
+            TMessageQueue originalReturnAddress = GetReturnAddress(message);
+            _returnAddress.SetMessageReturnAddress(ref message);
+            _serviceRequestSender.Send(message);                            //Forward message to destination(service)
+
             MessageReferenceData<TMessageQueue, TMessage, TJournal> refData = new MessageReferenceData<TMessageQueue, TMessage, TJournal>
             {
                 Journal = ConstructJournalReference(message),       //store message reference
-                OriginalReturnAddress = GetReturnAddress(message)                              //Stash reply address
+                OriginalReturnAddress = originalReturnAddress                              //Stash reply address
             };
 
             ReferenceData.Add(refData);
-
-            _returnAddress.SetMessageReturnAddress(ref message);
-            _serviceRequestSender.Send(message);                            //Forward message to destination(service)
-                
             AnalyzeMessage(message);
         }
 
