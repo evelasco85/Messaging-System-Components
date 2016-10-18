@@ -2,12 +2,6 @@
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : IRequestMessageConsumer<TMessageQueue, TMessage, TJournal>
-    {
-        void AnalyzeMessage(TMessage message);
-        TMessageQueue GetReturnAddress(TMessage message);
-    }
-
     public abstract class SmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal>
     {
         private IMessageSender<TMessageQueue, TMessage> _serviceRequestSender;

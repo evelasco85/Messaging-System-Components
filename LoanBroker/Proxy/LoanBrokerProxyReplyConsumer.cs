@@ -29,7 +29,7 @@ namespace LoanBroker
             _controlBus = controlBus;
         }
 
-        public override void AnalyzeMessage(MessageReferenceData<MessageQueue, ProxyJournal> reference, Message replyMessage)
+        public override void AnalyzeMessage(IMessageReferenceData<MessageQueue, ProxyJournal> reference, Message replyMessage)
         {
             TimeSpan duration = DateTime.Now - replyMessage.SentTime;
 

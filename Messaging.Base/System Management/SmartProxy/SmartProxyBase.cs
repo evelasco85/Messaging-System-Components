@@ -7,23 +7,18 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface ISmartProxyBase
-    {
-        void Process();
-    }
-
     public class SmartProxyBase<TMessageQueue, TMessage, TJournal> : ISmartProxyBase
     {
         ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> _requestConsumer;
         ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> _replyConsumer;
         
-        protected IList<MessageReferenceData<TMessageQueue, TJournal>> _referenceData;
+        protected IList<IMessageReferenceData<TMessageQueue, TJournal>> _referenceData;
 
         public SmartProxyBase(
             ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> requestConsumer,
             ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> replyConsumer)
         {
-            _referenceData = new List<MessageReferenceData<TMessageQueue, TJournal>>();
+            _referenceData = new List<IMessageReferenceData<TMessageQueue, TJournal>>();
 
             _requestConsumer = requestConsumer;
             _replyConsumer = replyConsumer;

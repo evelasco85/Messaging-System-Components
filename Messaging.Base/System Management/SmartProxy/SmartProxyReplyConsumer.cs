@@ -6,12 +6,6 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : IReplyMessageConsumer<TMessageQueue, TMessage, TJournal>
-    {
-        void AnalyzeMessage(MessageReferenceData<TMessageQueue, TJournal> reference, TMessage replyMessage);
-        void SendMessage(TJournal externalJournal, TMessageQueue queue, TMessage message);
-    }
-
     public abstract class SmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal>
     {
         public SmartProxyReplyConsumer(
@@ -26,7 +20,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             /*Retrieve internal journal associated from proxy message*/
             Func<TJournal, bool> internalJournalLookupCondition = GetJournalLookupCondition(message);
 
-            MessageReferenceData<TMessageQueue, TJournal> matchedReferenceData = this.ReferenceData
+            IMessageReferenceData<TMessageQueue, TJournal> matchedReferenceData = this.ReferenceData
                 .Where(reference => internalJournalLookupCondition(reference.InternalJournal))
                 .DefaultIfEmpty(null)
                 .FirstOrDefault();
@@ -46,7 +40,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             }
         }
 
-        public abstract void AnalyzeMessage(MessageReferenceData<TMessageQueue, TJournal> reference, TMessage replyMessage);
+        public abstract void AnalyzeMessage(IMessageReferenceData<TMessageQueue, TJournal> reference, TMessage replyMessage);
         public abstract Func<TJournal, bool> GetJournalLookupCondition(TMessage message);
         public abstract void SendMessage(TJournal externalJournal, TMessageQueue queue, TMessage message);
     }

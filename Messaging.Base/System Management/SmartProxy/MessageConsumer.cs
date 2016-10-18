@@ -6,25 +6,7 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface IMessageConsumer<TMessageQueue, TMessage, TJournal>
-    {
-        IList<MessageReferenceData<TMessageQueue, TJournal>> ReferenceData { get; set; }
-
-        void Process();
-        void ProcessMessage(TMessage message);
-    }
-
-    public interface IRequestMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
-    {
-        TJournal ConstructJournalReference(TMessage message);
-    }
-
-    public interface IReplyMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage, TJournal>
-    {
-        Func<TJournal, bool> GetJournalLookupCondition(TMessage message);
-    }
-
-    public class MessageReferenceData<TMessageQueue, TJournal>
+    public class MessageReferenceData<TMessageQueue, TJournal> : IMessageReferenceData<TMessageQueue, TJournal>
     {
         public TJournal InternalJournal { get; set; }       //Proxy related journal
         public TJournal ExternalJournal { get; set; }       //External system journal
@@ -35,9 +17,9 @@ namespace Messaging.Base.System_Management.SmartProxy
     {
         private IMessageCore<TMessageQueue> _messageQueue;
 
-        IList<MessageReferenceData<TMessageQueue, TJournal>> _references;
+        IList<IMessageReferenceData<TMessageQueue, TJournal>> _references;
 
-        public IList<MessageReferenceData<TMessageQueue, TJournal>> ReferenceData
+        public IList<IMessageReferenceData<TMessageQueue, TJournal>> ReferenceData
         {
             get { return _references; }
             set { _references = value; }
