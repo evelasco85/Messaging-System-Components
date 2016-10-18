@@ -14,24 +14,33 @@ namespace LoanBroker
     {
         private ArrayList _queueStats;
         private ArrayList _performanceStats;
+        private IMessageSender<MessageQueue, Message> _controlBus;
 
         public LoanBrokerProxyReplyConsumer
             (
             IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             ArrayList queueStats,
-            ArrayList performanceStats
+            ArrayList performanceStats,
+            IMessageSender<MessageQueue, Message> controlBus
             ) : base(serviceReplyReceiver)
         {
             _queueStats = queueStats;
             _performanceStats = performanceStats;
+            _controlBus = controlBus;
         }
 
-        public override void AnalyzeMessage(IList<MessageReferenceData<MessageQueue, Message, ProxyJournal>> references, Message replyMessage)
+        public override void AnalyzeMessage(MessageReferenceData<MessageQueue, ProxyJournal> reference, Message replyMessage)
         {
             TimeSpan duration = DateTime.Now - replyMessage.SentTime;
 
             _performanceStats.Add(duration.TotalSeconds);
-            _queueStats.Add(references.Count);
+            _queueStats.Add(this.ReferenceData.Count);
+
+            Console.WriteLine("--->processing time: {0:f}", duration.TotalSeconds);
+
+            if(_controlBus != null)
+                //_controlBus.Send(duration.TotalSeconds.ToString() + "," + this.ReferenceData.Count);
+                _controlBus.GetQueue().Send(duration.TotalSeconds.ToString() + "," + this.ReferenceData.Count);
         }
 
         public override Func<ProxyJournal, bool> GetJournalLookupCondition(Message message)

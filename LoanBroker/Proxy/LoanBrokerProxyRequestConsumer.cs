@@ -19,11 +19,10 @@ namespace LoanBroker
         public LoanBrokerProxyRequestConsumer(
             IMessageReceiver<MessageQueue, Message> requestReceiver,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
-            IReturnAddress<Message> returnAddress,
+            IReturnAddress<Message> serviceReplyReturnAddress,
             ArrayList queueStats
             )
-            : base(requestReceiver, serviceRequestSender, returnAddress)
-
+            : base(requestReceiver, serviceRequestSender, serviceReplyReturnAddress)
         {
             _queueStats = queueStats;
         }

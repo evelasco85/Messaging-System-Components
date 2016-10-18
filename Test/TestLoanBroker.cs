@@ -14,7 +14,6 @@ using MessageGateway;
 using LoanBroker;
 using Messaging.Base;
 using Messaging.Base.Constructions;
-using Messaging.Base.System_Management.SmartProxy;
 using MsmqGateway;
 
 namespace Test

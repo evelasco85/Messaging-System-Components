@@ -9,8 +9,6 @@
 using System;
 using System.Messaging;
 using MessageGateway;
-using Gateway.Mock;
-using CreditBureau;
 using Messaging.Base;
 using LoanBroker.Bank;
 using LoanBroker.LoanBroker;
@@ -31,8 +29,6 @@ namespace LoanBroker {
                 String creditRequestQueueName = ToPath(args[1]);
                 String creditReplyQueueName = ToPath(args[2]);
                 String bankReplyQueueName = ToPath(args[3]);
-
-                //broker = new ProcessManager(requestQueueName, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new ConnectionsManager());
 
                 string proxyRequestQueue = ".\\private$\\broker_loanrequestqueue";
                 string proxyReplyQueue = ".\\private$\\broker_loanreplyqueue";

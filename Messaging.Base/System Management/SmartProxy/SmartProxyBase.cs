@@ -17,13 +17,13 @@ namespace Messaging.Base.System_Management.SmartProxy
         ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> _requestConsumer;
         ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> _replyConsumer;
         
-        protected IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> _referenceData;
+        protected IList<MessageReferenceData<TMessageQueue, TJournal>> _referenceData;
 
         public SmartProxyBase(
             ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> requestConsumer,
             ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> replyConsumer)
         {
-            _referenceData = new List<MessageReferenceData<TMessageQueue, TMessage, TJournal>>();
+            _referenceData = new List<MessageReferenceData<TMessageQueue, TJournal>>();
 
             _requestConsumer = requestConsumer;
             _replyConsumer = replyConsumer;
@@ -32,9 +32,10 @@ namespace Messaging.Base.System_Management.SmartProxy
             _replyConsumer.ReferenceData = _referenceData;
         }
 
+        //Start listening incoming messages
         public virtual void Process()
         {
-            _requestConsumer.Process();
+            _requestConsumer.Process();     
             _replyConsumer.Process();
         }
     }

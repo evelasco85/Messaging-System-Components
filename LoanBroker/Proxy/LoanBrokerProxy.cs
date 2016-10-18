@@ -29,8 +29,8 @@ namespace LoanBroker
     {
         private IMessageSender<MessageQueue, Message> _controlBus;
 
-        static ArrayList _performanceStats = ArrayList.Synchronized(new ArrayList());
-        static ArrayList _queueStats = ArrayList.Synchronized(new ArrayList());
+        static ArrayList s_performanceStats = ArrayList.Synchronized(new ArrayList());
+        static ArrayList s_queueStats = ArrayList.Synchronized(new ArrayList());
         private Timer _timer;
         private int _interval;
 
@@ -46,12 +46,12 @@ namespace LoanBroker
         public LoanBrokerProxy(
             IMessageReceiver<MessageQueue, Message> input,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
-            IReturnAddress<Message> returnAddress,
+            IReturnAddress<Message> serviceReplyReturnAddress,
             IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             IMessageSender<MessageQueue, Message> controlBus,
             int interval): base(
-                new LoanBrokerProxyRequestConsumer(input, serviceRequestSender, returnAddress, _queueStats),
-                new LoanBrokerProxyReplyConsumer(serviceReplyReceiver, _queueStats, _performanceStats)
+                new LoanBrokerProxyRequestConsumer(input, serviceRequestSender, serviceReplyReturnAddress, s_queueStats),
+                new LoanBrokerProxyReplyConsumer(serviceReplyReceiver, s_queueStats, s_performanceStats, controlBus)
             )
         {
             _controlBus = controlBus;
@@ -72,30 +72,30 @@ namespace LoanBroker
             ArrayList currentQueueStats = new ArrayList();
             ArrayList currentPerformanceStats = new ArrayList();
 
-            lock (_queueStats)
+            lock (s_queueStats)
             {
-                currentQueueStats = (ArrayList) _queueStats.Clone();
+                currentQueueStats = (ArrayList) s_queueStats.Clone();
 
-                _queueStats.Clear();
+                s_queueStats.Clear();
             }
 
-            lock (_performanceStats)
+            lock (s_performanceStats)
             {
-                currentPerformanceStats = (ArrayList) _performanceStats.Clone();
+                currentPerformanceStats = (ArrayList) s_performanceStats.Clone();
 
-                _performanceStats.Clear();
+                s_performanceStats.Clear();
             }
 
-            if (_controlBus != null)
-            {
-                SummaryStat stat = new SummaryStat
-                {
-                    PerformanceStats = currentPerformanceStats,
-                    QueueStats = currentQueueStats
-                };
+            //if (_controlBus != null)
+            //{
+            //    SummaryStat stat = new SummaryStat
+            //    {
+            //        PerformanceStats = currentPerformanceStats,
+            //        QueueStats = currentQueueStats
+            //    };
 
-                //_controlBus.GetQueue().Send(stat);
-            }
+            //    _controlBus.GetQueue().Send(stat);
+            //}
         }
     }
 }

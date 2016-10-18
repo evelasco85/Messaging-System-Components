@@ -8,7 +8,7 @@ namespace Messaging.Base.System_Management.SmartProxy
 {
     public interface IMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
-        IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> ReferenceData { get; set; }
+        IList<MessageReferenceData<TMessageQueue, TJournal>> ReferenceData { get; set; }
 
         void Process();
         void ProcessMessage(TMessage message);
@@ -24,10 +24,10 @@ namespace Messaging.Base.System_Management.SmartProxy
         Func<TJournal, bool> GetJournalLookupCondition(TMessage message);
     }
 
-    public class MessageReferenceData<TMessageQueue, TMessage, TJournal>
+    public class MessageReferenceData<TMessageQueue, TJournal>
     {
-        public TJournal InternalJournal { get; set; }       //Correlation and Id
-        public TJournal ExternalJournal { get; set; }       //Correlation and Id
+        public TJournal InternalJournal { get; set; }       //Proxy related journal
+        public TJournal ExternalJournal { get; set; }       //External system journal
         public TMessageQueue OriginalReturnAddress { get; set; }
     }
 
@@ -35,9 +35,9 @@ namespace Messaging.Base.System_Management.SmartProxy
     {
         private IMessageCore<TMessageQueue> _messageQueue;
 
-        IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> _references;
+        IList<MessageReferenceData<TMessageQueue, TJournal>> _references;
 
-        public IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> ReferenceData
+        public IList<MessageReferenceData<TMessageQueue, TJournal>> ReferenceData
         {
             get { return _references; }
             set { _references = value; }

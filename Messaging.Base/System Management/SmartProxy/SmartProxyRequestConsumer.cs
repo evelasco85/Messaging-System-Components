@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
-using Messaging.Base.Constructions;
+﻿using Messaging.Base.Constructions;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
@@ -18,35 +11,42 @@ namespace Messaging.Base.System_Management.SmartProxy
     public abstract class SmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal>
     {
         private IMessageSender<TMessageQueue, TMessage> _serviceRequestSender;
-        IReturnAddress<TMessage> _returnAddress;
+        IReturnAddress<TMessage> _serviceReplyReturnAddress;
 
         public SmartProxyRequestConsumer(
             IMessageReceiver<TMessageQueue, TMessage> requestReceiver,
             IMessageSender<TMessageQueue, TMessage> serviceRequestSender,
-            IReturnAddress<TMessage> returnAddress
+            IReturnAddress<TMessage> serviceReplyReturnAddress
             ) : base(requestReceiver)
         {
             _serviceRequestSender = serviceRequestSender;
-            _returnAddress = returnAddress;
+            _serviceReplyReturnAddress = serviceReplyReturnAddress;
         }
 
-        public override void ProcessMessage(TMessage message)               //Received message from client
+        //Received message from client
+        public override void ProcessMessage(TMessage message)               
         {
+            /*Record journal information from incoming requests*/
             TMessageQueue originalReturnAddress = GetReturnAddress(message);
             TJournal externalJournal = ConstructJournalReference(message);
+            /**/
 
-            _returnAddress.SetMessageReturnAddress(ref message);
-            _serviceRequestSender.Send(message);                            //Forward message to destination(service)
+            /*Forward message to destination service*/
+            _serviceReplyReturnAddress.SetMessageReturnAddress(ref message);        //Ensures that destination replies to 'return address'
+            _serviceRequestSender.Send(message);
+            /**/
 
-            MessageReferenceData<TMessageQueue, TMessage, TJournal> refData = new MessageReferenceData<TMessageQueue, TMessage, TJournal>
+            /*Store proxy message journal(internal and external)*/
+            MessageReferenceData<TMessageQueue, TJournal> refData = new MessageReferenceData<TMessageQueue, TJournal>
             {
-                InternalJournal = ConstructJournalReference(message),       //store message reference
+                InternalJournal = ConstructJournalReference(message),
                 ExternalJournal = externalJournal,
-                OriginalReturnAddress = originalReturnAddress                              //Stash reply address
+                OriginalReturnAddress = originalReturnAddress
             };
 
             ReferenceData.Add(refData);
             AnalyzeMessage(message);
+            /**/
         }
 
         public abstract void AnalyzeMessage(TMessage message);

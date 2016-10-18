@@ -8,7 +8,8 @@ namespace Messaging.Base.System_Management.SmartProxy
 {
     public interface ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : IReplyMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
-        void AnalyzeMessage(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage replyMessage);
+        void AnalyzeMessage(MessageReferenceData<TMessageQueue, TJournal> reference, TMessage replyMessage);
+        void SendMessage(TJournal externalJournal, TMessageQueue queue, TMessage message);
     }
 
     public abstract class SmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal>
@@ -19,18 +20,23 @@ namespace Messaging.Base.System_Management.SmartProxy
         {
         }
 
-        public override void ProcessMessage(TMessage message)       //Received reply from service
+        //Received reply from service
+        public override void ProcessMessage(TMessage message)       
         {
-            Func<TJournal, bool> journalLookupCondition = GetJournalLookupCondition(message);
+            /*Retrieve internal journal associated from proxy message*/
+            Func<TJournal, bool> internalJournalLookupCondition = GetJournalLookupCondition(message);
 
-            MessageReferenceData<TMessageQueue, TMessage, TJournal> matchedReferenceData = this.ReferenceData
-                .Where(reference => journalLookupCondition(reference.InternalJournal))
+            MessageReferenceData<TMessageQueue, TJournal> matchedReferenceData = this.ReferenceData
+                .Where(reference => internalJournalLookupCondition(reference.InternalJournal))
                 .DefaultIfEmpty(null)
                 .FirstOrDefault();
+            /**/
 
             if (matchedReferenceData != null)
             {
-                AnalyzeMessage(this.ReferenceData, message);
+                AnalyzeMessage(matchedReferenceData, message);
+
+                //Forward reply to original recipient
                 SendMessage(matchedReferenceData.ExternalJournal, matchedReferenceData.OriginalReturnAddress, message);
                 ReferenceData.Remove(matchedReferenceData);
             }
@@ -40,7 +46,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             }
         }
 
-        public abstract void AnalyzeMessage(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage replyMessage);
+        public abstract void AnalyzeMessage(MessageReferenceData<TMessageQueue, TJournal> reference, TMessage replyMessage);
         public abstract Func<TJournal, bool> GetJournalLookupCondition(TMessage message);
         public abstract void SendMessage(TJournal externalJournal, TMessageQueue queue, TMessage message);
     }
