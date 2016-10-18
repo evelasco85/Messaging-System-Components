@@ -39,13 +39,15 @@ namespace LoanBroker
             return (journal) =>
             {
                 return ((journal.CorrelationId == message.CorrelationId) &&
-                        (journal.AppSpecific == message.AppSpecific))
-                    ;
+                        (journal.AppSpecific == message.AppSpecific));
             };
         }
 
-        public override void SendMessage(MessageQueue queue, Message message)
+        public override void SendMessage(ProxyJournal externalJournal, MessageQueue queue, Message message)
         {
+            message.CorrelationId = externalJournal.CorrelationId;
+            message.AppSpecific = externalJournal.AppSpecific;
+
             queue.Send(message);
         }
     }

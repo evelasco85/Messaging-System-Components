@@ -24,14 +24,14 @@ namespace Messaging.Base.System_Management.SmartProxy
             Func<TJournal, bool> journalLookupCondition = GetJournalLookupCondition(message);
 
             MessageReferenceData<TMessageQueue, TMessage, TJournal> matchedReferenceData = this.ReferenceData
-                .Where(reference => journalLookupCondition(reference.Journal))
+                .Where(reference => journalLookupCondition(reference.InternalJournal))
                 .DefaultIfEmpty(null)
                 .FirstOrDefault();
 
             if (matchedReferenceData != null)
             {
                 AnalyzeMessage(this.ReferenceData, message);
-                SendMessage(matchedReferenceData.OriginalReturnAddress, message);
+                SendMessage(matchedReferenceData.ExternalJournal, matchedReferenceData.OriginalReturnAddress, message);
                 ReferenceData.Remove(matchedReferenceData);
             }
             else
@@ -42,6 +42,6 @@ namespace Messaging.Base.System_Management.SmartProxy
 
         public abstract void AnalyzeMessage(IList<MessageReferenceData<TMessageQueue, TMessage, TJournal>> references, TMessage replyMessage);
         public abstract Func<TJournal, bool> GetJournalLookupCondition(TMessage message);
-        public abstract void SendMessage(TMessageQueue queue, TMessage message);
+        public abstract void SendMessage(TJournal externalJournal, TMessageQueue queue, TMessage message);
     }
 }
