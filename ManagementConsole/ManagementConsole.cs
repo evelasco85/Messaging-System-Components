@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using Message = System.Messaging.Message;
 
 namespace ManagementConsole
@@ -45,8 +46,42 @@ namespace ManagementConsole
         {
             using (StreamReader reader = new StreamReader(message.BodyStream))
             {
-                this.txtControlBusData.Text = reader.ReadToEnd() + Environment.NewLine + this.txtControlBusData.Text;
+                XmlDocument messageDoc = new XmlDocument();
+
+                messageDoc.LoadXml(reader.ReadToEnd());
+
+                XmlNode root = messageDoc.SelectSingleNode("/*");
+
+                switch (root.Name)
+                {
+                    case "SummaryStat":
+                        PrependStatisticData(messageDoc);
+                        break;
+                    case "LoanBrokerProxyInfo":
+                        PrependResponseData(messageDoc);
+                        break;
+                }
             }
+        }
+
+        void PrependResponseData(XmlDocument messageDoc)
+        {
+            XmlNode data = messageDoc.SelectSingleNode("/LoanBrokerProxyInfo/Detail");
+
+            this.txtLoanBrokerResponseData.Text = data.InnerText + Environment.NewLine + this.txtLoanBrokerResponseData.Text;
+        }
+
+        void PrependStatisticData(XmlDocument messageDoc)
+        {
+            XmlNode duration = messageDoc.SelectSingleNode("/SummaryStat/AverageReplyDuration");
+            XmlNode request = messageDoc.SelectSingleNode("/SummaryStat/AverageOutstandingRequest");
+
+            string data = string.Format("Ave. Reply Duration [{0:0.###}] | Ave. Outstanding Request [{1:0.###}]",
+                Convert.ToDouble(duration.InnerText),
+                Convert.ToDouble(request.InnerText)
+                );
+
+            this.txtLoanBrokerStatData.Text = data + Environment.NewLine + this.txtLoanBrokerStatData.Text;
         }
     }
 }
