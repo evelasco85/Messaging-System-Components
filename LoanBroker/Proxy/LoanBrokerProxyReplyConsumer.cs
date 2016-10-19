@@ -38,9 +38,13 @@ namespace LoanBroker
 
             Console.WriteLine("--->service reply processing time: {0:f}", duration.TotalSeconds);
 
-            if(_controlBus != null)
+            if (_controlBus != null)
+            {
                 //_controlBus.Send(duration.TotalSeconds.ToString() + "," + this.ReferenceData.Count);
-                _controlBus.GetQueue().Send(duration.TotalSeconds.ToString() + "," + this.ReferenceData.Count);
+                string message = string.Format("Reply Duration [{0}] | Outstanding Request [{1}]", duration.TotalSeconds, this.ReferenceData.Count - 1);
+
+                _controlBus.GetQueue().Send(message);
+            }
         }
 
         public override Func<ProxyJournal, bool> GetJournalLookupCondition(Message message)

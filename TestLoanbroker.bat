@@ -7,6 +7,9 @@ start CreditBureau creditRequestQueue
 start CreditBureau creditRequestQueue
 
 start loanbroker loanRequestQueue creditrequestQueue creditReplyQueue bankReplyQueue
+
+start ManagementConsole controlbus
+
 REM start loanbroker loanRequestQueue bankReplyQueue
 
 goto label1

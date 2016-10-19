@@ -86,16 +86,16 @@ namespace LoanBroker
                 s_performanceStats.Clear();
             }
 
-            //if (_controlBus != null)
-            //{
-            //    SummaryStat stat = new SummaryStat
-            //    {
-            //        PerformanceStats = currentPerformanceStats,
-            //        QueueStats = currentQueueStats
-            //    };
+            if (_controlBus != null)
+            {
+                SummaryStat stat = new SummaryStat
+                {
+                    PerformanceStats = currentPerformanceStats,
+                    QueueStats = currentQueueStats
+                };
 
-            //    _controlBus.GetQueue().Send(stat);
-            //}
+                //_controlBus.GetQueue().Send(stat);
+            }
         }
     }
 }
