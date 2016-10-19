@@ -12,6 +12,12 @@ namespace LoanBroker
 {
     public class LoanBrokerProxyReplyConsumer : SmartProxyReplyConsumer<MessageQueue, Message, ProxyJournal>
     {
+        public class LoanBrokerProxyInfo
+        {
+            public string Content { get; set; }
+            public string Detail { get; set; }
+        }
+
         private ArrayList _queueStats;
         private ArrayList _performanceStats;
         private IMessageSender<MessageQueue, Message> _controlBus;
@@ -41,9 +47,15 @@ namespace LoanBroker
             if (_controlBus != null)
             {
                 //_controlBus.Send(duration.TotalSeconds.ToString() + "," + this.ReferenceData.Count);
-                string message = string.Format("Reply Duration [{0}] | Outstanding Request [{1}]", duration.TotalSeconds, this.ReferenceData.Count - 1);
 
-                _controlBus.GetQueue().Send(message);
+                LoanBrokerProxyInfo info = new LoanBrokerProxyInfo
+                {
+                    Detail =
+                        string.Format("Reply Duration [{0}] | Outstanding Request [{1}]", duration.TotalSeconds,
+                            this.ReferenceData.Count - 1)
+                };
+
+                _controlBus.GetQueue().Send(info);
             }
         }
 

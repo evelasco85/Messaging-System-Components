@@ -21,6 +21,7 @@ namespace LoanBroker
 
     public class SummaryStat
     {
+        public string Content { get; set; }
         public ArrayList PerformanceStats { get; set; }
         public ArrayList QueueStats { get; set; }
     }
@@ -94,7 +95,7 @@ namespace LoanBroker
                     QueueStats = currentQueueStats
                 };
 
-                //_controlBus.GetQueue().Send(stat);
+                _controlBus.GetQueue().Send(stat);
             }
         }
     }
