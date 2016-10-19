@@ -22,8 +22,10 @@ namespace LoanBroker
     public class SummaryStat
     {
         public string Content { get; set; }
-        public ArrayList PerformanceStats { get; set; }
-        public ArrayList QueueStats { get; set; }
+        //public ArrayList PerformanceStats { get; set; }
+        //public ArrayList QueueStats { get; set; }
+        public double AverageReplyDuration { get; set; }
+        public double AverageOutstandingRequest { get; set; }
     }
 
     public class LoanBrokerProxy : SmartProxyBase<MessageQueue, Message, ProxyJournal>, IDisposable
@@ -89,10 +91,21 @@ namespace LoanBroker
 
             if (_controlBus != null)
             {
+                double performanceCount = (currentPerformanceStats.Count > 0) ? currentPerformanceStats.Count : 1;
+                double queueCount = (currentQueueStats.Count > 0) ? currentQueueStats.Count : 1;
+
                 SummaryStat stat = new SummaryStat
                 {
-                    PerformanceStats = currentPerformanceStats,
-                    QueueStats = currentQueueStats
+                    //PerformanceStats = currentPerformanceStats,
+                    //QueueStats = currentQueueStats,
+                    AverageReplyDuration = currentPerformanceStats
+                        .ToArray()
+                        .Select(statData => Convert.ToDouble(statData))
+                        .Sum() / performanceCount,
+                    AverageOutstandingRequest = currentQueueStats
+                        .ToArray()
+                        .Select(statData => Convert.ToDouble(statData))
+                        .Sum() / queueCount,
                 };
 
                 _controlBus.GetQueue().Send(stat);

@@ -38,9 +38,10 @@ namespace LoanBroker
         public override void AnalyzeMessage(IMessageReferenceData<MessageQueue, ProxyJournal> reference, Message replyMessage)
         {
             TimeSpan duration = DateTime.Now - replyMessage.SentTime;
+            int outstandingReferenceDataCount = this.ReferenceData.Count - 1;
 
             _performanceStats.Add(duration.TotalSeconds);
-            _queueStats.Add(this.ReferenceData.Count);
+            _queueStats.Add(outstandingReferenceDataCount);
 
             Console.WriteLine("--->service reply processing time: {0:f}", duration.TotalSeconds);
 
@@ -52,7 +53,7 @@ namespace LoanBroker
                 {
                     Detail =
                         string.Format("Reply Duration [{0}] | Outstanding Request [{1}]", duration.TotalSeconds,
-                            this.ReferenceData.Count - 1)
+                            outstandingReferenceDataCount)
                 };
 
                 _controlBus.GetQueue().Send(info);
