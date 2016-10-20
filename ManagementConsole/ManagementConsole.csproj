@@ -52,7 +52,7 @@
     <Compile Include="ManagementConsole.Designer.cs">
       <DependentUpon>ManagementConsole.cs</DependentUpon>
     </Compile>
-    <Compile Include="Monitor.cs" />
+    <Compile Include="MonitorCreditBureau.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ManagementConsole.resx">

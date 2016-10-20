@@ -8,10 +8,10 @@ namespace Messaging.Base.System_Management.SmartProxy
         IReturnAddress<TMessage> _serviceReplyReturnAddress;
 
         public SmartProxySmartProxyRequestConsumer(
-            IMessageReceiver<TMessageQueue, TMessage> requestMonitorReceiver,
+            IMessageReceiver<TMessageQueue, TMessage> requestReceiver,
             IMessageSender<TMessageQueue, TMessage> serviceRequestSender,
             IReturnAddress<TMessage> serviceReplyReturnAddress
-            ) : base(requestMonitorReceiver)
+            ) : base(requestReceiver)
         {
             _serviceRequestSender = serviceRequestSender;
             _serviceReplyReturnAddress = serviceReplyReturnAddress;

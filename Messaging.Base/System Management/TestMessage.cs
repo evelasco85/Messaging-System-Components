@@ -18,8 +18,8 @@ namespace Messaging.Base.System_Management
             IMessageSender<TMessageQueue, TMessage> controlBusQueue,
             IMessageSender<TMessageQueue, TMessage> serviceQueue,
             IReturnAddress<TMessage> monitorQueueReturnAddress,
-            IMessageReceiver<TMessageQueue, TMessage> monitorReceiver)
-            : base(monitorReceiver)
+            IMessageReceiver<TMessageQueue, TMessage> receiver)
+            : base(receiver)
         {
             _controlBusQueue = controlBusQueue;
             _monitorQueueReturnAddress = monitorQueueReturnAddress;

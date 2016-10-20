@@ -24,11 +24,11 @@ namespace LoanBroker
 
         public LoanBrokerProxySmartProxyReplyConsumer
             (
-            IMessageReceiver<MessageQueue, Message> serviceReplyMonitorReceiver,
+            IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             ArrayList queueStats,
             ArrayList performanceStats,
             IMessageSender<MessageQueue, Message> controlBus
-            ) : base(serviceReplyMonitorReceiver)
+            ) : base(serviceReplyReceiver)
         {
             _queueStats = queueStats;
             _performanceStats = performanceStats;

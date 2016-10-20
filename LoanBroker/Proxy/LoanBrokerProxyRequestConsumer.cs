@@ -17,12 +17,12 @@ namespace LoanBroker
         ArrayList _queueStats;
 
         public LoanBrokerProxySmartProxyRequestConsumer(
-            IMessageReceiver<MessageQueue, Message> requestMonitorReceiver,
+            IMessageReceiver<MessageQueue, Message> requestReceiver,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
             IReturnAddress<Message> serviceReplyReturnAddress,
             ArrayList queueStats
             )
-            : base(requestMonitorReceiver, serviceRequestSender, serviceReplyReturnAddress)
+            : base(requestReceiver, serviceRequestSender, serviceReplyReturnAddress)
         {
             _queueStats = queueStats;
         }

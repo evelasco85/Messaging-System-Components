@@ -31,7 +31,7 @@ namespace ManagementConsole
         public string MessageBody { get; set; }
     }
 
-    public class Monitor : TestMessage<MessageQueue, Message>, IDisposable
+    public class MonitorCreditBureau : TestMessage<MessageQueue, Message>, IDisposable
     {
         private Timer _sendTimer;
         private Timer _timeoutTimer;
@@ -59,7 +59,7 @@ namespace ManagementConsole
             }
         }
 
-        public Monitor(
+        public MonitorCreditBureau(
             string controlBusQueueName,
             string serviceQueueName, string monitorQueueName,
             int secondsInterval, int timeoutSecondsInterval

@@ -16,7 +16,7 @@ namespace ManagementConsole
     public partial class ManagementConsole : Form
     {
         private ControlBusConsumer _controlBus;
-        private Monitor _monitor;
+        private MonitorCreditBureau _monitor;
 
         public ManagementConsole(String[] args)
         {
@@ -29,7 +29,7 @@ namespace ManagementConsole
                     this.ProcessMessage
                     );
 
-                _monitor = new Monitor(
+                _monitor = new MonitorCreditBureau(
                     ToPath(args[0]),
                     ToPath(args[1]),
                     ToPath(args[2]),

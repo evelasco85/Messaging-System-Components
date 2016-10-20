@@ -19,10 +19,10 @@ namespace Messaging.Base.System_Management.SmartProxy
         {
         }
 
-        public MessageConsumer(IMessageReceiver<TMessageQueue, TMessage> monitorReceiver)
-            : this((IMessageCore<TMessageQueue>)monitorReceiver)
+        public MessageConsumer(IMessageReceiver<TMessageQueue, TMessage> receiver)
+            : this((IMessageCore<TMessageQueue>)receiver)
         {
-            monitorReceiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(ProcessMessage);
+            receiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(ProcessMessage);
         }
 
         public void Process()
