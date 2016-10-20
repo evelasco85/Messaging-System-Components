@@ -10,6 +10,7 @@ using CommonObjects;
 using MessageGateway;
 using Messaging.Base;
 using Messaging.Base.Constructions;
+using Messaging.Base.System_Management;
 using Messaging.Base.System_Management.SmartProxy;
 using MsmqGateway;
 
@@ -30,14 +31,11 @@ namespace ManagementConsole
         public string MessageBody { get; set; }
     }
 
-    public class Monitor : MessageConsumer<MessageQueue, Message>, IDisposable
+    public class Monitor : TestMessage<MessageQueue, Message>, IDisposable
     {
         private Timer _sendTimer;
         private Timer _timeoutTimer;
-        private static IMessageReceiver<MessageQueue, Message> s_monitorQueue;
-        private IMessageSender<MessageQueue, Message> _controlBusQueue;
-        private IReturnAddress<Message> _monitorQueueReturnAddress;
-        private IMessageSender<MessageQueue, Message> _serviceQueue;
+        
 
         private int _ssn = 123;
         Guid _monitorId = Guid.NewGuid();
@@ -63,16 +61,18 @@ namespace ManagementConsole
 
         public Monitor(
             string controlBusQueueName,
-            string serviceQueueName, string monitorQueueName, 
+            string serviceQueueName, string monitorQueueName,
             int secondsInterval, int timeoutSecondsInterval
             )
-            : base(s_monitorQueue  = new MessageReceiverGateway(monitorQueueName))
+            : base(
+                new MessageSenderGateway(controlBusQueueName),
+                new MessageSenderGateway(serviceQueueName),
+                new MQReturnAddress(new MessageSenderGateway(monitorQueueName)),
+                new MessageReceiverGateway(monitorQueueName)
+                )
         {
             _millisecondsInterval = secondsInterval*1000;
             _timeoutMillisecondsInterval = timeoutSecondsInterval*1000;
-            _controlBusQueue = new MessageSenderGateway(controlBusQueueName);
-            _monitorQueueReturnAddress = new MQReturnAddress(s_monitorQueue);
-            _serviceQueue = new MessageSenderGateway(serviceQueueName);
 
             ActivateTimer();
         }
@@ -87,7 +87,7 @@ namespace ManagementConsole
                 MonitorID = _monitorId
             };
 
-            _controlBusQueue.Send(new Message(status));
+            SendControlBusStatus(new Message(status));
 
             _lastStatus = status.Status;
         }
@@ -102,8 +102,7 @@ namespace ManagementConsole
 
             requestMessage.Priority = MessagePriority.AboveNormal;
 
-            _monitorQueueReturnAddress.SetMessageReturnAddress(ref requestMessage);
-            _serviceQueue.Send(requestMessage);
+            SendTestMessage(requestMessage);
 
             _correlationId = requestMessage.Id;
 
@@ -119,7 +118,7 @@ namespace ManagementConsole
                 MonitorID = _monitorId
             };
 
-            _controlBusQueue.Send(new Message(status));
+            SendControlBusStatus(new Message(status));
 
             _lastStatus = status.Status;
 
@@ -128,7 +127,7 @@ namespace ManagementConsole
             _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
         }
 
-        public override void ProcessMessage(Message message)
+        public override void ReceiveTestMessageResponse(Message message)
         {
             if (_timeoutTimer != null)
                 _timeoutTimer.Dispose();
@@ -187,7 +186,7 @@ namespace ManagementConsole
                 (status.Status != MonitorStatus.STATUS_OK) ||
                 ((status.Status == MonitorStatus.STATUS_OK) && (_lastStatus != MonitorStatus.STATUS_OK))
                 )
-                _controlBusQueue.Send(new Message(status));
+                SendControlBusStatus(new Message(status));
 
             _lastStatus = status.Status;
 

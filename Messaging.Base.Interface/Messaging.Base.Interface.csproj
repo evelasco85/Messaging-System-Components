@@ -46,6 +46,7 @@
     <Compile Include="IQueueGateway.cs" />
     <Compile Include="IMessageReceiver.cs" />
     <Compile Include="IMessageSender.cs" />
+    <Compile Include="System Management\ITestMessage.cs" />
     <Compile Include="System Management\SmartProxy\ISmartProxyRequestConsumer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IQueueService.cs" />

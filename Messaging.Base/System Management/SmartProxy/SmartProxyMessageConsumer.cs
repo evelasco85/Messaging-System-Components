@@ -27,7 +27,7 @@ namespace Messaging.Base.System_Management.SmartProxy
         {
         }
 
-        public SmartProxySmartProxyMessageConsumer(IMessageReceiver<TMessageQueue, TMessage> receiver) : base(receiver)
+        public SmartProxySmartProxyMessageConsumer(IMessageReceiver<TMessageQueue, TMessage> monitorReceiver) : base(monitorReceiver)
         {
         }
     }
