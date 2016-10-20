@@ -14,8 +14,17 @@ namespace MessageGateway{
 	
 	public class MessageSenderGateway: SenderGateway<MessageQueue, Message>
     {
-        public MessageSenderGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
-        {}
+	    public MessageSenderGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
+	    {
+            GetQueue().MessageReadPropertyFilter.ClearAll();
+            GetQueue().MessageReadPropertyFilter.AppSpecific = true;
+            GetQueue().MessageReadPropertyFilter.Body = true;
+            GetQueue().MessageReadPropertyFilter.CorrelationId = true;
+            GetQueue().MessageReadPropertyFilter.Id = true;
+            GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
+            GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
+            GetQueue().MessageReadPropertyFilter.SentTime = true;
+	    }
 
         public MessageSenderGateway(String q) : this(new MessageQueueGateway(q))
         { }

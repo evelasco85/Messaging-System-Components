@@ -18,6 +18,14 @@ namespace MessageGateway{
 
         public MessageReceiverGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
         {
+            GetQueue().MessageReadPropertyFilter.ClearAll();
+            GetQueue().MessageReadPropertyFilter.AppSpecific = true;
+            GetQueue().MessageReadPropertyFilter.Body = true;
+            GetQueue().MessageReadPropertyFilter.CorrelationId = true;
+            GetQueue().MessageReadPropertyFilter.Id = true;
+            GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
+            GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
+            GetQueue().MessageReadPropertyFilter.SentTime = true;
         }
 
         public MessageReceiverGateway(String q) : this(new MessageQueueGateway(q))
@@ -43,15 +51,7 @@ namespace MessageGateway{
         public MessageReceiverGateway(String q, IMessageFormatter formatter) : this(q)
         {
             GetQueue().Formatter = formatter;
-            GetQueue().MessageReadPropertyFilter.ClearAll();
-            GetQueue().MessageReadPropertyFilter.AppSpecific = true;
-            GetQueue().MessageReadPropertyFilter.Body = true;
-            GetQueue().MessageReadPropertyFilter.CorrelationId = true;
-            GetQueue().MessageReadPropertyFilter.Id = true;
-            GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
-            GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
-            GetQueue().MessageReadPropertyFilter.SentTime = true;
-
+            
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 

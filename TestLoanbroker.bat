@@ -8,7 +8,7 @@ start CreditBureau creditRequestQueue
 
 start loanbroker loanRequestQueue creditrequestQueue creditReplyQueue bankReplyQueue
 
-start ManagementConsole controlbus
+start ManagementConsole controlbusQueue creditRequestQueue monitorQueue 
 
 REM start loanbroker loanRequestQueue bankReplyQueue
 

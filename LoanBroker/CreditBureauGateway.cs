@@ -9,8 +9,8 @@
 using System;
 using System.Messaging;
 using System.Collections;
+using CommonObjects;
 using MessageGateway;
-using CreditBureau;
 using Messaging.Base;
 using LoanBroker.CreditBureau;
 using Messaging.Base.Constructions;

@@ -85,6 +85,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonObjects\CommonObjects.csproj">
+      <Project>{4fa085c4-4a66-45a3-a1e4-f81a7fdc5573}</Project>
+      <Name>CommonObjects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Messaging.Base.Interface\Messaging.Base.Interface.csproj">
       <Project>{04c09384-803c-46e9-8578-7afbc269a9b0}</Project>
       <Name>Messaging.Base.Interface</Name>
@@ -132,9 +136,6 @@
     <Compile Include="Bank\Banks.cs" />
     <Compile Include="Bank\Connection.cs" />
     <Compile Include="CreditBureauGateway.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CreditBureau\Model\Request_Reply_Stub.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LoanBroker\Translators\BankQuoteRequestTranslator.cs" />

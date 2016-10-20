@@ -1,5 +1,4 @@
 ﻿using Bank;
-using CreditBureau;
 using LoanBroker.CreditBureau;
 using LoanBroker.Models.LoanBroker;
 using Messaging.Base.Routing;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Messaging;
 using System.Text;
+using CommonObjects;
 
 namespace LoanBroker.LoanBroker
 {

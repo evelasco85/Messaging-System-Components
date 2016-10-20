@@ -52,6 +52,7 @@
     <Compile Include="ManagementConsole.Designer.cs">
       <DependentUpon>ManagementConsole.cs</DependentUpon>
     </Compile>
+    <Compile Include="Monitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ManagementConsole.resx">
@@ -80,6 +81,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonObjects\CommonObjects.csproj">
+      <Project>{4fa085c4-4a66-45a3-a1e4-f81a7fdc5573}</Project>
+      <Name>CommonObjects</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Messaging.Base.Interface\Messaging.Base.Interface.csproj">
       <Project>{04c09384-803c-46e9-8578-7afbc269a9b0}</Project>
       <Name>Messaging.Base.Interface</Name>

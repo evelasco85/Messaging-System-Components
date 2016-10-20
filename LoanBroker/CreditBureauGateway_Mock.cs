@@ -8,7 +8,7 @@
 
 using System;
 using System.Messaging;
-using CreditBureau;
+using CommonObjects;
 using LoanBroker.CreditBureau;
 
 namespace LoanBroker
