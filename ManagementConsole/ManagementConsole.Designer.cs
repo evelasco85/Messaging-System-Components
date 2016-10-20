@@ -33,7 +33,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtMonitorData = new System.Windows.Forms.TextBox();
+            this.txtCreditBureauStatus = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txtLoanBrokerResponseData
@@ -80,18 +80,18 @@
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(12, 99);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(84, 13);
+            this.label3.Size = new System.Drawing.Size(134, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Monitor Data:";
+            this.label3.Text = "Monitor Credit Bureau:";
             // 
-            // txtMonitorData
+            // txtCreditBureauStatus
             // 
-            this.txtMonitorData.Location = new System.Drawing.Point(12, 115);
-            this.txtMonitorData.Multiline = true;
-            this.txtMonitorData.Name = "txtMonitorData";
-            this.txtMonitorData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMonitorData.Size = new System.Drawing.Size(473, 146);
-            this.txtMonitorData.TabIndex = 4;
+            this.txtCreditBureauStatus.Location = new System.Drawing.Point(12, 115);
+            this.txtCreditBureauStatus.Multiline = true;
+            this.txtCreditBureauStatus.Name = "txtCreditBureauStatus";
+            this.txtCreditBureauStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtCreditBureauStatus.Size = new System.Drawing.Size(473, 146);
+            this.txtCreditBureauStatus.TabIndex = 4;
             // 
             // ManagementConsole
             // 
@@ -99,7 +99,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(497, 701);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtMonitorData);
+            this.Controls.Add(this.txtCreditBureauStatus);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtLoanBrokerStatData);
@@ -119,7 +119,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtMonitorData;
+        private System.Windows.Forms.TextBox txtCreditBureauStatus;
     }
 }
 

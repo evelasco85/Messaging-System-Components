@@ -182,10 +182,12 @@ namespace ManagementConsole
                 status.MessageBody = reader.ReadToEnd();
             }
 
-            if (
+            bool statusHasChanges = (
                 (status.Status != MonitorStatus.STATUS_OK) ||
                 ((status.Status == MonitorStatus.STATUS_OK) && (_lastStatus != MonitorStatus.STATUS_OK))
-                )
+                );
+
+            if (statusHasChanges)
                 SendControlBusStatus(new Message(status));
 
             _lastStatus = status.Status;

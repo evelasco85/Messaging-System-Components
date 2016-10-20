@@ -121,7 +121,7 @@ namespace ManagementConsole
                         DateTime.Now.ToString("T")
                         );
 
-                    this.txtMonitorData.Text = message + Environment.NewLine + this.txtMonitorData.Text;
+                    this.txtCreditBureauStatus.Text = message + Environment.NewLine + this.txtCreditBureauStatus.Text;
                 }));
             }
         }
