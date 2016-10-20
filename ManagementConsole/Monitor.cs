@@ -87,7 +87,7 @@ namespace ManagementConsole
                 MonitorID = _monitorId
             };
 
-            _controlBusQueue.GetQueue().Send(status);
+            _controlBusQueue.Send(new Message(status));
 
             _lastStatus = status.Status;
         }
@@ -119,7 +119,7 @@ namespace ManagementConsole
                 MonitorID = _monitorId
             };
 
-            _controlBusQueue.GetQueue().Send(status);
+            _controlBusQueue.Send(new Message(status));
 
             _lastStatus = status.Status;
 
@@ -187,7 +187,7 @@ namespace ManagementConsole
                 (status.Status != MonitorStatus.STATUS_OK) ||
                 ((status.Status == MonitorStatus.STATUS_OK) && (_lastStatus != MonitorStatus.STATUS_OK))
                 )
-                _controlBusQueue.GetQueue().Send(status);
+                _controlBusQueue.Send(new Message(status));
 
             _lastStatus = status.Status;
 
