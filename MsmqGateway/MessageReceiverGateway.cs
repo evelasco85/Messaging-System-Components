@@ -9,12 +9,15 @@
 using System.Messaging;
 using System;
 using Messaging.Base;
+using Messaging.Base.Constructions;
+using MsmqGateway;
 
 namespace MessageGateway{
-	public class MessageReceiverGateway :
-        ReceiverGateway<MessageQueue, Message>{
-		
-		private MessageDelegate<Message> _receivedMessageProcessor;
+    public class MessageReceiverGateway :
+        ReceiverGateway<MessageQueue, Message>
+    {
+        private IReturnAddress<Message> _returnAddress;
+        private MessageDelegate<Message> _receivedMessageProcessor;
 
         public MessageReceiverGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
         {
@@ -26,6 +29,8 @@ namespace MessageGateway{
             GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
             GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
             GetQueue().MessageReadPropertyFilter.SentTime = true;
+
+            _returnAddress = new MQReturnAddress(messageQueueGateway);
         }
 
         public MessageReceiverGateway(String q) : this(new MessageQueueGateway(q))
@@ -38,10 +43,10 @@ namespace MessageGateway{
             this._receivedMessageProcessor = receiveMessageDelegate;
         }
 
-        public MessageReceiverGateway(MessageQueue q): this(new MessageQueueGateway(q))
+        public MessageReceiverGateway(MessageQueue q) : this(new MessageQueueGateway(q))
         {
-			this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
-		}
+            this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
+        }
 
         public MessageReceiverGateway(MessageQueue q, MessageDelegate<Message> receiveMessageDelegate) : this(q)
         {
@@ -51,41 +56,49 @@ namespace MessageGateway{
         public MessageReceiverGateway(String q, IMessageFormatter formatter) : this(q)
         {
             GetQueue().Formatter = formatter;
-            
+
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 
-        public MessageReceiverGateway(String q, IMessageFormatter formatter, MessageDelegate<Message> receiveMessageDelegate)
-               : this(q, formatter)
+        public MessageReceiverGateway(String q, IMessageFormatter formatter,
+            MessageDelegate<Message> receiveMessageDelegate)
+            : this(q, formatter)
         {
             this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
         public override MessageDelegate<Message> ReceiveMessageProcessor
-        { 
-			get { return _receivedMessageProcessor; }  
-			set { _receivedMessageProcessor = value; }
-		}
-		
-		private void NullImpl(Message msg){}
-		
+        {
+            get { return _receivedMessageProcessor; }
+            set { _receivedMessageProcessor = value; }
+        }
+
+        private void NullImpl(Message msg)
+        {
+        }
+
         public override void StartReceivingMessages()
         {
             GetQueue().Formatter =
                 new System.Messaging.XmlMessageFormatter(new String[] {"System.String,mscorlib"});
-			GetQueue().ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
-			GetQueue().BeginReceive();
-		}
-		
-		private void OnReceiveCompleted(Object source, ReceiveCompletedEventArgs asyncResult)
-		{
-			MessageQueue mq = (MessageQueue)source;
-			Message m = mq.EndReceive(asyncResult.AsyncResult);
+            GetQueue().ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
+            GetQueue().BeginReceive();
+        }
 
-            if(_receivedMessageProcessor != null)
+        private void OnReceiveCompleted(Object source, ReceiveCompletedEventArgs asyncResult)
+        {
+            MessageQueue mq = (MessageQueue) source;
+            Message m = mq.EndReceive(asyncResult.AsyncResult);
+
+            if (_receivedMessageProcessor != null)
                 _receivedMessageProcessor.Invoke(m);
 
-			mq.BeginReceive(); 
-		}	
-	}
+            mq.BeginReceive();
+        }
+
+        public override IReturnAddress<Message> AsReturnAddress()
+        {
+            return _returnAddress;
+        }
+    }
 }

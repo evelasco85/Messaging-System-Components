@@ -9,11 +9,15 @@
 using Messaging.Base;
 using System;
 using System.Messaging;
+using Messaging.Base.Constructions;
+using MsmqGateway;
 
 namespace MessageGateway{
 	
 	public class MessageSenderGateway: SenderGateway<MessageQueue, Message>
-    {
+	{
+        private IReturnAddress<Message> _returnAddress;
+
 	    public MessageSenderGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
 	    {
             GetQueue().MessageReadPropertyFilter.ClearAll();
@@ -24,6 +28,8 @@ namespace MessageGateway{
             GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
             GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
             GetQueue().MessageReadPropertyFilter.SentTime = true;
+
+            _returnAddress = new MQReturnAddress(messageQueueGateway);
 	    }
 
         public MessageSenderGateway(String q) : this(new MessageQueueGateway(q))
@@ -32,7 +38,12 @@ namespace MessageGateway{
         public MessageSenderGateway(MessageQueue queue) : this(new MessageQueueGateway(queue))
         { }
 
-		public override void Send(Message msg){
+	    public override IReturnAddress<Message> AsReturnAddress()
+	    {
+	        return _returnAddress;
+	    }
+
+	    public override void Send(Message msg){
 			GetQueue().Send(msg);
 		}	
 	}

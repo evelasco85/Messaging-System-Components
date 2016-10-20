@@ -41,7 +41,6 @@ namespace LoanBroker {
                 _loanBrokerProxy = new LoanBrokerProxy(
                     new MessageReceiverGateway(requestQueueName, GetLoanRequestFormatter()),
                     new MessageSenderGateway(proxyRequestQueue),
-                    new MQReturnAddress(proxyReplyReceiver),
                     proxyReplyReceiver,
                     new MessageSenderGateway(".\\private$\\controlbusQueue"),
                     3);

@@ -17,12 +17,11 @@ namespace Messaging.Base.System_Management
         public TestMessage(
             IMessageSender<TMessageQueue, TMessage> controlBusQueue,
             IMessageSender<TMessageQueue, TMessage> serviceQueue,
-            IReturnAddress<TMessage> monitorQueueReturnAddress,
             IMessageReceiver<TMessageQueue, TMessage> receiver)
             : base(receiver)
         {
             _controlBusQueue = controlBusQueue;
-            _monitorQueueReturnAddress = monitorQueueReturnAddress;
+            _monitorQueueReturnAddress = receiver.AsReturnAddress();
             _serviceQueue = serviceQueue;
         }
 

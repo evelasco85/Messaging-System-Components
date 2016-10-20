@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
@@ -17,6 +18,8 @@ namespace Messaging.Base
         {
             return _queueGateway.GetQueue();
         }
+
+        public abstract IReturnAddress<TMessage> AsReturnAddress();
 
         public abstract void Send(TMessage message);
     }

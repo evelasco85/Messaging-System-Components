@@ -67,7 +67,6 @@ namespace ManagementConsole
             : base(
                 new MessageSenderGateway(controlBusQueueName),
                 new MessageSenderGateway(serviceQueueName),
-                new MQReturnAddress(new MessageSenderGateway(monitorQueueName)),
                 new MessageReceiverGateway(monitorQueueName)
                 )
         {

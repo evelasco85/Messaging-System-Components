@@ -6,6 +6,8 @@
  * This code is supplied as is. No warranties. 
  */
 
+using Messaging.Base.Constructions;
+
 namespace Gateway.Mock
 {
 
@@ -42,6 +44,10 @@ namespace Gateway.Mock
         {
             return null;
         }
-	
+
+        public IReturnAddress<Message> AsReturnAddress()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

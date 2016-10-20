@@ -45,7 +45,7 @@ namespace Test
             replyQueue = new MessageReceiverGateway(replyQueueName, GetFormatter());
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
 
-            _loanBroakerReturnAddress = new MQReturnAddress(replyQueue);
+            _loanBroakerReturnAddress = replyQueue.AsReturnAddress();
 
             
             this.numMessages = numMessages;

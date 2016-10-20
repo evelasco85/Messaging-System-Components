@@ -37,7 +37,7 @@ namespace LoanBroker
             this.connectionManager = connectionManager; 
             aggregationCorrelationID = 0;
 
-            _bankReturnAddress = new MQReturnAddress(bankReplyQueue);
+            _bankReturnAddress = bankReplyQueue.AsReturnAddress();
         }
 
         public static IMessageFormatter GetFormatter()

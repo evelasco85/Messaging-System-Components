@@ -42,7 +42,7 @@ namespace Test
 
             replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
-            _bankReturnAddress = new MQReturnAddress(replyQueue);
+            _bankReturnAddress = replyQueue.AsReturnAddress();
 
             this.numMessages = numMessages;
 

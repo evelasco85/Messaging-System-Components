@@ -4,6 +4,7 @@ using System.Linq;
 using System.Messaging;
 using System.Text;
 using System.Threading.Tasks;
+using Messaging.Base.Constructions;
 
 namespace Messaging.Base.Tests
 {
@@ -18,6 +19,11 @@ namespace Messaging.Base.Tests
 
         public override void Send(Message message)
         {
+        }
+
+        public override IReturnAddress<Message> AsReturnAddress()
+        {
+            throw new NotImplementedException();
         }
     }
 

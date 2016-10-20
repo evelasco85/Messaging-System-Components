@@ -55,7 +55,7 @@ namespace LoanBroker
             this.creditReplyQueue = creditReplyQueue;
             this.creditReplyQueue.ReceiveMessageProcessor += responseDelegate;
 
-            _creditReturnAddress = new MQReturnAddress(creditReplyQueue);
+            _creditReturnAddress = creditReplyQueue.AsReturnAddress();
         }
 
         public static IMessageFormatter	GetFormatter()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
@@ -12,6 +13,7 @@ namespace Messaging.Base
             set;
         }
 
+        IReturnAddress<TMessage> AsReturnAddress();
         void StartReceivingMessages();
     }
 }

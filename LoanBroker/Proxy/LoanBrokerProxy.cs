@@ -49,11 +49,10 @@ namespace LoanBroker
         public LoanBrokerProxy(
             IMessageReceiver<MessageQueue, Message> input,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
-            IReturnAddress<Message> serviceReplyReturnAddress,
             IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             IMessageSender<MessageQueue, Message> controlBus,
             int interval): base(
-                new LoanBrokerProxySmartProxyRequestConsumer(input, serviceRequestSender, serviceReplyReturnAddress, s_queueStats),
+                new LoanBrokerProxySmartProxyRequestConsumer(input, serviceRequestSender, serviceReplyReceiver.AsReturnAddress(), s_queueStats),
                 new LoanBrokerProxySmartProxyReplyConsumer(serviceReplyReceiver, s_queueStats, s_performanceStats, controlBus)
             )
         {
