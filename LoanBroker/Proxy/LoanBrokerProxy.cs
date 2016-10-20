@@ -53,8 +53,8 @@ namespace LoanBroker
             IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
             IMessageSender<MessageQueue, Message> controlBus,
             int interval): base(
-                new LoanBrokerProxyRequestConsumer(input, serviceRequestSender, serviceReplyReturnAddress, s_queueStats),
-                new LoanBrokerProxyReplyConsumer(serviceReplyReceiver, s_queueStats, s_performanceStats, controlBus)
+                new LoanBrokerProxySmartProxyRequestConsumer(input, serviceRequestSender, serviceReplyReturnAddress, s_queueStats),
+                new LoanBrokerProxySmartProxyReplyConsumer(serviceReplyReceiver, s_queueStats, s_performanceStats, controlBus)
             )
         {
             _controlBus = controlBus;

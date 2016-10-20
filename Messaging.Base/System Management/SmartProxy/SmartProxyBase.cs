@@ -9,29 +9,29 @@ namespace Messaging.Base.System_Management.SmartProxy
 {
     public class SmartProxyBase<TMessageQueue, TMessage, TJournal> : ISmartProxyBase
     {
-        ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> _requestConsumer;
-        ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> _replyConsumer;
+        ISmartProxyRequestSmartProxyConsumer<TMessageQueue, TMessage, TJournal> _requestSmartProxyConsumer;
+        ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, TJournal> _replySmartProxyConsumer;
         
         protected IList<IMessageReferenceData<TMessageQueue, TJournal>> _referenceData;
 
         public SmartProxyBase(
-            ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> requestConsumer,
-            ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> replyConsumer)
+            ISmartProxyRequestSmartProxyConsumer<TMessageQueue, TMessage, TJournal> requestSmartProxyConsumer,
+            ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, TJournal> replySmartProxyConsumer)
         {
             _referenceData = new List<IMessageReferenceData<TMessageQueue, TJournal>>();
 
-            _requestConsumer = requestConsumer;
-            _replyConsumer = replyConsumer;
+            _requestSmartProxyConsumer = requestSmartProxyConsumer;
+            _replySmartProxyConsumer = replySmartProxyConsumer;
 
-            _requestConsumer.ReferenceData = _referenceData;
-            _replyConsumer.ReferenceData = _referenceData;
+            _requestSmartProxyConsumer.ReferenceData = _referenceData;
+            _replySmartProxyConsumer.ReferenceData = _referenceData;
         }
 
         //Start listening incoming messages
         public virtual void Process()
         {
-            _requestConsumer.Process();     
-            _replyConsumer.Process();
+            _requestSmartProxyConsumer.Process();     
+            _replySmartProxyConsumer.Process();
         }
     }
 }

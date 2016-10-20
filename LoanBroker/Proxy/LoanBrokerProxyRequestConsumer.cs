@@ -12,11 +12,11 @@ using MsmqGateway;
 
 namespace LoanBroker
 {
-    public class LoanBrokerProxyRequestConsumer : SmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal>
+    public class LoanBrokerProxySmartProxyRequestConsumer : SmartProxySmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal>
     {
         ArrayList _queueStats;
 
-        public LoanBrokerProxyRequestConsumer(
+        public LoanBrokerProxySmartProxyRequestConsumer(
             IMessageReceiver<MessageQueue, Message> requestReceiver,
             IMessageSender<MessageQueue, Message> serviceRequestSender,
             IReturnAddress<Message> serviceReplyReturnAddress,

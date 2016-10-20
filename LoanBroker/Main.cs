@@ -44,7 +44,7 @@ namespace LoanBroker {
                     new MQReturnAddress(proxyReplyReceiver),
                     proxyReplyReceiver,
                     new MessageSenderGateway(".\\private$\\controlbus"),
-                    10);
+                    3);
 
                 _loanBrokerProxy.Process();
 

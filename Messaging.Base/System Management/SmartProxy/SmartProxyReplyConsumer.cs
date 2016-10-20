@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public abstract class SmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal>
+    public abstract class SmartProxySmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : SmartProxySmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, TJournal>
     {
-        public SmartProxyReplyConsumer(
+        public SmartProxySmartProxyReplyConsumer(
             IMessageReceiver<TMessageQueue, TMessage> serviceReplyReceiver
             ) : base(serviceReplyReceiver)
         {

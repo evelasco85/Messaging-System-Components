@@ -50,6 +50,7 @@
     <Compile Include="Routing\ProcessManager.cs" />
     <Compile Include="Routing\RecipientList.cs" />
     <Compile Include="SenderGateway.cs" />
+    <Compile Include="System Management\SmartProxy\SmartProxyMessageConsumer.cs" />
     <Compile Include="System Management\SmartProxy\MessageConsumer.cs" />
     <Compile Include="System Management\SmartProxy\SmartProxyBase.cs" />
     <Compile Include="System Management\SmartProxy\SmartProxyReplyConsumer.cs" />

@@ -9,11 +9,7 @@ using Messaging.Base.System_Management.SmartProxy;
 
 namespace ManagementConsole
 {
-    public class NullJournal
-    {
-    }
-
-    public class ControlBusConsumer : MessageConsumer<MessageQueue, Message, NullJournal>
+    public class ControlBusConsumer : MessageConsumer<MessageQueue, Message>
     {
         public delegate  void MessageReceived(Message message);
 
