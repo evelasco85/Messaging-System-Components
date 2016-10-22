@@ -5,6 +5,11 @@ using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
+    /// <summary>
+    /// Abstract implementation for receiving messages
+    /// </summary>
+    /// <typeparam name="TMessageQueue">Type of message queue to listen from</typeparam>
+    /// <typeparam name="TMessage">Type of message to receive</typeparam>
     public abstract class ReceiverGateway<TMessageQueue, TMessage> : IMessageReceiver<TMessageQueue, TMessage>
     {
         IQueueGateway<TMessageQueue> _queueGateway;

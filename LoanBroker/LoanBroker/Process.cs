@@ -35,7 +35,7 @@ namespace LoanBroker.LoanBroker
 
         public override void StartProcess(ProcessManager processor)
         {
-            CreditBureauRequest creditRequest = Translator.GetCreditBureaurequest(_loanRequest);
+            CreditBureauRequest creditRequest = Translator.GetCreditBureauRequest(_loanRequest);
 
             processor.CreditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply));
         }

@@ -6,31 +6,39 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.Transformation
 {
-    public class Translator<TEntityTo> : ITranslator<TEntityTo>
+    /// <summary>
+    /// Translator implementation
+    /// </summary>
+    /// <typeparam name="TOutput">Type of output</typeparam>
+    public class Translator<TOutput> : ITranslator<TOutput>
     {
         IDictionary<string, object> _translators = new Dictionary<string, object>();
+
+        public Translator()
+        {
+        }
 
         string GetKey<TInput>()
         {
             return typeof(TInput).FullName;
         }
 
-        public TEntityTo Translate<TInput>(TInput entity)
+        public TOutput Translate<TInput>(TInput entity)
         {
             string key = GetKey<TInput>();
 
             if (entity == null)
-                return default(TEntityTo);
+                return default(TOutput);
 
             if (!_translators.ContainsKey(key))
                 throw new ArgumentException(string.Format("Translator for input type '{0}' does not exists", key));
 
-            TranslationDelegate<TEntityTo, TInput> translator = (TranslationDelegate<TEntityTo, TInput>)_translators[key];
+            TranslationDelegate<TOutput, TInput> translator = (TranslationDelegate<TOutput, TInput>)_translators[key];
 
             return translator(entity);
         }
 
-        public void RegisterTranslators<TInput>(TranslationDelegate<TEntityTo, TInput> translator)
+        public void RegisterTranslator<TInput>(TranslationDelegate<TOutput, TInput> translator)
         {
             if (translator == null)
                 throw new ArgumentNullException("'translator' implementation is required");

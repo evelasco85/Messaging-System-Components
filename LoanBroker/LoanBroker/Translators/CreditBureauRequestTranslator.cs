@@ -23,7 +23,7 @@ namespace LoanBroker.LoanBroker.Translators
                 return GetCreditBureaurequest(input.LoanRequest);
             };
 
-            RegisterTranslators(translator);
+            RegisterTranslator(translator);
         }
 
         CreditBureauRequest GetCreditBureaurequest(LoanQuoteRequest loanRequest)

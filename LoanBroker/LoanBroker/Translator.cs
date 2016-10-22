@@ -15,7 +15,7 @@ namespace LoanBroker.LoanBroker
         static BankQuoteRequestTranslator _bankQuoteRequestTranslator = new BankQuoteRequestTranslator();
         static CreditBureauRequestTranslator _CreditBureauRequestTranslator = new CreditBureauRequestTranslator();
 
-        public static CreditBureauRequest GetCreditBureaurequest(LoanQuoteRequest loanRequest)
+        public static CreditBureauRequest GetCreditBureauRequest(LoanQuoteRequest loanRequest)
         {
             return _CreditBureauRequestTranslator.Translate(new CreditBureauRequestTranslator.Inputs
             {

@@ -11,6 +11,6 @@ namespace Messaging.Base.Transformation
     public interface ITranslator<TEntityTo>
     {
         TEntityTo Translate<TInput>(TInput entity);
-        void RegisterTranslators<TInput>(TranslationDelegate<TEntityTo, TInput> translator);
+        void RegisterTranslator<TInput>(TranslationDelegate<TEntityTo, TInput> translator);
     }
 }

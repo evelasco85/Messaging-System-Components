@@ -25,7 +25,7 @@ namespace LoanBroker.LoanBroker.Translators
                 return GetBankQuoteRequest(input.LoanRequest, input.CreditReply);
             };
 
-            RegisterTranslators(translator);
+            RegisterTranslator(translator);
         }
 
         BankQuoteRequest GetBankQuoteRequest(LoanQuoteRequest loanRequest, CreditBureauReply creditReply)

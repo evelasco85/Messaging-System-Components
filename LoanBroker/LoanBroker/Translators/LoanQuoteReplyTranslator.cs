@@ -24,7 +24,7 @@ namespace LoanBroker.LoanBroker.Translators
                 return GetLoanQuoteReply(input.LoanRequest, input.BestQuote);
             };
 
-            RegisterTranslators(translator);
+            RegisterTranslator(translator);
         }
 
         LoanQuoteReply GetLoanQuoteReply(LoanQuoteRequest loanRequest, BankQuoteReply bestQuote)

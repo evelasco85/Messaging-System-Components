@@ -5,6 +5,12 @@ using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
+
+    /// <summary>
+    /// Abstract implementation for sending messages
+    /// </summary>
+    /// <typeparam name="TMessageQueue">Type of message queue</typeparam>
+    /// <typeparam name="TMessage">Type of message to send</typeparam>
     public abstract class SenderGateway<TMessageQueue, TMessage> : IMessageSender<TMessageQueue, TMessage>
     {
         IQueueGateway<TMessageQueue> _queueGateway;
