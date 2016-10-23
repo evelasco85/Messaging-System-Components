@@ -2,13 +2,14 @@ if "%1"=="nostart" goto nostart
 
 call runbanks
 
-start CreditBureau creditRequestQueue
-start CreditBureau creditRequestQueue
-start CreditBureau creditRequestQueue
+start CreditBureau primaryCreditRequestQueue
+start CreditBureau backupCreditRequestQueue
+::start CreditBureau creditRequestQueue
 
 start loanbroker loanRequestQueue creditrequestQueue creditReplyQueue bankReplyQueue
 
-start ManagementConsole controlbusQueue creditRequestQueue monitorQueue 
+start ManagementConsole controlbusQueue creditRequestQueue monitorQueue
+start CreditBureauFailOver creditRequestQueue primaryCreditRequestQueue backupCreditRequestQueue
 
 REM start loanbroker loanRequestQueue bankReplyQueue
 

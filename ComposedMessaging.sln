@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanBroker", "LoanBroker\LoanBroker.csproj", "{9D7DC6B7-85AE-4B69-A804-24F34B7DAB1D}"
 EndProject
@@ -25,6 +25,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementConsole", "ManagementConsole\ManagementConsole.csproj", "{6B1EFB63-7063-4141-BA85-2076860ABE9E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonObjects", "CommonObjects\CommonObjects.csproj", "{4FA085C4-4A66-45A3-A1E4-F81A7FDC5573}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditBureauFailOver", "CreditBureauFailOver\CreditBureauFailOver.csproj", "{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,6 +74,10 @@ Global
 		{4FA085C4-4A66-45A3-A1E4-F81A7FDC5573}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FA085C4-4A66-45A3-A1E4-F81A7FDC5573}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FA085C4-4A66-45A3-A1E4-F81A7FDC5573}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,5 +93,6 @@ Global
 		{DB6BA481-039E-4B79-8666-8201607B6232} = {9535CE0A-8891-4E97-B1D6-34212EA43642}
 		{6B1EFB63-7063-4141-BA85-2076860ABE9E} = {9DAEFC8A-4D07-4F9D-9E74-47D7E0789B24}
 		{4FA085C4-4A66-45A3-A1E4-F81A7FDC5573} = {9DAEFC8A-4D07-4F9D-9E74-47D7E0789B24}
+		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE} = {9DAEFC8A-4D07-4F9D-9E74-47D7E0789B24}
 	EndGlobalSection
 EndGlobal

@@ -14,7 +14,6 @@ using MessageGateway;
 using Messaging.Base;
 using LoanBroker.CreditBureau;
 using Messaging.Base.Constructions;
-using MsmqGateway;
 
 namespace LoanBroker
 {
@@ -28,6 +27,7 @@ namespace LoanBroker
     {
         protected IMessageSender<MessageQueue, Message>  creditRequestQueue;
         protected IMessageReceiver<MessageQueue, Message> creditReplyQueue;
+        
         protected Random random = new Random();
 
         IReturnAddress<Message> _creditReturnAddress;
@@ -54,7 +54,6 @@ namespace LoanBroker
             this.creditRequestQueue = creditRequestQueue;
             this.creditReplyQueue = creditReplyQueue;
             this.creditReplyQueue.ReceiveMessageProcessor += responseDelegate;
-
             _creditReturnAddress = creditReplyQueue.AsReturnAddress();
         }
 

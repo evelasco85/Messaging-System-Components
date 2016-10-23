@@ -12,15 +12,15 @@ using MessageGateway;
 using Messaging.Base;
 using LoanBroker.Bank;
 using LoanBroker.LoanBroker;
-using MsmqGateway;
 using LoanBroker.Models.LoanBroker;
 
 namespace LoanBroker {
 
 	internal class Run{
         private static LoanBrokerProxy _loanBrokerProxy;
+        
 
-		public static void Main(String[] args){
+        public static void Main(String[] args){
             MQRequestReplyService_Asynchronous broker;
 
             if (args.Length >= 4) 

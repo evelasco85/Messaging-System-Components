@@ -21,7 +21,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             Func<TJournal, bool> internalJournalLookupCondition = GetJournalLookupCondition(message);
 
             IMessageReferenceData<TMessageQueue, TJournal> matchedReferenceData = this.ReferenceData
-                .Where(reference => internalJournalLookupCondition(reference.InternalJournal))
+                .Where(reference => ((internalJournalLookupCondition != null) && (internalJournalLookupCondition(reference.InternalJournal))))
                 .DefaultIfEmpty(null)
                 .FirstOrDefault();
             /**/

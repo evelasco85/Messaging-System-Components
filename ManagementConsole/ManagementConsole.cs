@@ -33,7 +33,7 @@ namespace ManagementConsole
                     ToPath(args[0]),
                     ToPath(args[1]),
                     ToPath(args[2]),
-                    7,
+                    5,
                     10
                     );
             }

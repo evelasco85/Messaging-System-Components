@@ -23,7 +23,7 @@ namespace ManagementConsole
         public const string STATUS_FAILED_CORRELATION = "Failed Correlation";
         public const string STATUS_INVALID_DATA = "Invalid Data";
         public const string STATUS_INVALID_FORMAT = "Invalid Format";
-        public const string STATUS_OK = "A-OK";
+        public const string STATUS_OK = "A-OK";        
 
         public string Status { get; set; }
         public string Description { get; set; }
@@ -38,12 +38,11 @@ namespace ManagementConsole
         
 
         private int _ssn = 123;
+        const int TEST_MESSAGE_ID = 1230;       //Used as a correlation id for test, 'Message.CorrelationId' will fail on message forwarding mechanism
         Guid _monitorId = Guid.NewGuid();
-        private string _correlationId = string.Empty;
         private int _millisecondsInterval;
         private int _timeoutMillisecondsInterval;
         string _lastStatus = String.Empty;
-
 
         public void Dispose()
         {
@@ -100,10 +99,9 @@ namespace ManagementConsole
             Message requestMessage = new Message(request);
 
             requestMessage.Priority = MessagePriority.AboveNormal;
+            requestMessage.AppSpecific = TEST_MESSAGE_ID;       //Utilitize 'AppSpecific' field as correlation since 'Message.CorrelationId' will fail on message forwarding mechanism
 
             SendTestMessage(requestMessage);
-
-            _correlationId = requestMessage.Id;
 
             _timeoutTimer = new Timer(new TimerCallback(this.OnTimeoutEvent), null, _timeoutMillisecondsInterval, Timeout.Infinite);
         }
@@ -147,7 +145,7 @@ namespace ManagementConsole
                 {
                     reply = (CreditBureauReply) message.Body;
 
-                    if (message.CorrelationId != _correlationId)
+                    if (message.AppSpecific != TEST_MESSAGE_ID)
                     {
                         status.Status = MonitorStatus.STATUS_FAILED_CORRELATION;
                         status.Description = "Incoming message correlation ID does not match outgoing message ID";

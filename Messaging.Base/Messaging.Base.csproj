@@ -46,6 +46,7 @@
     <Compile Include="QueueService.cs" />
     <Compile Include="ReceiverGateway.cs" />
     <Compile Include="Routing\Aggregator.cs" />
+    <Compile Include="Routing\ContextBasedRouter.cs" />
     <Compile Include="Routing\MessageRouter.cs" />
     <Compile Include="Routing\ProcessManager.cs" />
     <Compile Include="Routing\RecipientList.cs" />
