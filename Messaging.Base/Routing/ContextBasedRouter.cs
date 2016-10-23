@@ -17,9 +17,9 @@ namespace Messaging.Base.Routing
             _destinations = new List<Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>>();
         }
 
-        public IContextBasedRouter<TMessageQueue, TMessage, TInput> AddSender(Func<TInput, bool> triggerFunction, IMessageSender<TMessageQueue, TMessage> destination)
+        public IContextBasedRouter<TMessageQueue, TMessage, TInput> AddSender(Func<TInput, bool> invocationConditionFunction, IMessageSender<TMessageQueue, TMessage> destination)
         {
-            _destinations.Add(new Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>(triggerFunction, destination));
+            _destinations.Add(new Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>(invocationConditionFunction, destination));
 
             return this;
         }

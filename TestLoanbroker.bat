@@ -9,7 +9,7 @@ start CreditBureau backupCreditRequestQueue
 start loanbroker loanRequestQueue creditrequestQueue creditReplyQueue bankReplyQueue
 
 start ManagementConsole controlbusQueue creditRequestQueue monitorQueue
-start CreditBureauFailOver creditRequestQueue primaryCreditRequestQueue backupCreditRequestQueue
+start CreditBureauFailOver routerControlQueue creditRequestQueue primaryCreditRequestQueue backupCreditRequestQueue
 
 REM start loanbroker loanRequestQueue bankReplyQueue
 
