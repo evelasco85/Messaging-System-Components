@@ -76,21 +76,21 @@ namespace ManagementConsole
             _millisecondsInterval = secondsInterval*1000;
             _timeoutMillisecondsInterval = timeoutSecondsInterval*1000;
 
-            ActivateTimer();
+            StartMonitoring();
         }
 
-        void ActivateTimer()
+        void StartMonitoring()
         {
             MonitorStatus status = new MonitorStatus
             {
                 Status = MonitorStatus.STATUS_ANNOUNCE,
-                Description = "Monitor On-Line",
+                Description = "Monitor On-line",
                 MonitorID = _monitorId
             };
 
             SwitchRoute(FailOverRouteEnum.Standby);
             SendStatus(status);
-            SwitchRoute(FailOverRouteEnum.Backup);
+            SwitchRoute(FailOverRouteEnum.Primary);
             SendTestMessage();
 
             _lastStatus = status.Status;
@@ -114,7 +114,6 @@ namespace ManagementConsole
         {
             SendTestMessage();
             
-            //Set timeout time
             _timeoutTimer = new Timer(new TimerCallback(this.OnTimeoutEvent), null, _timeoutMillisecondsInterval, Timeout.Infinite);
         }
 
@@ -200,7 +199,9 @@ namespace ManagementConsole
                 );
 
             if (statusHasChanges)
+            {
                 SendStatus(status);
+            }
 
             _lastStatus = status.Status;
 
