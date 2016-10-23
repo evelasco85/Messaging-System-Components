@@ -12,6 +12,8 @@ namespace CreditBureauFailOver
     class Program
     {
         static FailOverRouter _failOverRouter;
+        static FailOverControlReceiver _failOverControlReceiver;
+
         static void Main(string[] args)
         {
             if (args.Count() == 4)
@@ -21,28 +23,29 @@ namespace CreditBureauFailOver
                 string primaryCreditQueueName = ToPath(args[2]);
                 string secondaryCreditQueueName = ToPath(args[3]);
 
-                _failOverRouter = new FailOverRouter(new MessageReceiverGateway(creditQueueName, GetReceivedMessageFormatter()));
+                _failOverRouter = new FailOverRouter(
+                    primaryCreditQueueName, secondaryCreditQueueName,
+                    new MessageReceiverGateway(creditQueueName, new XmlMessageFormatter(new Type[] { typeof(CreditBureauRequest) }))
+                    );
+                _failOverControlReceiver = new FailOverControlReceiver(
+                    new MessageReceiverGateway(routerControlQueueName, new XmlMessageFormatter(new Type[] { typeof(FailOverRouteEnum) })),
+                    _failOverRouter
+                    );
 
-                _failOverRouter.SetRoute(primaryCreditQueueName, secondaryCreditQueueName);
-                _failOverRouter.SwitchDestination(FailOverEnum.Primary);
-                _failOverRouter.Process();
+                _failOverControlReceiver.Process();
             }
             else
                 Console.WriteLine("Usage: <>");
 
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");
+            Console.WriteLine();
             Console.ReadLine();
         }
 
         private static String ToPath(String arg)
         {
             return ".\\private$\\" + arg;
-        }
-
-        public static IMessageFormatter GetReceivedMessageFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { typeof(CreditBureauRequest) });
         }
     }
 }

@@ -37,12 +37,13 @@ namespace ManagementConsole
         private Timer _timeoutTimer;
         
 
-        private int _ssn = 123;
+        private int _ssn = 1230;
         const int TEST_MESSAGE_ID = 1230;       //Used as a correlation id for test, 'Message.CorrelationId' will fail on message forwarding mechanism
         Guid _monitorId = Guid.NewGuid();
         private int _millisecondsInterval;
         private int _timeoutMillisecondsInterval;
         string _lastStatus = String.Empty;
+        IMessageSender<MessageQueue, Message> _routerControlQueue;
 
         public void Dispose()
         {
@@ -61,6 +62,7 @@ namespace ManagementConsole
         public MonitorCreditBureau(
             string controlBusQueueName,
             string serviceQueueName, string monitorQueueName,
+            string routerControlQueueName,
             int secondsInterval, int timeoutSecondsInterval
             )
             : base(
@@ -69,6 +71,8 @@ namespace ManagementConsole
                 new MessageReceiverGateway(monitorQueueName)
                 )
         {
+            _routerControlQueue = new MessageSenderGateway(routerControlQueueName);
+
             _millisecondsInterval = secondsInterval*1000;
             _timeoutMillisecondsInterval = timeoutSecondsInterval*1000;
 
@@ -77,7 +81,6 @@ namespace ManagementConsole
 
         void ActivateTimer()
         {
-            _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
             MonitorStatus status = new MonitorStatus
             {
                 Status = MonitorStatus.STATUS_ANNOUNCE,
@@ -85,12 +88,15 @@ namespace ManagementConsole
                 MonitorID = _monitorId
             };
 
-            SendControlBusStatus(new Message(status));
+            SwitchRoute(FailOverRouteEnum.Standby);
+            SendStatus(status);
+            SwitchRoute(FailOverRouteEnum.Backup);
+            SendTestMessage();
 
             _lastStatus = status.Status;
         }
 
-        void OnSendTimerEvent(object state)
+        void SendTestMessage()
         {
             CreditBureauRequest request = new CreditBureauRequest
             {
@@ -102,7 +108,13 @@ namespace ManagementConsole
             requestMessage.AppSpecific = TEST_MESSAGE_ID;       //Utilitize 'AppSpecific' field as correlation since 'Message.CorrelationId' will fail on message forwarding mechanism
 
             SendTestMessage(requestMessage);
+        }
 
+        void OnSendTimerEvent(object state)
+        {
+            SendTestMessage();
+            
+            //Set timeout time
             _timeoutTimer = new Timer(new TimerCallback(this.OnTimeoutEvent), null, _timeoutMillisecondsInterval, Timeout.Infinite);
         }
 
@@ -115,7 +127,7 @@ namespace ManagementConsole
                 MonitorID = _monitorId
             };
 
-            SendControlBusStatus(new Message(status));
+            SendStatus(status);
 
             _lastStatus = status.Status;
 
@@ -126,8 +138,11 @@ namespace ManagementConsole
 
         public override void ReceiveTestMessageResponse(Message message)
         {
+            //Stop timeout timer
             if (_timeoutTimer != null)
+            {
                 _timeoutTimer.Dispose();
+            }
 
             message.Formatter = new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
 
@@ -185,13 +200,27 @@ namespace ManagementConsole
                 );
 
             if (statusHasChanges)
-                SendControlBusStatus(new Message(status));
+                SendStatus(status);
 
             _lastStatus = status.Status;
 
-            _sendTimer.Dispose();
+            if (_sendTimer != null)
+            {
+                _sendTimer.Dispose();
+                _sendTimer = null;
+            }
 
             _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
+        }
+
+        void SwitchRoute(FailOverRouteEnum route)
+        {
+            _routerControlQueue.Send(new Message(route));
+        }
+
+        void SendStatus(MonitorStatus status)
+        {
+            SendControlBusStatus(new Message(status));
         }
     }
 }

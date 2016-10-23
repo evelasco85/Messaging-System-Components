@@ -30,8 +30,8 @@ namespace LoanBroker {
                 String creditReplyQueueName = ToPath(args[2]);
                 String bankReplyQueueName = ToPath(args[3]);
 
-                string proxyRequestQueue = ".\\private$\\broker_loanrequestqueue";
-                string proxyReplyQueue = ".\\private$\\broker_loanreplyqueue";
+                string proxyRequestQueue = ".\\private$\\proxy_loanrequestqueue";
+                string proxyReplyQueue = ".\\private$\\proxy_loanreplyqueue";
 
                 IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
                     proxyReplyQueue,

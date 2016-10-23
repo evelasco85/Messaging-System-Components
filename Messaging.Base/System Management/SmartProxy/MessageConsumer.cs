@@ -9,6 +9,12 @@ namespace Messaging.Base.System_Management.SmartProxy
     public abstract class MessageConsumer<TMessageQueue, TMessage> : IMessageConsumer<TMessageQueue, TMessage>
     {
         private IMessageCore<TMessageQueue> _messageQueue;
+        bool _processStarted = false;
+
+        public bool ProcessStarted
+        {
+            get { return _processStarted; }
+        }
 
         public MessageConsumer(IMessageCore<TMessageQueue> messageQueue)
         {
@@ -25,12 +31,18 @@ namespace Messaging.Base.System_Management.SmartProxy
             receiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(ProcessMessage);
         }
 
-        public void Process()
+        public bool Process()
         {
             IMessageReceiver<TMessageQueue, TMessage> receiver = ((IMessageReceiver<TMessageQueue, TMessage>)_messageQueue);
 
-            if (receiver != null)
+            if ((receiver != null) && (!_processStarted))
+            {
                 receiver.StartReceivingMessages();
+
+                _processStarted = true;
+            }
+
+            return _processStarted;
         }
 
         public abstract void ProcessMessage(TMessage message);

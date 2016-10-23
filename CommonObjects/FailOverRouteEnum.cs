@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace CommonObjects
 {
-    public enum FailOverEnum
+    public enum FailOverRouteEnum
     {
-        Primary,
-        Backup
+        Standby = 0,
+        Primary = 1,
+        Backup = 2
     }
 }

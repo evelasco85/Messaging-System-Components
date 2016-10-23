@@ -22,19 +22,25 @@ namespace ManagementConsole
         {
             InitializeComponent();
 
-            if (args.Length == 3)
+            if (args.Length == 4)
             {
+                string controlBusQueue = ToPath(args[0]);
+                string serviceQueue = ToPath(args[1]);
+                string monitoringQueue = ToPath(args[2]);
+                string routerControlQueue = ToPath(args[3]);
+
                 _controlBus = new ControlBusConsumer(
-                    ToPath(args[0]),
+                    controlBusQueue,
                     this.ProcessMessage
                     );
 
                 _monitor = new MonitorCreditBureau(
-                    ToPath(args[0]),
-                    ToPath(args[1]),
-                    ToPath(args[2]),
-                    5,
-                    10
+                    controlBusQueue,
+                    serviceQueue,
+                    monitoringQueue,
+                    routerControlQueue,
+                    5,      //Verify status every n-th second(s)
+                    10      //Set n-th second timeout
                     );
             }
         }
@@ -111,13 +117,13 @@ namespace ManagementConsole
             {
                 this.Invoke(new MethodInvoker(() =>
                 {
-                    XmlNode status = messageDoc.SelectSingleNode("/MonitorStatus/Status");
-                    XmlNode description = messageDoc.SelectSingleNode("/MonitorStatus/Description");
+                    XmlNode statusNode = messageDoc.SelectSingleNode("/MonitorStatus/Status");
+                    XmlNode descriptionNode = messageDoc.SelectSingleNode("/MonitorStatus/Description");
                     string message = string.Format("Status: {2}{0}Description: {3}{0}Date-Time: {4}{0}{1}",
                         Environment.NewLine,
                         string.Join("", Enumerable.Repeat('-', 10)),
-                        status.InnerText,
-                        description.InnerText,
+                        statusNode.InnerText,
+                        descriptionNode.InnerText,
                         DateTime.Now.ToString("T")
                         );
 

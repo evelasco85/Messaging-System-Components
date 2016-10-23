@@ -9,6 +9,7 @@ namespace Messaging.Base.Routing
 {
     public interface IContextBasedRouter<TMessageQueue, TMessage, TInput> : IMessageConsumer<TMessageQueue, TMessage>
     {
+        bool DestinationIsSet { get; }
         IContextBasedRouter<TMessageQueue, TMessage, TInput> AddSender(Func<TInput, bool> triggerFunction, IMessageSender<TMessageQueue, TMessage> destination);
         void SwitchDestination(TInput inputToVerify);
     }

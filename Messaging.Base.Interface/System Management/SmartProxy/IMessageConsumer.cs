@@ -8,7 +8,8 @@ namespace Messaging.Base.System_Management.SmartProxy
 {
     public interface IMessageConsumer<TMessageQueue, TMessage>
     {
-        void Process();
+        bool ProcessStarted { get; }
+        bool Process();
         void ProcessMessage(TMessage message);
     }
 }

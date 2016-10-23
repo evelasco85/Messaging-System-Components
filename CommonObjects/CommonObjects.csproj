@@ -39,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FailOverEnum.cs" />
+    <Compile Include="FailOverRouteEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request_Reply_Stub.cs" />
   </ItemGroup>

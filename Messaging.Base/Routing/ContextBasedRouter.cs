@@ -12,6 +12,11 @@ namespace Messaging.Base.Routing
         IList<Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>> _destinations;
         IMessageSender<TMessageQueue, TMessage> _currentDestinationSender;
 
+        public bool DestinationIsSet
+        {
+            get { return _currentDestinationSender != null; }
+        }
+
         public ContextBasedRouter(IMessageReceiver<TMessageQueue, TMessage> inputQueue) : base(inputQueue)
         {
             _destinations = new List<Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>>();

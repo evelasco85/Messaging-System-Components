@@ -61,7 +61,12 @@ namespace Test
             replyQueue.StartReceivingMessages();
             startTime = DateTime.Now;
 
-            for (int count = 1; count <= numMessages; count++)
+            Func<int, bool> loopCondition = (currentCount) =>
+            {
+                return (numMessages == 0) ? true : (currentCount <= this.numMessages);
+            };
+
+            for (int count = 1; loopCondition(count); count++)
             {
                 LoanQuoteRequest req = new LoanQuoteRequest();
                 req.SSN = count;
