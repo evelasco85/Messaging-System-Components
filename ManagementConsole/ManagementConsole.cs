@@ -26,7 +26,7 @@ namespace ManagementConsole
             {
                 string controlBusQueue = ToPath(args[0]);
                 string serviceQueue = ToPath(args[1]);
-                string monitoringQueue = ToPath(args[2]);
+                string monitoringReplyQueue = ToPath(args[2]);
                 string routerControlQueue = ToPath(args[3]);
 
                 _controlBus = new ControlBusConsumer(
@@ -37,7 +37,7 @@ namespace ManagementConsole
                 _monitor = new MonitorCreditBureau(
                     controlBusQueue,
                     serviceQueue,
-                    monitoringQueue,
+                    monitoringReplyQueue,
                     routerControlQueue,
                     5,      //Verify status every n-th second(s)
                     10      //Set n-th second timeout

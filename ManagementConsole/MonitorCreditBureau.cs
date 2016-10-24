@@ -19,11 +19,11 @@ namespace ManagementConsole
     public class MonitorStatus
     {
         public const string STATUS_ANNOUNCE = "Announce";
-        public const string STATUS_TIMEOUT = "Timeout";
+        public const string STATUS_TIMEOUT = "Timeout (Backup Credit Bureau is Active, Primary is Down)";
         public const string STATUS_FAILED_CORRELATION = "Failed Correlation";
         public const string STATUS_INVALID_DATA = "Invalid Data";
         public const string STATUS_INVALID_FORMAT = "Invalid Format";
-        public const string STATUS_OK = "A-OK";        
+        public const string STATUS_OK = "A-OK (Primary Credit Bureau is Active)";        
 
         public string Status { get; set; }
         public string Description { get; set; }
@@ -38,7 +38,7 @@ namespace ManagementConsole
         
 
         private int _ssn = 1230;
-        const int TEST_MESSAGE_ID = 1230;       //Used as a correlation id for test, 'Message.CorrelationId' will fail on message forwarding mechanism
+        private string _correlationId;
         Guid _monitorId = Guid.NewGuid();
         private int _millisecondsInterval;
         private int _timeoutMillisecondsInterval;
@@ -61,14 +61,14 @@ namespace ManagementConsole
 
         public MonitorCreditBureau(
             string controlBusQueueName,
-            string serviceQueueName, string monitorQueueName,
+            string serviceQueueName, string monitorReplyQueueName,
             string routerControlQueueName,
             int secondsInterval, int timeoutSecondsInterval
             )
             : base(
                 new MessageSenderGateway(controlBusQueueName),
                 new MessageSenderGateway(serviceQueueName),
-                new MessageReceiverGateway(monitorQueueName)
+                new MessageReceiverGateway(monitorReplyQueueName)
                 )
         {
             _routerControlQueue = new MessageSenderGateway(routerControlQueueName);
@@ -81,6 +81,8 @@ namespace ManagementConsole
 
         void StartMonitoring()
         {
+            _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
+
             MonitorStatus status = new MonitorStatus
             {
                 Status = MonitorStatus.STATUS_ANNOUNCE,
@@ -90,7 +92,6 @@ namespace ManagementConsole
 
             SwitchRoute(FailOverRouteEnum.Standby);
             SendStatus(status);
-            SwitchRoute(FailOverRouteEnum.Primary);
             SendTestMessage();
 
             _lastStatus = status.Status;
@@ -105,9 +106,10 @@ namespace ManagementConsole
             Message requestMessage = new Message(request);
 
             requestMessage.Priority = MessagePriority.AboveNormal;
-            requestMessage.AppSpecific = TEST_MESSAGE_ID;       //Utilitize 'AppSpecific' field as correlation since 'Message.CorrelationId' will fail on message forwarding mechanism
-
+            
             SendTestMessage(requestMessage);
+
+            _correlationId = requestMessage.Id;
         }
 
         void OnSendTimerEvent(object state)
@@ -127,7 +129,7 @@ namespace ManagementConsole
             };
 
             SendStatus(status);
-
+            
             _lastStatus = status.Status;
 
             _timeoutTimer.Dispose();
@@ -137,11 +139,8 @@ namespace ManagementConsole
 
         public override void ReceiveTestMessageResponse(Message message)
         {
-            //Stop timeout timer
             if (_timeoutTimer != null)
-            {
                 _timeoutTimer.Dispose();
-            }
 
             message.Formatter = new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
 
@@ -159,7 +158,7 @@ namespace ManagementConsole
                 {
                     reply = (CreditBureauReply) message.Body;
 
-                    if (message.AppSpecific != TEST_MESSAGE_ID)
+                    if (message.CorrelationId != _correlationId)
                     {
                         status.Status = MonitorStatus.STATUS_FAILED_CORRELATION;
                         status.Description = "Incoming message correlation ID does not match outgoing message ID";
@@ -199,17 +198,12 @@ namespace ManagementConsole
                 );
 
             if (statusHasChanges)
-            {
                 SendStatus(status);
-            }
 
             _lastStatus = status.Status;
 
             if (_sendTimer != null)
-            {
                 _sendTimer.Dispose();
-                _sendTimer = null;
-            }
 
             _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
         }
@@ -221,6 +215,16 @@ namespace ManagementConsole
 
         void SendStatus(MonitorStatus status)
         {
+            switch (status.Status)
+            {
+                case MonitorStatus.STATUS_OK:
+                    SwitchRoute(FailOverRouteEnum.Primary);
+                    break;
+                case MonitorStatus.STATUS_TIMEOUT:
+                    SwitchRoute(FailOverRouteEnum.Backup);
+                    break;
+            }
+
             SendControlBusStatus(new Message(status));
         }
     }
