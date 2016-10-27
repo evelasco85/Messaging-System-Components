@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Messaging.Orchestration.Server
+namespace Messaging.Orchestration.Models
 {
-    public class Class1
+    public enum QueueTypeEnum
     {
+        MSMQ
     }
 }

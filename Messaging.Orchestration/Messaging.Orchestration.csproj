@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E0E24E89-6E68-4D7F-9910-3DDE21526953}</ProjectGuid>
+    <ProjectGuid>{B3A80A60-25D1-43D8-AB2F-EC6084FC8161}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Messaging.Orchestration.Server</RootNamespace>
-    <AssemblyName>Messaging.Orchestration.Server</AssemblyName>
+    <RootNamespace>Messaging.Orchestration.Shared</RootNamespace>
+    <AssemblyName>Messaging.Orchestration.Shared</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,8 +39,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Models\ObjectInformation.cs" />
+    <Compile Include="Models\QueueTypeEnum.cs" />
+    <Compile Include="Services\ObjectManipulationService.cs" />
+    <Compile Include="Models\IVersionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Messaging.Utilities\Messaging.Utilities.csproj">
+      <Project>{1cff82b3-bfb8-44af-a237-aa9bc5eccc95}</Project>
+      <Name>Messaging.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Messaging.Orchestration.Shared.Models;
-using Messaging.Orchestration.Shared.Services;
+using Messaging.Orchestration.Models;
+using Messaging.Orchestration.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Messaging.Orchestration.Tests

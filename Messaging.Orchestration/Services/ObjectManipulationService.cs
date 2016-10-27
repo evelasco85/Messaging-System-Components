@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Messaging.Orchestration.Shared.Models;
+using Messaging.Orchestration.Models;
 using Messaging.Utilities;
 
-namespace Messaging.Orchestration.Shared.Services
+namespace Messaging.Orchestration.Services
 {
     public interface IObjectManipulationService
     {

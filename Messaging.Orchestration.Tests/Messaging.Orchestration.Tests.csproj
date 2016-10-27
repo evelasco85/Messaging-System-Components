@@ -54,9 +54,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Messaging.Orchestration.Shared\Messaging.Orchestration.Shared.csproj">
+    <ProjectReference Include="..\Messaging.Orchestration\Messaging.Orchestration.csproj">
       <Project>{b3a80a60-25d1-43d8-ab2f-ec6084fc8161}</Project>
-      <Name>Messaging.Orchestration.Shared</Name>
+      <Name>Messaging.Orchestration</Name>
     </ProjectReference>
     <ProjectReference Include="..\Messaging.Utilities\Messaging.Utilities.csproj">
       <Project>{1cff82b3-bfb8-44af-a237-aa9bc5eccc95}</Project>
