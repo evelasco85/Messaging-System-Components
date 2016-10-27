@@ -101,7 +101,7 @@ namespace Messaging.Orchestration.Shared.Services
         public IDictionary<string, object> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary)
         {
             IDictionary<string, object> emptyValueDictionary = dictionary
-                .ToDictionary(kvp => kvp.Key, kvp => new object());
+                .ToDictionary(kvp => kvp.Key, kvp => default(object));
 
             return emptyValueDictionary;
         }
