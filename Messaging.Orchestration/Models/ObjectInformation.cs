@@ -14,13 +14,13 @@ namespace Messaging.Orchestration.Models
         IDictionary<string, string> Properties { get; set; }
     }
 
-    public class ObjectInformationInformation<TObject, TVersion> : IObjectInformation<TVersion>
+    public class ObjectInformation<TVersion> : IObjectInformation<TVersion>
     {
         public IVersionInfo<TVersion> VersionInfo { get; set; }
         public IList<IDictionary<string, string>> ConstructorParameters { get; set; }
         public IDictionary<string, string> Properties { get; set; }
 
-        public ObjectInformationInformation(IVersionInfo<TVersion> versionInfo)
+        public ObjectInformation(IVersionInfo<TVersion> versionInfo)
         {
             VersionInfo = versionInfo;
             ConstructorParameters = new List<IDictionary<string, string>>();

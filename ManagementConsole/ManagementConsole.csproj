@@ -53,6 +53,7 @@
       <DependentUpon>ManagementConsole.cs</DependentUpon>
     </Compile>
     <Compile Include="MonitorCreditBureau.cs" />
+    <Compile Include="OrchestrationServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ManagementConsole.resx">
@@ -92,6 +93,10 @@
     <ProjectReference Include="..\Messaging.Base\Messaging.Base.csproj">
       <Project>{62819694-7de4-49ed-86d5-3bb599ecb41a}</Project>
       <Name>Messaging.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Messaging.Orchestration\Messaging.Orchestration.csproj">
+      <Project>{b3a80a60-25d1-43d8-ab2f-ec6084fc8161}</Project>
+      <Name>Messaging.Orchestration</Name>
     </ProjectReference>
     <ProjectReference Include="..\MsmqGateway\MsmqGateway.csproj">
       <Project>{e2dcbaac-ea99-4c68-9523-aa69251570a8}</Project>

@@ -35,7 +35,7 @@ namespace Messaging.Orchestration.Services
             IDictionary<string, string> propertyDescriptions = ConvertToFriendlyPropertyDictionary(properties);
             IList<IDictionary<string, string>> constructorsParams = ConvertToFriendlyConstructorParamDictionary(constructorInfos);
 
-            IObjectInformation<TVersion> objectInformation = new ObjectInformationInformation<TObject, TVersion>(
+            IObjectInformation<TVersion> objectInformation = new ObjectInformation<TVersion>(
                 new VersionInfo<TVersion>(queueType, id, version)
                 )
             {
