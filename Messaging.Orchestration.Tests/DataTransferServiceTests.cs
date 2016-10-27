@@ -38,6 +38,12 @@ namespace Messaging.Orchestration.Tests
         private int _constructParam3;
 #endregion
 
+        public TestObject(string constructParam, string constructParam2)
+        {
+            _constructParam = constructParam;
+            _constructParam2 = constructParam2;
+        }
+
         public TestObject(string constructParam, string constructParam2, int constructParam3)
         {
             _constructParam = constructParam;
@@ -83,13 +89,46 @@ namespace Messaging.Orchestration.Tests
                 TestObject.VERSION
                 );
 
-            IDictionary<string, string> emptyValueDictionary = service
+            IDictionary<string, object> emptyValueDictionary = service
                 .CreateDictionaryWithEmptyValues(transferObjectInformation.ConstructorParameters[0]);
 
-            foreach (KeyValuePair<string, string> kvp in emptyValueDictionary)
+            foreach (KeyValuePair<string, object> kvp in emptyValueDictionary)
             {
-                Assert.IsTrue(string.IsNullOrEmpty(kvp.Value));
+                Assert.IsNull(kvp.Value);
             }
+        }
+
+        [TestMethod]
+        public void TestInstantiateObject()
+        {
+            IObjectManipulationService service = ObjectManipulationService.GetInstance();
+            IObjectInformation<int> transferObjectInformation = service.GetObjectInformation<int, TestObject>(
+                TestObject.QUEUE_TYPE,
+                TestObject.ID,
+                TestObject.VERSION
+                );
+
+            IDictionary<string, object> constructorParams = service.CreateDictionaryWithEmptyValues(transferObjectInformation.ConstructorParameters[0]);
+            IDictionary<string, object> properties = service.CreateDictionaryWithEmptyValues(transferObjectInformation.Properties);
+
+
+            constructorParams["constructParam"] = "string 1";
+            constructorParams["constructParam2"] = "string 2";
+            constructorParams["constructParam3"] = 101;
+
+            properties["TestBoolProperty"] = true;
+            properties["TestIntProperty"] = 102;
+            properties["TestStringProperty"] = "Test Property";
+
+            TestObject obj = service.InstantiateObject<TestObject>(constructorParams, properties);
+
+            Assert.AreEqual("string 1", obj.ConstructParam);
+            Assert.AreEqual("string 2", obj.ConstructParam2);
+            Assert.AreEqual(101, obj.ConstructParam3);
+            Assert.AreEqual(true, obj.TestBoolProperty);
+            Assert.AreEqual(102, obj.TestIntProperty);
+            Assert.AreEqual("Test Property", obj.TestStringProperty);
         }
     }
 }
+

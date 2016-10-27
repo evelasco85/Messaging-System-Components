@@ -15,7 +15,11 @@ namespace Messaging.Orchestration.Shared.Services
         IObjectInformation<TVersion> GetObjectInformation<TVersion, TObject>(QueueTypeEnum queueType, Guid id,
             TVersion version);
 
-        IDictionary<string, string> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary);
+        IDictionary<string, object> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary);
+
+        TObject InstantiateObject<TObject>(
+            IDictionary<string, object> constructorKVP,
+            IDictionary<string, object> publicPropertiesKVP);
     }
 
     public class ObjectManipulationService : Singleton<ObjectManipulationService, IObjectManipulationService>, IObjectManipulationService
@@ -94,12 +98,56 @@ namespace Messaging.Orchestration.Shared.Services
             return constructorDescriptions;
         }
 
-        public IDictionary<string, string> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary)
+        public IDictionary<string, object> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary)
         {
-            IDictionary<string, string> emptyValueDictionary = dictionary
-                .ToDictionary(kvp => kvp.Key, kvp => string.Empty);
+            IDictionary<string, object> emptyValueDictionary = dictionary
+                .ToDictionary(kvp => kvp.Key, kvp => new object());
 
             return emptyValueDictionary;
+        }
+
+        public TObject InstantiateObject<TObject>(
+            IDictionary<string, object> constructorKVP,
+            IDictionary<string, object> publicPropertiesKVP)
+        {
+            ConstructorInfo[] constInfoArray = GetConstructorParameters<TObject>();
+            ConstructorInfo matchedConstInfo = constInfoArray
+                .Where(constInfo =>
+                    (constInfo.GetParameters().Length == constructorKVP.Count) &&
+                    (constInfo.GetParameters().Any(x => constructorKVP.ContainsKey(x.Name)))
+                    )
+                .DefaultIfEmpty(null)
+                .FirstOrDefault();
+
+            if (matchedConstInfo == null)
+                return default(TObject);
+
+            object[] constructorParameters = matchedConstInfo
+                .GetParameters()
+                .Select(param => constructorKVP[param.Name])
+                .ToArray();
+
+            TObject instance = (TObject) matchedConstInfo.Invoke(
+                (BindingFlags.Instance | BindingFlags.Public),
+                null,
+                constructorParameters,
+                null);
+
+            PropertyInfo[] properties = GetProperties<TObject>();
+
+            for (int index = 0; index < properties.Length; index++)
+            {
+                PropertyInfo property = properties[index];
+
+                if(property == null)
+                    continue;
+
+                object value = publicPropertiesKVP[property.Name];
+
+                property.SetValue(instance, value);
+            }
+
+            return instance;
         }
     }
 }
