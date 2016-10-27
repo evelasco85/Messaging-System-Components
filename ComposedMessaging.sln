@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoanBroker", "LoanBroker\LoanBroker.csproj", "{9D7DC6B7-85AE-4B69-A804-24F34B7DAB1D}"
 EndProject
@@ -27,6 +27,20 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonObjects", "CommonObjects\CommonObjects.csproj", "{4FA085C4-4A66-45A3-A1E4-F81A7FDC5573}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreditBureauFailOver", "CreditBureauFailOver\CreditBureauFailOver.csproj", "{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messaging Orchestration", "Messaging Orchestration", "{5BE5EF12-88B8-4010-AB66-7006D3212122}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Orchestration.Client", "Messaging.Orchestration.Client\Messaging.Orchestration.Client.csproj", "{EC411109-744F-4460-8AC8-D9BFFB75B9E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Orchestration.Server", "Messaging.Orchestration.Server\Messaging.Orchestration.Server.csproj", "{E0E24E89-6E68-4D7F-9910-3DDE21526953}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Orchestration.Shared", "Messaging.Orchestration.Shared\Messaging.Orchestration.Shared.csproj", "{B3A80A60-25D1-43D8-AB2F-EC6084FC8161}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messaging Utilities", "Messaging Utilities", "{193AF034-D8C7-4478-9738-E0ED53CD495C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Utilities", "Messaging.Utilities\Messaging.Utilities.csproj", "{1CFF82B3-BFB8-44AF-A237-AA9BC5ECCC95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Orchestration.Tests", "Messaging.Orchestration.Tests\Messaging.Orchestration.Tests.csproj", "{0220105E-7B51-4A56-B8CE-064B97604666}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +92,26 @@ Global
 		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC411109-744F-4460-8AC8-D9BFFB75B9E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC411109-744F-4460-8AC8-D9BFFB75B9E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC411109-744F-4460-8AC8-D9BFFB75B9E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC411109-744F-4460-8AC8-D9BFFB75B9E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0E24E89-6E68-4D7F-9910-3DDE21526953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0E24E89-6E68-4D7F-9910-3DDE21526953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0E24E89-6E68-4D7F-9910-3DDE21526953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0E24E89-6E68-4D7F-9910-3DDE21526953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3A80A60-25D1-43D8-AB2F-EC6084FC8161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3A80A60-25D1-43D8-AB2F-EC6084FC8161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3A80A60-25D1-43D8-AB2F-EC6084FC8161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3A80A60-25D1-43D8-AB2F-EC6084FC8161}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CFF82B3-BFB8-44AF-A237-AA9BC5ECCC95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CFF82B3-BFB8-44AF-A237-AA9BC5ECCC95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CFF82B3-BFB8-44AF-A237-AA9BC5ECCC95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CFF82B3-BFB8-44AF-A237-AA9BC5ECCC95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0220105E-7B51-4A56-B8CE-064B97604666}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0220105E-7B51-4A56-B8CE-064B97604666}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0220105E-7B51-4A56-B8CE-064B97604666}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0220105E-7B51-4A56-B8CE-064B97604666}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,5 +128,10 @@ Global
 		{6B1EFB63-7063-4141-BA85-2076860ABE9E} = {9DAEFC8A-4D07-4F9D-9E74-47D7E0789B24}
 		{4FA085C4-4A66-45A3-A1E4-F81A7FDC5573} = {9DAEFC8A-4D07-4F9D-9E74-47D7E0789B24}
 		{33ACAFB8-260A-438C-9F7A-10C9ED43D7CE} = {9DAEFC8A-4D07-4F9D-9E74-47D7E0789B24}
+		{EC411109-744F-4460-8AC8-D9BFFB75B9E7} = {5BE5EF12-88B8-4010-AB66-7006D3212122}
+		{E0E24E89-6E68-4D7F-9910-3DDE21526953} = {5BE5EF12-88B8-4010-AB66-7006D3212122}
+		{B3A80A60-25D1-43D8-AB2F-EC6084FC8161} = {5BE5EF12-88B8-4010-AB66-7006D3212122}
+		{1CFF82B3-BFB8-44AF-A237-AA9BC5ECCC95} = {193AF034-D8C7-4478-9738-E0ED53CD495C}
+		{0220105E-7B51-4A56-B8CE-064B97604666} = {5BE5EF12-88B8-4010-AB66-7006D3212122}
 	EndGlobalSection
 EndGlobal
