@@ -11,13 +11,21 @@ using System;
 using Messaging.Base;
 
 namespace MessageGateway{
-	
-	
-	public class MessageQueueGateway : QueueGateway<MessageQueue>
+    public class MessageQueueGateway : QueueGateway<MessageQueue>, IDisposable
     {
         MessageQueue msgQueue;
-		
-		public MessageQueueGateway(String q):this(FindQueue(q))
+
+        public void Dispose()
+        {
+            if (msgQueue != null)
+            {
+                msgQueue.Dispose();
+                msgQueue = null;
+            }
+        }
+
+        public MessageQueueGateway(String q)
+            : this(FindQueue(q))
 		{
 		}
 		

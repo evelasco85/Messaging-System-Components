@@ -37,10 +37,6 @@ namespace Messaging.Orchestration.Tests
         private int _constructParam3;
 #endregion
 
-        public TestObject()
-        {
-        }
-
         public TestObject(string constructParam, string constructParam2, int constructParam3)
         {
             _constructParam = constructParam;
