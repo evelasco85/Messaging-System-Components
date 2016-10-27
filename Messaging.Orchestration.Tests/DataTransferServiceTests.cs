@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -51,7 +52,7 @@ namespace Messaging.Orchestration.Tests
         [TestMethod]
         public void TestGetObjectInformation()
         {
-            IDataTransferService service = DataTransferService.GetInstance();
+            IObjectManipulationService service = ObjectManipulationService.GetInstance();
             IObjectInformation<int> transferObjectInformation = service.GetObjectInformation<int, TestObject>(
                 TestObject.QUEUE_TYPE,
                 TestObject.ID,
@@ -66,10 +67,29 @@ namespace Messaging.Orchestration.Tests
                 (transferObjectInformation.Properties.ContainsKey("TestIntProperty")) &&
                 (transferObjectInformation.Properties["TestIntProperty"] == "System.Int32")
                 );
-            Assert.AreEqual(2, transferObjectInformation.ConstructorParameters.Count);
+            Assert.AreEqual(1, transferObjectInformation.ConstructorParameters.Count);
             Assert.IsTrue(transferObjectInformation
-                .ConstructorParameters[1]
+                .ConstructorParameters[0]
                 .ContainsKey("constructParam2"));
+        }
+
+        [TestMethod]
+        public void TestCreateDictionaryWithEmptyValues()
+        {
+            IObjectManipulationService service = ObjectManipulationService.GetInstance();
+            IObjectInformation<int> transferObjectInformation = service.GetObjectInformation<int, TestObject>(
+                TestObject.QUEUE_TYPE,
+                TestObject.ID,
+                TestObject.VERSION
+                );
+
+            IDictionary<string, string> emptyValueDictionary = service
+                .CreateDictionaryWithEmptyValues(transferObjectInformation.ConstructorParameters[0]);
+
+            foreach (KeyValuePair<string, string> kvp in emptyValueDictionary)
+            {
+                Assert.IsTrue(string.IsNullOrEmpty(kvp.Value));
+            }
         }
     }
 }

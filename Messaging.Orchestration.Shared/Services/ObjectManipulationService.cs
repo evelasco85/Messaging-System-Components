@@ -10,15 +10,17 @@ using Messaging.Utilities;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public interface IDataTransferService
+    public interface IObjectManipulationService
     {
         IObjectInformation<TVersion> GetObjectInformation<TVersion, TObject>(QueueTypeEnum queueType, Guid id,
             TVersion version);
+
+        IDictionary<string, string> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary);
     }
 
-    public class DataTransferService : Singleton<DataTransferService, IDataTransferService>, IDataTransferService
+    public class ObjectManipulationService : Singleton<ObjectManipulationService, IObjectManipulationService>, IObjectManipulationService
     {
-        private DataTransferService()
+        private ObjectManipulationService()
         {
         }
 
@@ -68,12 +70,9 @@ namespace Messaging.Orchestration.Shared.Services
             if (properties == null)
                 return propertyDescriptions;
 
-            for (int index = 0; index < properties.Count(); index++)
-            {
-                PropertyInfo property = properties[index];
-                propertyDescriptions.Add(property.Name, property.PropertyType.FullName);
-            }
-
+            propertyDescriptions = properties
+                .ToDictionary(kvp => kvp.Name, kvp => kvp.PropertyType.FullName);
+            
             return propertyDescriptions;
         }
 
@@ -93,6 +92,14 @@ namespace Messaging.Orchestration.Shared.Services
                 .ToList();
 
             return constructorDescriptions;
+        }
+
+        public IDictionary<string, string> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary)
+        {
+            IDictionary<string, string> emptyValueDictionary = dictionary
+                .ToDictionary(kvp => kvp.Key, kvp => string.Empty);
+
+            return emptyValueDictionary;
         }
     }
 }
