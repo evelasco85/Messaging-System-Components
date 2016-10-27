@@ -12,8 +12,8 @@ namespace Messaging.Orchestration.Shared.Services
 {
     public interface IDataTransferService
     {
-        IObjectInformation<TVersion> GetObjectInformation<TVersion, TObject>(TObject obj)
-            where TObject : IVersionInfo<TVersion>;
+        IObjectInformation<TVersion> GetObjectInformation<TVersion, TObject>(QueueTypeEnum queueType, Guid id,
+            TVersion version);
     }
 
     public class DataTransferService : Singleton<DataTransferService, IDataTransferService>, IDataTransferService
@@ -22,15 +22,16 @@ namespace Messaging.Orchestration.Shared.Services
         {
         }
 
-        public IObjectInformation<TVersion> GetObjectInformation<TVersion, TObject>(TObject obj)
-            where TObject : IVersionInfo<TVersion>
+        public IObjectInformation<TVersion> GetObjectInformation<TVersion, TObject>(QueueTypeEnum queueType, Guid id, TVersion version)
         {
             PropertyInfo[] properties = GetProperties<TObject>();
             ConstructorInfo[] constructorInfos = GetConstructorParameters<TObject>();
             IDictionary<string, string> propertyDescriptions = ConvertToFriendlyPropertyDictionary(properties);
             IList<IDictionary<string, string>> constructorsParams = ConvertToFriendlyConstructorParamDictionary(constructorInfos);
 
-            IObjectInformation<TVersion> objectInformation = new ObjectInformationInformation<TObject, TVersion>(obj)
+            IObjectInformation<TVersion> objectInformation = new ObjectInformationInformation<TObject, TVersion>(
+                new VersionInfo<TVersion>(queueType, id, version)
+                )
             {
                 ConstructorParameters = constructorsParams,
                 Properties = propertyDescriptions

@@ -15,18 +15,14 @@ namespace Messaging.Orchestration.Shared.Models
     }
 
     public class ObjectInformationInformation<TObject, TVersion> : IObjectInformation<TVersion>
-        where TObject: IVersionInfo<TVersion>
     {
         public IVersionInfo<TVersion> VersionInfo { get; set; }
         public IList<IDictionary<string, string>> ConstructorParameters { get; set; }
         public IDictionary<string, string> Properties { get; set; }
 
-        public ObjectInformationInformation(TObject obj)
+        public ObjectInformationInformation(IVersionInfo<TVersion> versionInfo)
         {
-            if(obj == null)
-                throw  new ArgumentNullException("'obj' constructor parameter requires a value");
-
-            this.VersionInfo = obj;
+            VersionInfo = versionInfo;
             ConstructorParameters = new List<IDictionary<string, string>>();
             Properties = new Dictionary<string, string>();
         }

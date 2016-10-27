@@ -5,11 +5,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Messaging.Orchestration.Tests
 {
-    public class TestObject : IVersionInfo<int>
+    public class TestObject 
     {
-        public int Version {
-            get { return 29; }
-        }
+        public const int VERSION = 29;
+        public const QueueTypeEnum QUEUE_TYPE = QueueTypeEnum.MSMQ;
+        public static readonly Guid ID = Guid.NewGuid();
 
         #region Public read-write properties
         public bool TestBoolProperty { get; set; }
@@ -56,10 +56,16 @@ namespace Messaging.Orchestration.Tests
         public void TestGetObjectInformation()
         {
             IDataTransferService service = DataTransferService.GetInstance();
-            TestObject obj = new TestObject();
-            IObjectInformation<int> transferObjectInformation = service.GetObjectInformation<int, TestObject>(obj);
+            IObjectInformation<int> transferObjectInformation = service.GetObjectInformation<int, TestObject>(
+                TestObject.QUEUE_TYPE,
+                TestObject.ID,
+                TestObject.VERSION
+                );
+
 
             Assert.AreEqual(29, transferObjectInformation.VersionInfo.Version);
+            Assert.AreEqual(QueueTypeEnum.MSMQ, transferObjectInformation.VersionInfo.QueueType);
+            Assert.IsNotNull(transferObjectInformation.VersionInfo.ID);
             Assert.IsTrue(
                 (transferObjectInformation.Properties.ContainsKey("TestIntProperty")) &&
                 (transferObjectInformation.Properties["TestIntProperty"] == "System.Int32")

@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ObjectInformation.cs" />
+    <Compile Include="Models\QueueTypeEnum.cs" />
     <Compile Include="Services\DataTransferService.cs" />
     <Compile Include="Models\IVersionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
