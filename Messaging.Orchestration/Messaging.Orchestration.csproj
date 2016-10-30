@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Models\ObjectInformation.cs" />
     <Compile Include="Models\QueueTypeEnum.cs" />
+    <Compile Include="Services\ClientService.cs" />
     <Compile Include="Services\ObjectManipulationService.cs" />
     <Compile Include="Models\IVersionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
