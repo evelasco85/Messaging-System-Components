@@ -21,6 +21,11 @@ namespace MessageGateway{
 
         public MessageReceiverGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
         {
+            _returnAddress = new MQReturnAddress(messageQueueGateway);
+        }
+
+        public override void SetupReceiver()
+        {
             GetQueue().MessageReadPropertyFilter.ClearAll();
             GetQueue().MessageReadPropertyFilter.AppSpecific = true;
             GetQueue().MessageReadPropertyFilter.Body = true;
@@ -29,8 +34,6 @@ namespace MessageGateway{
             GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
             GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
             GetQueue().MessageReadPropertyFilter.SentTime = true;
-
-            _returnAddress = new MQReturnAddress(messageQueueGateway);
         }
 
         public MessageReceiverGateway(String q) : this(new MessageQueueGateway(q))

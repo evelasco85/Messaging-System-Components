@@ -3,8 +3,10 @@ if "%1"=="nostart" goto nostart
 call runbanks
 
 ::start 
-start StartCreditBureau_Primary ***
-start StartCreditBureau_Backup	***
+start StartCreditBureau_Primary
+start StartCreditBureau_Primary
+start StartCreditBureau_Backup
+start StartCreditBureau_Backup
 
 start loanbroker loanRequestQueue creditrequestQueue creditReplyQueue bankReplyQueue
 

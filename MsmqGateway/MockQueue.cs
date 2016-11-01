@@ -49,5 +49,13 @@ namespace Gateway.Mock
         {
             throw new System.NotImplementedException();
         }
+
+        public void SetupSender()
+        {
+        }
+
+        public void SetupReceiver()
+        {
+        }
     }
 }

@@ -23,6 +23,8 @@ namespace Messaging.Base
         public ReceiverGateway(IQueueGateway<TMessageQueue> queueGateway)
         {
             _queueGateway = queueGateway;
+
+            SetupReceiver();
         }
 
         public TMessageQueue GetQueue()
@@ -33,5 +35,6 @@ namespace Messaging.Base
         public abstract IReturnAddress<TMessage> AsReturnAddress();
 
         public abstract void StartReceivingMessages();
+        public abstract void SetupReceiver();
     }
 }

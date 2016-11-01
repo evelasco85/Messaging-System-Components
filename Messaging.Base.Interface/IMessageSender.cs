@@ -9,5 +9,6 @@ namespace Messaging.Base
     {
         IReturnAddress<TMessage> AsReturnAddress();
         void Send(TMessage message);
+        void SetupSender();
     }
 }

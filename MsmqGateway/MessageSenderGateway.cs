@@ -20,15 +20,6 @@ namespace MessageGateway{
 
 	    public MessageSenderGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
 	    {
-            GetQueue().MessageReadPropertyFilter.ClearAll();
-            GetQueue().MessageReadPropertyFilter.AppSpecific = true;
-            GetQueue().MessageReadPropertyFilter.Body = true;
-            GetQueue().MessageReadPropertyFilter.CorrelationId = true;
-            GetQueue().MessageReadPropertyFilter.Id = true;
-            GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
-            GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
-            GetQueue().MessageReadPropertyFilter.SentTime = true;
-
             _returnAddress = new MQReturnAddress(messageQueueGateway);
 	    }
 
@@ -45,6 +36,18 @@ namespace MessageGateway{
 
 	    public override void Send(Message msg){
 			GetQueue().Send(msg);
-		}	
+		}
+
+	    public override void SetupSender()
+	    {
+            GetQueue().MessageReadPropertyFilter.ClearAll();
+            GetQueue().MessageReadPropertyFilter.AppSpecific = true;
+            GetQueue().MessageReadPropertyFilter.Body = true;
+            GetQueue().MessageReadPropertyFilter.CorrelationId = true;
+            GetQueue().MessageReadPropertyFilter.Id = true;
+            GetQueue().MessageReadPropertyFilter.ResponseQueue = true;
+            GetQueue().MessageReadPropertyFilter.ArrivedTime = true;
+            GetQueue().MessageReadPropertyFilter.SentTime = true;
+	    }
 	}
 }

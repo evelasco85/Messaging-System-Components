@@ -25,6 +25,11 @@ namespace Messaging.Base.Tests
         {
             throw new NotImplementedException();
         }
+
+        public override void SetupSender()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public abstract class BaseRecipient

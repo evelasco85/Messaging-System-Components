@@ -18,6 +18,8 @@ namespace Messaging.Base
         public SenderGateway(IQueueGateway<TMessageQueue> queueGateway)
         {
             _queueGateway = queueGateway;
+
+            SetupSender();
         }
 
         public TMessageQueue GetQueue()
@@ -28,5 +30,6 @@ namespace Messaging.Base
         public abstract IReturnAddress<TMessage> AsReturnAddress();
 
         public abstract void Send(TMessage message);
+        public abstract void SetupSender();
     }
 }

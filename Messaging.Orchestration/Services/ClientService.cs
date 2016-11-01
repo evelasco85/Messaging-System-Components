@@ -48,7 +48,12 @@ namespace Messaging.Orchestration.Shared.Services
 
         IDictionary<string, Action<object>> _serverParameterRequests = new Dictionary<string, Action<object>>();
 
-        public void RegisterClient<TVersion, TObject>(
+        public ClientService(string serverRequestQueue, string serviceReplyQueue)
+        {
+            
+        }
+
+        public void RegisterClient(
             Guid clientId, QueueTypeEnum queueType,
             Action<IClientService_ParameterRegistration> registerRequiredServerParametersSequence,
             Action<string> invalidRegistrationSequence,

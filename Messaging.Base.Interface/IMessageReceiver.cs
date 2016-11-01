@@ -15,5 +15,6 @@ namespace Messaging.Base
 
         IReturnAddress<TMessage> AsReturnAddress();
         void StartReceivingMessages();
+        void SetupReceiver();
     }
 }

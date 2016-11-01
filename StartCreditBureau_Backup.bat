@@ -1,3 +1,3 @@
 TITLE Credit Bureau
-start CreditBureau creditRequestQueue_BackupProcessor
+CreditBureau creditRequestQueue_BackupProcessor
 exit
