@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Messaging" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -52,8 +53,17 @@
   <ItemGroup>
     <Compile Include="ObjectManipulationServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OrchestrationTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Messaging.Base.Interface\Messaging.Base.Interface.csproj">
+      <Project>{04c09384-803c-46e9-8578-7afbc269a9b0}</Project>
+      <Name>Messaging.Base.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Messaging.Base\Messaging.Base.csproj">
+      <Project>{62819694-7de4-49ed-86d5-3bb599ecb41a}</Project>
+      <Name>Messaging.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Messaging.Orchestration\Messaging.Orchestration.csproj">
       <Project>{b3a80a60-25d1-43d8-ab2f-ec6084fc8161}</Project>
       <Name>Messaging.Orchestration</Name>
@@ -61,6 +71,10 @@
     <ProjectReference Include="..\Messaging.Utilities\Messaging.Utilities.csproj">
       <Project>{1cff82b3-bfb8-44af-a237-aa9bc5eccc95}</Project>
       <Name>Messaging.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MsmqGateway\MsmqGateway.csproj">
+      <Project>{e2dcbaac-ea99-4c68-9523-aa69251570a8}</Project>
+      <Name>MsmqGateway</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

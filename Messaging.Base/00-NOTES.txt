@@ -2,3 +2,4 @@
 *BankGateway.cs uses a 'Scatter-Gather' pattern implementation
 *'Scatter-Gather' = 'Recipient List' + 'Aggregator' 
 *'Request-Reply' pattern is a 'Service Activator' type
+*'End-points' patters are implemented on their respective projects as this is a client-specific implementation
