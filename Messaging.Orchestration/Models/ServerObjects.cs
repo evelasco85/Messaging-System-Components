@@ -23,19 +23,25 @@ namespace Messaging.Orchestration.Shared.Models
         Register
     }
 
+    public class ParameterEntry
+    {
+        public string Name { get; set; }
+        public object Value { get; set; }
+    }
+
     public class ServerMessage
     {
         //public QueueTypeEnum QueueType { get; set; }
-        public Guid ClientId { get; set; }
+        public string ClientId { get; set; }
         public ClientCommandStatus ClientStatus { get; set; }
-        public IDictionary<string, object> ClientParameters { get; set; }
+        public List<ParameterEntry> ClientParameters { get; set; }
         public string Message { get; set; }
     }
 
     public class ServerRequest
     {
         public ServerRequestType RequestType { get; set; }
-        public Guid ClientId { get; set; }
+        public string ClientId { get; set; }
         public List<string> ParameterList { get; set; }
     }
 }

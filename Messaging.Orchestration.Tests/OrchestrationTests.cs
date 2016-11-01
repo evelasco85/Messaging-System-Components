@@ -23,14 +23,14 @@ namespace Messaging.Orchestration.Tests
         {
             string requestQueue = "ServerRequestQueue";
             string replyQueue = "ServerReplyQueue";
-            Guid clientId = Guid.Parse("1c4054c1-6ae4-4a3c-b540-55d768988994");
+            string clientId = @"1c4054c1-6ae4-4a3c-b540-55d768988994\123";
             IClientService client = new ClientService<MessageQueue, Message>(
                 clientId,
                 new MessageSenderGateway(ToPath(requestQueue)),
                 new MQSelectiveConsumer(
                     ToPath(replyQueue),
                     new XmlMessageFormatter(new Type[] {typeof(ServerMessage)}),
-                    clientId.ToString()),
+                    clientId),
                 (sender, request) => //Concrete sender implementation
                 {
                     sender.Send(new Message(request));
@@ -93,20 +93,28 @@ namespace Messaging.Orchestration.Tests
                     switch (request.RequestType)
                     {
                         case ServerRequestType.Register:
-                            IDictionary<string, object> paramList = request
-                                .ParameterList
-                                .Select(param => new KeyValuePair<string, object>(param, "hello world"))
-                                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-                            response = new ServerMessage
+                            try
                             {
-                                ClientId = request.ClientId,
-                                ClientStatus = ClientCommandStatus.Standby,
-                                ClientParameters = paramList
-                            };
+                                List<ParameterEntry> paramList = request
+                                .ParameterList
+                               .Select(param => new ParameterEntry
+                               {
+                                   Name = param,
+                                   Value = "hello world"
+                               })
+                               .ToList();
+
+                                response = new ServerMessage
+                                {
+                                    ClientId = request.ClientId,
+                                    ClientStatus = ClientCommandStatus.Standby,
+                                    ClientParameters = paramList
+                                };
+                            }
+                            catch (Exception ex)
+                            { throw ex; }
                             break;
                     }
-
 
                     return response;
                 },
@@ -114,14 +122,13 @@ namespace Messaging.Orchestration.Tests
                 {
                     Message message = new Message(response);
 
-                    //MsmqMessage<ServerMessage> message = new MsmqMessage<ServerMessage>(response);
-                    string corrId = response.ClientId.ToString();
-                    message.CorrelationId = corrId;
+                    message.CorrelationId = response.ClientId;
 
                     sender.Send(message);
                 });
 
             server.Process();
+            client.Process();
         }
     }
 }

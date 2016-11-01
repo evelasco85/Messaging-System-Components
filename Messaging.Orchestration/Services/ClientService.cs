@@ -29,7 +29,7 @@ namespace Messaging.Orchestration.Shared.Services
 
     public class ClientService<TMessageQueue, TMessage> : IClientService
     {
-        Guid _clientId;
+        string _clientId;
         Action<string> _invalidRegistrationSequence;
         Action _standbySequence;
         Action _startSequence;
@@ -42,7 +42,7 @@ namespace Messaging.Orchestration.Shared.Services
         private Action<IMessageSender<TMessageQueue, TMessage>, ServerRequest> _sendRequest;
 
         public ClientService(
-            Guid clientId, 
+            string clientId, 
             IMessageSender<TMessageQueue, TMessage> serverRequestSender,
             IMessageReceiver<TMessageQueue, TMessage> serverReplyReceiver,
             Action<IMessageSender<TMessageQueue, TMessage>, ServerRequest> sendRequest,
@@ -145,15 +145,19 @@ namespace Messaging.Orchestration.Shared.Services
             }
         }
 
-        void SetupClientParameters(IDictionary<string, Action<object>> serverParametersRequest, IDictionary<string, object> clientParameters)
+        void SetupClientParameters(IDictionary<string, Action<object>> serverParametersRequest, List<ParameterEntry> clientParameters)
         {
             if ((serverParametersRequest == null) || (clientParameters == null))
                 return;
 
             foreach(KeyValuePair<string, Action<object>> kvp in serverParametersRequest)
             {
-                if ((kvp.Value != null) && (clientParameters.ContainsKey(kvp.Key)))
-                    kvp.Value(clientParameters[kvp.Key]);
+                ParameterEntry entry = clientParameters
+                    .DefaultIfEmpty(null)
+                    .FirstOrDefault(param => param.Name == kvp.Key);
+
+                if ((kvp.Value != null) && (entry != null))
+                    kvp.Value(entry.Value);
             }
         }
 
