@@ -15,6 +15,11 @@ namespace Messaging.Orchestration.Shared.Services.Interfaces
 
     public interface IServerService<TMessageQueue, TMessage> : IMessageConsumer<TMessageQueue, TMessage>
     {
+        void Register(
+            ServerRequestConverterDelegate<TMessage> serverRequestConverter,
+            SendResponseDelegate<TMessageQueue, TMessage> sendResponse,
+            ProcessRequestDelegate processRequest
+            );
         void SendClientMessage(ServerMessage serverMessage);
     }
 }

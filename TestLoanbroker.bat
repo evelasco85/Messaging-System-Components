@@ -28,7 +28,9 @@ Test\bin\Debug\Test loanbroker loanRequestQueue loanReplyQueue %1
 goto end
 
 :noarg
-Test\bin\Debug\Test loanbroker loanRequestQueue loanReplyQueue 50
+::Test\bin\Debug\Test loanbroker loanRequestQueue loanReplyQueue 50
+Test\bin\Debug\Test 92022db8-750a-4481-afc7-dc2dcfb8fc20\1 ServerRequestQueue ServerReplyQueue
+
 
 
 :end

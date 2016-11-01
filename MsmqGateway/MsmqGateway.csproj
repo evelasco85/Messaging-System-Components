@@ -102,6 +102,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MQOrchestration.cs" />
     <Compile Include="MQRequestReplyService_Asynchronous.cs" />
     <Compile Include="MessageQueueGateway.cs">
       <SubType>Code</SubType>
@@ -138,6 +139,10 @@
     <ProjectReference Include="..\Messaging.Base\Messaging.Base.csproj">
       <Project>{62819694-7de4-49ed-86d5-3bb599ecb41a}</Project>
       <Name>Messaging.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Messaging.Orchestration\Messaging.Orchestration.csproj">
+      <Project>{b3a80a60-25d1-43d8-ab2f-ec6084fc8161}</Project>
+      <Name>Messaging.Orchestration</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

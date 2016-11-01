@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<clients>
+  <client id="92022db8-750a-4481-afc7-dc2dcfb8fc20\1" name="Test Loan Broker" description="">
+    <group id="">
+      <config id="" name="mode" value="loanbroker" />
+      <config id="" name="requestQueue" value="loanRequestQueue" />
+      <config id="" name="replyQueue" value="loanReplyQueue" />
+      <config id="" name="numMessages" value="50" />
+    </group>
+  </client>
+  <client id="962c38f8-35a1-4ace-811e-73a100295e6f\1" name="CreditBureauFailOver" description="">
+    <group id="">
+      <config id="" name="" value="routerControlQueue" />
+      <config id="" name="" value="creditRequestQueue" />
+      <config id="" name="" value="creditRequestQueue_PrimaryProcessor" />
+      <config id="" name="" value="creditRequestQueue_BackupProcessor" />
+    </group>
+  </client>
+  <client id="" name="" description="">
+    <group id="">
+      <config id="" name="" value="" />
+    </group>
+  </client>
+  <client id="" name="" description="">
+    <group id="">
+      <config id="" name="" value="" />
+    </group>
+  </client>
+  <client id="" name="" description="">
+    <group id="">
+      <config id="" name="" value="" />
+    </group>
+  </client>
+  <client id="" name="" description="">
+    <group id="">
+      <config id="" name="" value="" />
+    </group>
+  </client>
+</clients>

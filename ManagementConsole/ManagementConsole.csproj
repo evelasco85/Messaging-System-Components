@@ -45,6 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ControlBusConsumer.cs" />
     <Compile Include="ManagementConsole.cs">
       <SubType>Form</SubType>
@@ -56,6 +61,10 @@
     <Compile Include="OrchestrationServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Configuration\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="ManagementConsole.resx">
       <DependentUpon>ManagementConsole.cs</DependentUpon>
     </EmbeddedResource>
@@ -102,6 +111,12 @@
       <Project>{e2dcbaac-ea99-4c68-9523-aa69251570a8}</Project>
       <Name>MsmqGateway</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Configuration\ClientConfigurations.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -55,6 +55,10 @@ namespace Test
             Console.WriteLine("Sending {0} messages to {1}. Expecting replies on {2}", numMessages, requestQueueName, replyQueueName);
         }
 
+        public void StopProcessing()
+        {
+            replyQueue.StopReceivingMessages();
+        }
 
         public void Process()
         {

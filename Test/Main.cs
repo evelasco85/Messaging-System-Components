@@ -6,7 +6,12 @@
  * This code is supplied as is. No warranties. 
  */
 
+using MessageGateway;
+using Messaging.Orchestration.Shared.Models;
+using Messaging.Orchestration.Shared.Services;
+using MsmqGateway;
 using System;
+using System.Messaging;
 
 namespace Test
 {
@@ -16,17 +21,60 @@ namespace Test
         [STAThread]
         static void Main(string[] args)
         {
-            String arg = args[0];
-            String[] newArgs =  new String[args.Length -1];
-            for(int i = 1; i < args.Length; i++)
-                newArgs[i-1] = args[i];
-			
-            if(arg.Equals("credit"))
-                CreditBureauTest(newArgs);
-            else if (arg.Equals("bank"))
-                BankTest(newArgs);
-            else if (arg.Equals("loanbroker"))
-                LoanBrokerTest(newArgs);
+            IClientService client = MQOrchestration.GetInstance().CreateClient(
+                args[0],
+                ToPath(args[1]),
+                ToPath(args[2])
+                );
+
+            //IClientService client = MQOrchestration.GetInstance().CreateClient(
+            //   @"92022db8-750a-4481-afc7-dc2dcfb8fc20\1",
+            //   ToPath("ServerRequestQueue"),
+            //   ToPath("ServerReplyQueue")
+            //   );
+
+            int numMessages = 0;
+            TestLoanBroker test = null;
+            string requestQueue = string.Empty;
+            string replyQueue = string.Empty;
+            string mode = string.Empty;
+
+            client.Register(registration =>
+            {
+                //Server parameter requests
+                registration.RegisterRequiredServerParameters("mode", (value) => mode = (string)value);
+                registration.RegisterRequiredServerParameters("requestQueue", (value) => requestQueue = (string)value);
+                registration.RegisterRequiredServerParameters("replyQueue", (value) => replyQueue = (string)value);
+                registration.RegisterRequiredServerParameters("numMessages", (value) => numMessages = System.Convert.ToInt32(value));
+            },
+                errorMessage =>
+                {
+                    //Invalid registration
+                },
+                () =>
+                {
+                    //Client parameter setup completed
+                    Console.WriteLine("Configurations ok!");
+                    test = new TestLoanBroker(ToPath(requestQueue), ToPath(replyQueue), numMessages);
+                },
+                () =>
+                {
+                    //Stand-by
+                    Console.WriteLine("Test Loan Broker Parameters Prepared!");
+                },
+                () =>
+                {
+                    //Start
+                    test.Process();
+                },
+                () =>
+                {
+                    //Stop
+                    test.StopProcessing();
+                });
+
+            client.Process();
+            Console.ReadLine();
         }
 
 

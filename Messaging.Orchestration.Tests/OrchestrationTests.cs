@@ -20,8 +20,8 @@ namespace Messaging.Orchestration.Tests
             return ".\\private$\\" + arg;
         }
 
-        IClientService client;
-        IServerService<MessageQueue, Message> server;
+        IClientService _client;
+        IServerService<MessageQueue, Message> _server;
 
         [TestMethod]
         public void TestMethod1()
@@ -31,7 +31,7 @@ namespace Messaging.Orchestration.Tests
             string clientId = @"1c4054c1-6ae4-4a3c-b540-55d768988994\123";
             string nameValue = string.Empty;
 
-            client = new ClientService<MessageQueue, Message>(
+            _client = new ClientService<MessageQueue, Message>(
                 clientId,
                 new MessageSenderGateway(ToPath(requestQueue)),
                 new MQSelectiveConsumer(
@@ -53,7 +53,7 @@ namespace Messaging.Orchestration.Tests
                 });
 
 
-            client.Register(registration =>
+            _client.Register(registration =>
             {
                 //Server parameter requests
                 registration.RegisterRequiredServerParameters("name", (value) => nameValue = (string)value);
@@ -67,7 +67,7 @@ namespace Messaging.Orchestration.Tests
                     //Client parameter setup completed
                     Assert.AreEqual("Albert", nameValue);
 
-                    server.SendClientMessage(new ServerMessage
+                    _server.SendClientMessage(new ServerMessage
                     {
                         ClientId = clientId,
                         ClientStatus = ClientCommandStatus.Standby
@@ -78,7 +78,7 @@ namespace Messaging.Orchestration.Tests
                     //Stand-by
                     Assert.IsTrue(true);
 
-                    server.SendClientMessage(new ServerMessage
+                    _server.SendClientMessage(new ServerMessage
                     {
                         ClientId = clientId,
                         ClientStatus = ClientCommandStatus.Stop
@@ -92,18 +92,20 @@ namespace Messaging.Orchestration.Tests
                 {
                     //Stop
                     //Force stopping this process
-                    client.StopReceivingMessages();
-                    server.StopProcessing();
+                    _client.StopReceivingMessages();
+                    _server.StopProcessing();
 
                     //Thread.CurrentThread.Join();
                 });
 
-            server = new ServerService<MessageQueue, Message>
+            _server = new ServerService<MessageQueue, Message>
                 (
                 new MessageReceiverGateway(
                     ToPath(requestQueue),
-                    new XmlMessageFormatter(new Type[] {typeof(ServerRequest)})),
-                new MessageSenderGateway(ToPath(replyQueue)),
+                    new XmlMessageFormatter(new Type[] { typeof(ServerRequest) })),
+                new MessageSenderGateway(ToPath(replyQueue)));
+
+            _server.Register(
                 message =>
                 {
                     ServerRequest request = null;
@@ -112,6 +114,14 @@ namespace Messaging.Orchestration.Tests
                         request = (ServerRequest) message.Body;
 
                     return request;
+                },
+                (sender, response) =>
+                {
+                    Message message = new Message(response);
+
+                    message.CorrelationId = response.ClientId;
+
+                    sender.Send(message);
                 },
                 request =>
                 {
@@ -147,18 +157,10 @@ namespace Messaging.Orchestration.Tests
                     }
 
                     return response;
-                },
-                (sender, response) =>
-                {
-                    Message message = new Message(response);
-
-                    message.CorrelationId = response.ClientId;
-
-                    sender.Send(message);
                 });
 
-            server.Process();
-            client.Process();            
+            _server.Process();
+            _client.Process();            
         }
     }
 }

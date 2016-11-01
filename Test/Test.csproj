@@ -93,6 +93,10 @@
       <Project>{62819694-7de4-49ed-86d5-3bb599ecb41a}</Project>
       <Name>Messaging.Base</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Messaging.Orchestration\Messaging.Orchestration.csproj">
+      <Project>{b3a80a60-25d1-43d8-ab2f-ec6084fc8161}</Project>
+      <Name>Messaging.Orchestration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MsmqGateway\MsmqGateway.csproj">
       <Name>MsmqGateway</Name>
       <Project>{E2DCBAAC-EA99-4C68-9523-AA69251570A8}</Project>

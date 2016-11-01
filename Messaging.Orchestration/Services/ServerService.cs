@@ -20,15 +20,20 @@ namespace Messaging.Orchestration.Shared.Services
 
         public ServerService(
             IMessageReceiver<TMessageQueue, TMessage> serverRequestReceiver,
-            IMessageSender<TMessageQueue, TMessage> serverReplySender,
-            ServerRequestConverterDelegate<TMessage> serverRequestConverter,
-            ProcessRequestDelegate processRequest,
-            SendResponseDelegate<TMessageQueue, TMessage> sendResponse
+            IMessageSender<TMessageQueue, TMessage> serverReplySender
             )
             : base(serverRequestReceiver)
         {
-            _processRequest = processRequest;
             _serverReplySender = serverReplySender;
+        }
+
+        public void Register(
+            ServerRequestConverterDelegate<TMessage> serverRequestConverter,
+            SendResponseDelegate<TMessageQueue, TMessage> sendResponse,
+            ProcessRequestDelegate processRequest
+            )
+        {
+            _processRequest = processRequest;
             _sendResponse = sendResponse;
             _serverRequestConverter = serverRequestConverter;
         }

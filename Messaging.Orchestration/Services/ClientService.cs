@@ -93,7 +93,6 @@ namespace Messaging.Orchestration.Shared.Services
                 _serverParameterRequests.Add(name, setValueOperator);
         }
 
-        
         void PerformClientRegistration(
             IDictionary<string, SetParameterDelegate> serverParametersRequest)
         {
@@ -153,7 +152,7 @@ namespace Messaging.Orchestration.Shared.Services
             {
                 ParameterEntry entry = clientParameters
                     .DefaultIfEmpty(null)
-                    .FirstOrDefault(param => param.Name == kvp.Key);
+                    .FirstOrDefault(param => (param != null) && (param.Name == kvp.Key));
 
                 if ((kvp.Value != null) && (entry != null))
                     kvp.Value(entry.Value);
