@@ -57,5 +57,10 @@ namespace Gateway.Mock
         public void SetupReceiver()
         {
         }
+
+        public void StopReceivingMessages()
+        {
+
+        }
     }
 }

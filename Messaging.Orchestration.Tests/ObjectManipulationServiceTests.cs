@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Messaging.Orchestration.Models;
 using Messaging.Orchestration.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Messaging.Orchestration.Shared.Services.Interfaces;
 
 namespace Messaging.Orchestration.Tests
 {

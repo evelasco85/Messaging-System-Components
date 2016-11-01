@@ -10,43 +10,29 @@ using Messaging.Orchestration.Shared.Models;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public interface IClientService_ParameterRegistration
-    {
-        void RegisterRequiredServerParameters(string name, Action<object> setValueOperator);
-    }
-
-    public interface IClientService : IClientService_ParameterRegistration
-    {
-        void Process();
-
-        void Register(
-            Action<IClientService_ParameterRegistration> registerRequiredServerParametersSequence,
-            Action<string> invalidRegistrationSequence,
-            Action standbySequence,
-            Action startSequence,
-            Action stopSequence);
-    }
-
     public class ClientService<TMessageQueue, TMessage> : IClientService
     {
         string _clientId;
-        Action<string> _invalidRegistrationSequence;
-        Action _standbySequence;
-        Action _startSequence;
-        Action _stopSequence;
+        InvalidRegistrationDelegate _invalidRegistrationSequence;
+        StandByDelegate _standbySequence;
+        StartDelegate _startSequence;
+        StopDelegate _stopSequence;
 
-        IDictionary<string, Action<object>> _serverParameterRequests = new Dictionary<string, Action<object>>();
+        IDictionary<string, SetParameterDelegate> _serverParameterRequests = new Dictionary<string, SetParameterDelegate>();
         IMessageSender<TMessageQueue, TMessage> _serverRequestSender;
         private IMessageReceiver<TMessageQueue, TMessage> _serverReplyReceiver;
-        private Func<TMessage, ServerMessage> _serverResponseConverter;
-        private Action<IMessageSender<TMessageQueue, TMessage>, ServerRequest> _sendRequest;
+
+
+        private ConvertToServerResponseDelegate<TMessage> _serverResponseConverter;
+        private SendRequestToServerDelegate<TMessageQueue, TMessage> _sendRequest;
+        ClientParameterSetupCompleteDelegate _clientParameterSetupComplete;
 
         public ClientService(
             string clientId, 
             IMessageSender<TMessageQueue, TMessage> serverRequestSender,
             IMessageReceiver<TMessageQueue, TMessage> serverReplyReceiver,
-            Action<IMessageSender<TMessageQueue, TMessage>, ServerRequest> sendRequest,
-            Func<TMessage, ServerMessage> serverResponseConverter
+            SendRequestToServerDelegate<TMessageQueue, TMessage> sendRequest,
+            ConvertToServerResponseDelegate<TMessage> serverResponseConverter
             )
         {
             serverReplyReceiver.ReceiveMessageProcessor += ProcessMessage;
@@ -63,6 +49,11 @@ namespace Messaging.Orchestration.Shared.Services
             _serverReplyReceiver.StartReceivingMessages();
         }
 
+        public void StopReceivingMessages()
+        {
+            _serverReplyReceiver.StopReceivingMessages();
+        }
+
         void ProcessMessage(TMessage message)
         {
             if(_serverResponseConverter == null)
@@ -75,13 +66,15 @@ namespace Messaging.Orchestration.Shared.Services
         }
 
         public void Register(
-            Action<IClientService_ParameterRegistration> registerRequiredServerParametersSequence,
-            Action<string> invalidRegistrationSequence,
-            Action standbySequence,
-            Action startSequence,
-            Action stopSequence)
+            RegisterRequiredServerParametersDelegate registerRequiredServerParametersSequence,
+            InvalidRegistrationDelegate invalidRegistrationSequence,
+            ClientParameterSetupCompleteDelegate clientParameterSetupCompleteSequence,
+            StandByDelegate standbySequence,
+            StartDelegate startSequence,
+            StopDelegate stopSequence)
         {
             _invalidRegistrationSequence = invalidRegistrationSequence;
+            _clientParameterSetupComplete = clientParameterSetupCompleteSequence;
             _standbySequence = standbySequence;
             _startSequence = startSequence;
             _stopSequence = stopSequence;
@@ -94,7 +87,7 @@ namespace Messaging.Orchestration.Shared.Services
         }
 
         
-        public void RegisterRequiredServerParameters(string name, Action<object> setValueOperator)
+        public void RegisterRequiredServerParameters(string name, SetParameterDelegate setValueOperator)
         {
             if (!_serverParameterRequests.ContainsKey(name))
                 _serverParameterRequests.Add(name, setValueOperator);
@@ -102,7 +95,7 @@ namespace Messaging.Orchestration.Shared.Services
 
         
         void PerformClientRegistration(
-            IDictionary<string, Action<object>> serverParametersRequest)
+            IDictionary<string, SetParameterDelegate> serverParametersRequest)
         {
             if (_sendRequest == null)
                 return;
@@ -132,25 +125,31 @@ namespace Messaging.Orchestration.Shared.Services
                     break;
                 case ClientCommandStatus.SetupClientParameters:
                     SetupClientParameters(_serverParameterRequests, response.ClientParameters);
+
+                    if (_clientParameterSetupComplete != null)
+                        _clientParameterSetupComplete();
                     break;
                 case ClientCommandStatus.Standby:
-                    SafeInvokeMethod(_standbySequence);
+                    if (_standbySequence != null)
+                        _standbySequence();
                     break;
                 case ClientCommandStatus.Start:
-                    SafeInvokeMethod(_startSequence);
+                    if (_startSequence != null)
+                        _startSequence();
                     break;
                 case ClientCommandStatus.Stop:
-                    SafeInvokeMethod(_stopSequence);
+                    if (_stopSequence != null)
+                        _stopSequence();
                     break;
             }
         }
 
-        void SetupClientParameters(IDictionary<string, Action<object>> serverParametersRequest, List<ParameterEntry> clientParameters)
+        void SetupClientParameters(IDictionary<string, SetParameterDelegate> serverParametersRequest, List<ParameterEntry> clientParameters)
         {
             if ((serverParametersRequest == null) || (clientParameters == null))
                 return;
 
-            foreach(KeyValuePair<string, Action<object>> kvp in serverParametersRequest)
+            foreach(KeyValuePair<string, SetParameterDelegate> kvp in serverParametersRequest)
             {
                 ParameterEntry entry = clientParameters
                     .DefaultIfEmpty(null)
@@ -165,11 +164,6 @@ namespace Messaging.Orchestration.Shared.Services
         {
             if (_invalidRegistrationSequence != null)
                 _invalidRegistrationSequence(serverMessage);
-        }
-        void SafeInvokeMethod(Action actionToCall)
-        {
-            if (actionToCall != null)
-                actionToCall();
         }
     }
 }

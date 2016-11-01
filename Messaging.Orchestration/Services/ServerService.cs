@@ -6,32 +6,28 @@ using System.Threading.Tasks;
 using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
 using Messaging.Orchestration.Shared.Models;
+using Messaging.Orchestration.Shared.Services.Interfaces;
+using System.Threading;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public interface IServerService<TMessageQueue, TMessage> : IMessageConsumer<TMessageQueue, TMessage>
-    {
-        void SendClientMessage(ServerMessage serverMessage);
-    }
-
     public class ServerService<TMessageQueue, TMessage> : MessageConsumer<TMessageQueue, TMessage>, IServerService<TMessageQueue, TMessage>
     {
-        private Func<ServerRequest, ServerMessage> _requestProcessor;
+        private ProcessRequestDelegate _processRequest;
         private IMessageSender<TMessageQueue, TMessage> _serverReplySender;
-        private Action<IMessageSender<TMessageQueue, TMessage>, ServerMessage> _sendResponse;
-        private Func<TMessage, ServerRequest> _serverRequestConverter;
+        private SendResponseDelegate<TMessageQueue, TMessage> _sendResponse;
+        private ServerRequestConverterDelegate<TMessage> _serverRequestConverter;
 
         public ServerService(
             IMessageReceiver<TMessageQueue, TMessage> serverRequestReceiver,
             IMessageSender<TMessageQueue, TMessage> serverReplySender,
-            Func<TMessage, ServerRequest> serverRequestConverter,
-            Func<ServerRequest, ServerMessage> requestProcessor,
-            Action<IMessageSender<TMessageQueue, TMessage>, ServerMessage> sendResponse
-            
+            ServerRequestConverterDelegate<TMessage> serverRequestConverter,
+            ProcessRequestDelegate processRequest,
+            SendResponseDelegate<TMessageQueue, TMessage> sendResponse
             )
             : base(serverRequestReceiver)
         {
-            _requestProcessor = requestProcessor;
+            _processRequest = processRequest;
             _serverReplySender = serverReplySender;
             _sendResponse = sendResponse;
             _serverRequestConverter = serverRequestConverter;
@@ -41,8 +37,8 @@ namespace Messaging.Orchestration.Shared.Services
         {
             ServerMessage response = null;
 
-            if ((message != null) && (_requestProcessor != null) && (_serverRequestConverter != null))
-                response = _requestProcessor(_serverRequestConverter(message));
+            if ((message != null) && (_processRequest != null) && (_serverRequestConverter != null))
+                response = _processRequest(_serverRequestConverter(message));
 
             SendClientMessage(response);
         }

@@ -10,6 +10,7 @@ namespace Messaging.Base.System_Management.SmartProxy
     {
         bool ProcessStarted { get; }
         bool Process();
+        void StopProcessing();
         void ProcessMessage(TMessage message);
     }
 }

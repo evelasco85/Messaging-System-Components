@@ -16,7 +16,7 @@ namespace MsmqGateway
         private IReturnAddress<Message> _returnAddress;
         private MessageDelegate<Message> _receivedMessageProcessor;
         private string _correlationId;
-
+        bool _continueReceivingMessages = true;
 
         public MQSelectiveConsumer(MessageQueueGateway messageQueueGateway, 
             string correlationId
@@ -97,7 +97,9 @@ namespace MsmqGateway
             if (GetQueue().Formatter == null)
                 GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
 
-            while (true)
+            _continueReceivingMessages = true;
+
+            while (_continueReceivingMessages)
             {
                 try
                 {
@@ -113,6 +115,11 @@ namespace MsmqGateway
 
                 }
             }
+        }
+
+        public override void StopReceivingMessages()
+        {
+            _continueReceivingMessages = false;
         }
 
         public override IReturnAddress<Message> AsReturnAddress()

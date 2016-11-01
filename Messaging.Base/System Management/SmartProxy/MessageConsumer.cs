@@ -46,5 +46,17 @@ namespace Messaging.Base.System_Management.SmartProxy
         }
 
         public abstract void ProcessMessage(TMessage message);
+
+        public virtual void StopProcessing()
+        {
+            IMessageReceiver<TMessageQueue, TMessage> receiver = ((IMessageReceiver<TMessageQueue, TMessage>)_messageQueue);
+
+            if ((receiver != null) && (_processStarted))
+            {
+                receiver.StopReceivingMessages();
+
+                _processStarted = false;
+            }
+        }
     }
 }

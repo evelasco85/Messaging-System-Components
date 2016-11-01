@@ -7,6 +7,8 @@ using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MsmqGateway;
+using Messaging.Orchestration.Shared.Services.Interfaces;
+using System.Threading;
 
 namespace Messaging.Orchestration.Tests
 {
@@ -18,13 +20,18 @@ namespace Messaging.Orchestration.Tests
             return ".\\private$\\" + arg;
         }
 
+        IClientService client;
+        IServerService<MessageQueue, Message> server;
+
         [TestMethod]
         public void TestMethod1()
         {
             string requestQueue = "ServerRequestQueue";
             string replyQueue = "ServerReplyQueue";
             string clientId = @"1c4054c1-6ae4-4a3c-b540-55d768988994\123";
-            IClientService client = new ClientService<MessageQueue, Message>(
+            string nameValue = string.Empty;
+
+            client = new ClientService<MessageQueue, Message>(
                 clientId,
                 new MessageSenderGateway(ToPath(requestQueue)),
                 new MQSelectiveConsumer(
@@ -49,7 +56,7 @@ namespace Messaging.Orchestration.Tests
             client.Register(registration =>
             {
                 //Server parameter requests
-                registration.RegisterRequiredServerParameters("name", null);
+                registration.RegisterRequiredServerParameters("name", (value) => nameValue = (string)value);
             },
                 errorMessage =>
                 {
@@ -57,7 +64,25 @@ namespace Messaging.Orchestration.Tests
                 },
                 () =>
                 {
+                    //Client parameter setup completed
+                    Assert.AreEqual("Albert", nameValue);
+
+                    server.SendClientMessage(new ServerMessage
+                    {
+                        ClientId = clientId,
+                        ClientStatus = ClientCommandStatus.Standby
+                    });
+                },
+                () =>
+                {
                     //Stand-by
+                    Assert.IsTrue(true);
+
+                    server.SendClientMessage(new ServerMessage
+                    {
+                        ClientId = clientId,
+                        ClientStatus = ClientCommandStatus.Stop
+                    });
                 },
                 () =>
                 {
@@ -66,9 +91,14 @@ namespace Messaging.Orchestration.Tests
                 () =>
                 {
                     //Stop
+                    //Force stopping this process
+                    client.StopReceivingMessages();
+                    server.StopProcessing();
+
+                    //Thread.CurrentThread.Join();
                 });
 
-            IServerService<MessageQueue, Message> server = new ServerService<MessageQueue, Message>
+            server = new ServerService<MessageQueue, Message>
                 (
                 new MessageReceiverGateway(
                     ToPath(requestQueue),
@@ -100,14 +130,14 @@ namespace Messaging.Orchestration.Tests
                                .Select(param => new ParameterEntry
                                {
                                    Name = param,
-                                   Value = "hello world"
+                                   Value = "Albert"
                                })
                                .ToList();
 
                                 response = new ServerMessage
                                 {
                                     ClientId = request.ClientId,
-                                    ClientStatus = ClientCommandStatus.Standby,
+                                    ClientStatus = ClientCommandStatus.SetupClientParameters,
                                     ClientParameters = paramList
                                 };
                             }
@@ -128,7 +158,7 @@ namespace Messaging.Orchestration.Tests
                 });
 
             server.Process();
-            client.Process();
+            client.Process();            
         }
     }
 }

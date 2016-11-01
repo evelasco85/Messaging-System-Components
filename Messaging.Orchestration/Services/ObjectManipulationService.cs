@@ -7,21 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Messaging.Orchestration.Models;
 using Messaging.Utilities;
+using Messaging.Orchestration.Shared.Services.Interfaces;
 
 namespace Messaging.Orchestration.Services
 {
-    public interface IObjectManipulationService
-    {
-        IObjectInformation<TVersion> GetObjectInformation<TVersion, TObject>(QueueTypeEnum queueType, Guid id,
-            TVersion version);
-
-        IDictionary<string, object> CreateDictionaryWithEmptyValues(IDictionary<string, string> dictionary);
-
-        TObject InstantiateObject<TObject>(
-            IDictionary<string, object> constructorKVP,
-            IDictionary<string, object> publicPropertiesKVP);
-    }
-
     public class ObjectManipulationService : Singleton<ObjectManipulationService, IObjectManipulationService>, IObjectManipulationService
     {
         private ObjectManipulationService()

@@ -86,7 +86,14 @@ namespace MessageGateway{
                 GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
 
             GetQueue().ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
+
             GetQueue().BeginReceive();
+        }
+
+        public override void StopReceivingMessages()
+        {
+            GetQueue().ReceiveCompleted -= new ReceiveCompletedEventHandler(OnReceiveCompleted);
+            GetQueue().Close();
         }
 
         private void OnReceiveCompleted(Object source, ReceiveCompletedEventArgs asyncResult)
