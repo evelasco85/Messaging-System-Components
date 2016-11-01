@@ -97,17 +97,22 @@ namespace MsmqGateway
             if (GetQueue().Formatter == null)
                 GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
 
+            MessageQueueTransaction transaction = new MessageQueueTransaction();
+
             while (true)
             {
                 try
                 {
-                    Message message = GetQueue().ReceiveByCorrelationId(_correlationId);
+                    Message message = GetQueue().ReceiveByCorrelationId(_correlationId, transaction);
 
                     if ((message != null) && (_receivedMessageProcessor != null))
                         _receivedMessageProcessor.Invoke(message);
+
+                    transaction.Commit();
                 }
                 catch
                 {
+                    transaction.Abort();
                 }
 
                 Thread.Sleep(1000);

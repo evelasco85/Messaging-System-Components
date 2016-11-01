@@ -9,23 +9,24 @@ using Messaging.Orchestration.Shared.Models;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public interface IServerService
+    public interface IServerService<TMessageQueue, TMessage> : IMessageConsumer<TMessageQueue, TMessage>
     {
+        void SendClientMessage(ServerMessage serverMessage);
     }
 
-    public class ServerService<TMessageQueue, TMessage> : MessageConsumer<TMessageQueue, TMessage>, IServerService
+    public class ServerService<TMessageQueue, TMessage> : MessageConsumer<TMessageQueue, TMessage>, IServerService<TMessageQueue, TMessage>
     {
-        private Func<ServerRequest, ServerResponse> _requestProcessor;
+        private Func<ServerRequest, ServerMessage> _requestProcessor;
         private IMessageSender<TMessageQueue, TMessage> _serverReplySender;
-        private Action<IMessageSender<TMessageQueue, TMessage>, ServerResponse> _sendResponse;
+        private Action<IMessageSender<TMessageQueue, TMessage>, ServerMessage> _sendResponse;
         private Func<TMessage, ServerRequest> _serverRequestConverter;
 
         public ServerService(
             IMessageReceiver<TMessageQueue, TMessage> serverRequestReceiver,
             IMessageSender<TMessageQueue, TMessage> serverReplySender,
             Func<TMessage, ServerRequest> serverRequestConverter,
-            Func<ServerRequest, ServerResponse> requestProcessor,
-            Action<IMessageSender<TMessageQueue, TMessage>, ServerResponse> sendResponse
+            Func<ServerRequest, ServerMessage> requestProcessor,
+            Action<IMessageSender<TMessageQueue, TMessage>, ServerMessage> sendResponse
             
             )
             : base(serverRequestReceiver)
@@ -38,13 +39,18 @@ namespace Messaging.Orchestration.Shared.Services
 
         public override void ProcessMessage(TMessage message)
         {
-            ServerResponse response = null;
+            ServerMessage response = null;
 
             if ((message != null) && (_requestProcessor != null) && (_serverRequestConverter != null))
                 response = _requestProcessor(_serverRequestConverter(message));
 
-            if (_sendResponse != null)
-                _sendResponse(_serverReplySender, response);
+            SendClientMessage(response);
+        }
+
+        public void SendClientMessage(ServerMessage serverMessage)
+        {
+            if ((_sendResponse != null) && (serverMessage != null))
+                _sendResponse(_serverReplySender, serverMessage);
         }
     }
 }

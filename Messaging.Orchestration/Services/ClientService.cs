@@ -38,7 +38,7 @@ namespace Messaging.Orchestration.Shared.Services
         IDictionary<string, Action<object>> _serverParameterRequests = new Dictionary<string, Action<object>>();
         IMessageSender<TMessageQueue, TMessage> _serverRequestSender;
         private IMessageReceiver<TMessageQueue, TMessage> _serverReplyReceiver;
-        private Func<TMessage, ServerResponse> _serverResponseConverter;
+        private Func<TMessage, ServerMessage> _serverResponseConverter;
         private Action<IMessageSender<TMessageQueue, TMessage>, ServerRequest> _sendRequest;
 
         public ClientService(
@@ -46,7 +46,7 @@ namespace Messaging.Orchestration.Shared.Services
             IMessageSender<TMessageQueue, TMessage> serverRequestSender,
             IMessageReceiver<TMessageQueue, TMessage> serverReplyReceiver,
             Action<IMessageSender<TMessageQueue, TMessage>, ServerRequest> sendRequest,
-            Func<TMessage, ServerResponse> serverResponseConverter
+            Func<TMessage, ServerMessage> serverResponseConverter
             )
         {
             serverReplyReceiver.ReceiveMessageProcessor += ProcessMessage;
@@ -68,7 +68,7 @@ namespace Messaging.Orchestration.Shared.Services
             if(_serverResponseConverter == null)
                 return;
 
-            ServerResponse response = _serverResponseConverter(message);
+            ServerMessage response = _serverResponseConverter(message);
 
             if (response != null)
                 ReceiveServerCommand(response);
@@ -123,7 +123,7 @@ namespace Messaging.Orchestration.Shared.Services
             _sendRequest(_serverRequestSender, request);
         }
 
-        void ReceiveServerCommand(ServerResponse response)
+        void ReceiveServerCommand(ServerMessage response)
         {
             switch(response.ClientStatus)
             {

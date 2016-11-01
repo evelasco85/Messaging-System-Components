@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Messaging;
 using MessageGateway;
 using Messaging.Orchestration.Shared.Models;
@@ -27,7 +29,7 @@ namespace Messaging.Orchestration.Tests
                 new MessageSenderGateway(ToPath(requestQueue)),
                 new MQSelectiveConsumer(
                     ToPath(replyQueue),
-                    new XmlMessageFormatter(new Type[] {typeof(ServerResponse)}),
+                    new XmlMessageFormatter(new Type[] {typeof(ServerMessage)}),
                     clientId.ToString()),
                 (sender, request) => //Concrete sender implementation
                 {
@@ -35,10 +37,10 @@ namespace Messaging.Orchestration.Tests
                 },
                 message => //Concrete receiver implementation
                 {
-                    ServerResponse response = null;
+                    ServerMessage response = null;
 
-                    if (message.Body is ServerResponse)
-                        response = (ServerResponse) message.Body;
+                    if (message.Body is ServerMessage)
+                        response = (ServerMessage) message.Body;
 
                     return response;
                 });
@@ -66,7 +68,7 @@ namespace Messaging.Orchestration.Tests
                     //Stop
                 });
 
-            ServerService<MessageQueue, Message> server = new ServerService<MessageQueue, Message>
+            IServerService<MessageQueue, Message> server = new ServerService<MessageQueue, Message>
                 (
                 new MessageReceiverGateway(
                     ToPath(requestQueue),
@@ -83,21 +85,40 @@ namespace Messaging.Orchestration.Tests
                 },
                 request =>
                 {
-                    ServerResponse response = null;
+                    ServerMessage response = null;
 
-                    if (request != null)
+                    if (request == null)
+                        return response;
+
+                    switch (request.RequestType)
                     {
-                        response = new ServerResponse
-                        {
-                            ClientId = request.ClientId
-                        };
+                        case ServerRequestType.Register:
+                            IDictionary<string, object> paramList = request
+                                .ParameterList
+                                .Select(param => new KeyValuePair<string, object>(param, "hello world"))
+                                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                            response = new ServerMessage
+                            {
+                                ClientId = request.ClientId,
+                                ClientStatus = ClientCommandStatus.Standby,
+                                ClientParameters = paramList
+                            };
+                            break;
                     }
+
 
                     return response;
                 },
                 (sender, response) =>
                 {
-                    sender.Send(new Message(response));
+                    Message message = new Message(response);
+
+                    //MsmqMessage<ServerMessage> message = new MsmqMessage<ServerMessage>(response);
+                    string corrId = response.ClientId.ToString();
+                    message.CorrelationId = corrId;
+
+                    sender.Send(message);
                 });
 
             server.Process();

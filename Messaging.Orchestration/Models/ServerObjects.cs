@@ -13,7 +13,8 @@ namespace Messaging.Orchestration.Shared.Models
         SetupClientParameters,
         Standby,
         Start,
-        Stop
+        Stop,
+        ServerAnnouncement
     }
 
     public enum ServerRequestType
@@ -22,7 +23,7 @@ namespace Messaging.Orchestration.Shared.Models
         Register
     }
 
-    public class ServerResponse
+    public class ServerMessage
     {
         //public QueueTypeEnum QueueType { get; set; }
         public Guid ClientId { get; set; }
