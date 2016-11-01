@@ -41,10 +41,12 @@
   <ItemGroup>
     <Compile Include="Models\ObjectInformation.cs" />
     <Compile Include="Models\QueueTypeEnum.cs" />
+    <Compile Include="Models\ServerObjects.cs" />
     <Compile Include="Services\ClientService.cs" />
     <Compile Include="Services\ObjectManipulationService.cs" />
     <Compile Include="Models\IVersionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ServerService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Messaging.Base.Interface\Messaging.Base.Interface.csproj">

@@ -6,41 +6,10 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Messaging.Base;
+using Messaging.Orchestration.Shared.Models;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public enum ClientCommandStatus
-    {
-        Inactive = 0,
-        InvalidRegistration,
-        SetupClientParameters,
-        Standby,
-        Start,
-        Stop
-    }
-
-    public enum ServerRequestType
-    {
-        None = 0,
-        Register
-    }
-
-    public class ServerResponse
-    {
-        //public QueueTypeEnum QueueType { get; set; }
-        public Guid Client_ID { get; set; }
-        public ClientCommandStatus ClientStatus { get; set; }
-        public IDictionary<string, object> ClientParameters { get; set; }
-        public string Message { get; set; }
-    }
-
-    public class ServerRequest
-    {
-        public ServerRequestType RequestType { get; set; }
-        public Guid ID { get; set; }
-        public List<string> ParameterList { get; set; }
-    }
-
     public interface IClientService_ParameterRegistration
     {
         void RegisterRequiredServerParameters(string name, Action<object> setValueOperator);
@@ -140,7 +109,7 @@ namespace Messaging.Orchestration.Shared.Services
 
             ServerRequest request = new ServerRequest
             {
-                ID =  _clientId,
+                ClientId = _clientId,
                 RequestType = ServerRequestType.Register
             };
 
