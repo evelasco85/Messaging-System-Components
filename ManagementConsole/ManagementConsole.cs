@@ -26,98 +26,57 @@ namespace ManagementConsole
         private ControlBusConsumer _controlBus;
         private MonitorCreditBureau _monitor;
         IServerService<MessageQueue, Message> _server;
-        private IClientService _client;
         IList<string> _clientIds = new List<string>();
 
         public ManagementConsole(String[] args)
         {
             InitializeComponent();
 
-            string clientId = args[0];
-            string serverRequestQueue = ToPath(args[1]);
-            string serverReplyQueue = ToPath(args[2]);
+            string serverRequestQueue = ToPath(args[0]);
+            string serverReplyQueue = ToPath(args[1]);
+            string controlBusQueue = ToPath(args[2]);
+            string serviceQueue = ToPath(args[3]);
+            string monitoringReplyQueue = ToPath(args[4]);
+            string routerControlQueue = ToPath(args[5]);
+            int secondsInterval = Convert.ToInt32(args[6]);
+            int timeoutSecondsInterval = Convert.ToInt32(args[7]);
 
-            //Queue server setup
+            RunControlBus(
+                controlBusQueue, serviceQueue,
+                monitoringReplyQueue, routerControlQueue,
+                secondsInterval, timeoutSecondsInterval
+                );
+
             _server = MQOrchestration.GetInstance().CreateServer(
                serverRequestQueue,
                serverReplyQueue
                );
             RegisterServer(ref _server);
             _server.Process();
-
-            //Queue client setup
-            _client = MQOrchestration.GetInstance().CreateClient(
-                clientId,
-                serverRequestQueue,
-                serverReplyQueue
-                );
-            Thread thread = new Thread(new ThreadStart(_client.Process));
-            RegisterClient(ref _client);
-            
-            thread.Start();
         }
 
-        void RegisterClient(ref IClientService client)
+        void RunControlBus(
+            string controlBusQueue, string serviceQueue,
+            string monitoringReplyQueue, string routerControlQueue,
+            int secondsInterval, int timeoutSecondsInterval
+            )
         {
-            string controlBusQueue = string.Empty;
-            string serviceQueue = string.Empty;
-            string monitoringReplyQueue = string.Empty;
-            string routerControlQueue = string.Empty;
-            int secondsInterval = 0;
-            int timeoutSecondsInterval = 0;
+            _controlBus = new ControlBusConsumer(
+                controlBusQueue,
+                this.ProcessMessage
+                );
 
-            client.Register(registration =>
-            {
-                //Server parameter requests
-                registration.RegisterRequiredServerParameters("controlBusQueue", (value) => controlBusQueue = (string)value);
-                registration.RegisterRequiredServerParameters("serviceQueue", (value) => serviceQueue = (string)value);
-                registration.RegisterRequiredServerParameters("monitoringReplyQueue", (value) => monitoringReplyQueue = (string)value);
-                registration.RegisterRequiredServerParameters("routerControlQueue", (value) => routerControlQueue = (string)value);
-                registration.RegisterRequiredServerParameters("secondsInterval", (value) => secondsInterval = Convert.ToInt32(value));
-                registration.RegisterRequiredServerParameters("timeoutSecondsInterval", (value) => timeoutSecondsInterval = Convert.ToInt32(value));
-            },
-                errorMessage =>
-                {
-                    //Invalid registration
-                },
-                () =>
-                {
-                    //Client parameter setup completed
-                    _controlBus = new ControlBusConsumer(
-                        ToPath(controlBusQueue),
-                        this.ProcessMessage
-                        );
+            _monitor = new MonitorCreditBureau(
+                controlBusQueue,
+                serviceQueue,
+                monitoringReplyQueue,
+                routerControlQueue,
+                secondsInterval, //Verify status every n-th second(s)
+                timeoutSecondsInterval //Set n-th second timeout
+                );
 
-                    _monitor = new MonitorCreditBureau(
-                        ToPath(controlBusQueue),
-                        ToPath(serviceQueue),
-                        ToPath(monitoringReplyQueue),
-                        ToPath(routerControlQueue),
-                        secondsInterval, //Verify status every n-th second(s)
-                        timeoutSecondsInterval //Set n-th second timeout
-                        );
-
-                    Console.WriteLine("Configurations ok!");
-                },
-                () =>
-                {
-                    //Stand-by
-                    Console.WriteLine("Stand-by Application!");
-                },
-                () =>
-                {
-                    //Start
-                    _controlBus.Process();
-                    _monitor.Process();
-                    Console.WriteLine("Starting Application!");
-                },
-                () =>
-                {
-                    //Stop
-                    _controlBus.StopProcessing();
-                    _monitor.StopProcessing();
-                    Console.WriteLine("Stopping Application!");
-                });
+            _controlBus.Process();
+            _monitor.Process();
         }
 
         void RegisterServer(ref IServerService<MessageQueue, Message> server)

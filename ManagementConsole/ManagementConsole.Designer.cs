@@ -36,9 +36,9 @@
             this.txtLoanBrokerStatData = new System.Windows.Forms.TextBox();
             this.txtLoanBrokerResponseData = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnActivateAll = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.txtServerResponse = new System.Windows.Forms.TextBox();
-            this.btnActivateAll = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -127,6 +127,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Orchestration";
             // 
+            // btnActivateAll
+            // 
+            this.btnActivateAll.Location = new System.Drawing.Point(6, 261);
+            this.btnActivateAll.Name = "btnActivateAll";
+            this.btnActivateAll.Size = new System.Drawing.Size(115, 23);
+            this.btnActivateAll.TabIndex = 14;
+            this.btnActivateAll.Text = "Activate Clients";
+            this.btnActivateAll.UseVisualStyleBackColor = true;
+            this.btnActivateAll.Click += new System.EventHandler(this.btnActivateAll_Click);
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -145,16 +155,6 @@
             this.txtServerResponse.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtServerResponse.Size = new System.Drawing.Size(456, 200);
             this.txtServerResponse.TabIndex = 12;
-            // 
-            // btnActivateAll
-            // 
-            this.btnActivateAll.Location = new System.Drawing.Point(6, 261);
-            this.btnActivateAll.Name = "btnActivateAll";
-            this.btnActivateAll.Size = new System.Drawing.Size(115, 23);
-            this.btnActivateAll.TabIndex = 14;
-            this.btnActivateAll.Text = "Activate Clients";
-            this.btnActivateAll.UseVisualStyleBackColor = true;
-            this.btnActivateAll.Click += new System.EventHandler(this.btnActivateAll_Click);
             // 
             // ManagementConsole
             // 
