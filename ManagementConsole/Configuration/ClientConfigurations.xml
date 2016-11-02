@@ -27,14 +27,14 @@
       <config id="" name="proxyReplyQueue" value="proxy_loanreplyqueue" />
     </group>
   </client>
-  <client id="" name="" description="">
+  <client id="f0b2fc66-008d-4941-a6da-5f3c741609d5\1" name="Primary Credit Bureau" description="">
     <group id="">
-      <config id="" name="" value="" />
+      <config id="" name="requestQueueName" value="creditRequestQueue_PrimaryProcessor" />
     </group>
   </client>
-  <client id="" name="" description="">
+  <client id="c8b74dd1-b34c-43ae-8e35-40c0637a2ad4\1" name="Backup Credit Bureau" description="">
     <group id="">
-      <config id="" name="" value="" />
+      <config id="" name="requestQueueName" value="creditRequestQueue_BackupProcessor" />
     </group>
   </client>
   <client id="" name="" description="">

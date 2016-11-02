@@ -7,23 +7,61 @@
  */
 
 using System;
+using System.Messaging;
+using MessageGateway;
+using Messaging.Orchestration.Shared.Services;
+using MsmqGateway;
 
 namespace CreditBureau
 {
 
     public class Run
     {
+        private static CreditBureau _proc;
         public static void Main(String[] args)
         {
-            if(args.Length != 1) 
-            {
-                Console.WriteLine("Usage: "	+ Environment.GetCommandLineArgs()[0] +" <in_queue>");
-                return;
-            } 
+            String requestQueueName = string.Empty;
+            IClientService client = MQOrchestration.GetInstance().CreateClient(
+                args[0],
+                ToPath(args[1]),
+                ToPath(args[2])
+                );
 
-            CreditBureau proc = new CreditBureau(ToPath(args[0]));
-            proc.Run();
-            
+            client.Register(registration =>
+            {
+                //Server parameter requests
+                registration.RegisterRequiredServerParameters("requestQueueName", (value) => requestQueueName = (string)value);
+            },
+                errorMessage =>
+                {
+                    //Invalid registration
+                },
+                () =>
+                {
+                    //Client parameter setup completed
+                    _proc = new CreditBureau(ToPath(requestQueueName));
+                    Console.WriteLine("Configurations ok!");
+                },
+                () =>
+                {
+                    //Stand-by
+                    Console.WriteLine("Stand-by Application!");
+                },
+                () =>
+                {
+                    //Start
+                    _proc.Run();
+                    Console.WriteLine("Starting Application!");
+                },
+                () =>
+                {
+                    //Stop
+                    _proc.StopRunning();
+                    Console.WriteLine("Stopping Application!");
+                });
+
+            client.Process();
+
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");
             Console.ReadLine();
