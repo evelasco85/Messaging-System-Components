@@ -10,10 +10,11 @@ start StartCreditBureau_Backup
 
 
 
-start loanbroker loanRequestQueue creditrequestQueue creditReplyQueue bankReplyQueue
-start ManagementConsole controlbusQueue creditRequestQueue_PrimaryProcessor monitorReplyQueue routerControlQueue
-start CreditBureauFailOver\bin\Debug\CreditBureauFailOver 962c38f8-35a1-4ace-811e-73a100295e6f\1 ServerRequestQueue ServerReplyQueue
 
+start ManagementConsole controlbusQueue creditRequestQueue_PrimaryProcessor monitorReplyQueue routerControlQueue
+
+start LoanBroker\bin\Debug\LoanBroker 78d1d920-3aaa-4fe0-b72f-1508aa8cfe4d\1 ServerRequestQueue ServerReplyQueue
+start CreditBureauFailOver\bin\Debug\CreditBureauFailOver 962c38f8-35a1-4ace-811e-73a100295e6f\1 ServerRequestQueue ServerReplyQueue
 Test\bin\Debug\Test 92022db8-750a-4481-afc7-dc2dcfb8fc20\1 ServerRequestQueue ServerReplyQueue
 
 REM start loanbroker loanRequestQueue bankReplyQueue

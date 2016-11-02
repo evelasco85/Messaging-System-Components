@@ -8,65 +8,113 @@
 
 using System;
 using System.Messaging;
+using CommonObjects;
 using MessageGateway;
 using Messaging.Base;
 using LoanBroker.Bank;
 using LoanBroker.LoanBroker;
 using LoanBroker.Models.LoanBroker;
+using Messaging.Orchestration.Shared.Services;
+using MsmqGateway;
 
 namespace LoanBroker {
 
 	internal class Run{
         private static LoanBrokerProxy _loanBrokerProxy;
-        
+	    private static MQRequestReplyService_Asynchronous _broker;
 
-        public static void Main(String[] args){
-            MQRequestReplyService_Asynchronous broker;
+	    public static void Main(String[] args)
+	    {
+	        String requestQueueName = string.Empty;
+	        String creditRequestQueueName = string.Empty;
+	        String creditReplyQueueName = string.Empty;
+	        String bankReplyQueueName = string.Empty;
 
-            if (args.Length >= 4) 
-            {
-                String requestQueueName = ToPath(args[0]); 
-                String creditRequestQueueName = ToPath(args[1]);
-                String creditReplyQueueName = ToPath(args[2]);
-                String bankReplyQueueName = ToPath(args[3]);
+	        string proxyRequestQueue = string.Empty;
+	        string proxyReplyQueue = string.Empty;
+	        string controlBusQueue = string.Empty;
 
-                string proxyRequestQueue = ".\\private$\\proxy_loanrequestqueue";
-                string proxyReplyQueue = ".\\private$\\proxy_loanreplyqueue";
+	        IClientService client = MQOrchestration.GetInstance().CreateClient(
+	            args[0],
+	            ToPath(args[1]),
+	            ToPath(args[2])
+	            );
 
-                IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
-                    proxyReplyQueue,
-                    GetLoanReplyFormatter()
-                    );
+	        client.Register(registration =>
+	        {
+	            //Server parameter requests
+	            registration.RegisterRequiredServerParameters("requestQueueName",
+	                (value) => requestQueueName = (string) value);
+	            registration.RegisterRequiredServerParameters("creditRequestQueueName",
+	                (value) => creditRequestQueueName = (string) value);
+	            registration.RegisterRequiredServerParameters("creditReplyQueueName",
+	                (value) => creditReplyQueueName = (string) value);
+	            registration.RegisterRequiredServerParameters("bankReplyQueueName",
+	                (value) => bankReplyQueueName = (string) value);
+	            registration.RegisterRequiredServerParameters("controlBusQueue",
+	                (value) => controlBusQueue = (string) value);
+	            registration.RegisterRequiredServerParameters("proxyRequestQueue",
+	                (value) => proxyRequestQueue = (string) value);
+	            registration.RegisterRequiredServerParameters("proxyReplyQueue",
+	                (value) => proxyReplyQueue = (string) value);
 
-                _loanBrokerProxy = new LoanBrokerProxy(
-                    new MessageReceiverGateway(requestQueueName, GetLoanRequestFormatter()),
-                    new MessageSenderGateway(proxyRequestQueue),
-                    proxyReplyReceiver,
-                    new MessageSenderGateway(".\\private$\\controlbusQueue"),
-                    3);
+	        },
+	            errorMessage =>
+	            {
+	                //Invalid registration
+	            },
+	            () =>
+	            {
+	                //Client parameter setup completed
 
-                _loanBrokerProxy.Process();
+	                IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
+	                    ToPath(proxyReplyQueue),
+	                    GetLoanReplyFormatter()
+	                    );
+	                _loanBrokerProxy = new LoanBrokerProxy(
+	                    new MessageReceiverGateway(ToPath(requestQueueName), GetLoanRequestFormatter()),
+	                    new MessageSenderGateway(ToPath(proxyRequestQueue)),
+	                    proxyReplyReceiver,
+	                    new MessageSenderGateway(ToPath(controlBusQueue)),
+	                    3);
+	                _broker = new ProcessManager(
+	                    ToPath(proxyRequestQueue), ToPath(creditRequestQueueName),
+	                    ToPath(creditReplyQueueName), ToPath(bankReplyQueueName),
+	                    new ConnectionsManager());
 
-                broker = new ProcessManager(proxyRequestQueue, creditRequestQueueName, creditReplyQueueName, bankReplyQueueName, new ConnectionsManager());
-            }
-            else if (args.Length == 2) 
-            {
-                broker = new ProcessManager(ToPath(args[0]), new MockCreditBureauGatewayImp(), ToPath(args[1]), new ConnectionsManager());
-            }
-            else 
-            {
-                Console.WriteLine("Usage: <>");
-                return;
-            }
+	                Console.WriteLine("Configurations ok!");
+	            },
+	            () =>
+	            {
+	                //Stand-by
+	                Console.WriteLine("Stand-by Application!");
+	            },
+	            () =>
+	            {
+	                //Start
+	                _loanBrokerProxy.Process();
+	                _broker.Run();
 
-            broker.Run();
-            
-            Console.WriteLine();
-            Console.WriteLine("Press Enter to exit...");
-            Console.ReadLine();
-		}
+	                Console.WriteLine("Starting Application!");
+	            },
+	            () =>
+	            {
+	                //Stop
+	                _loanBrokerProxy.StopProcessing();
+	                _broker.StopRunning();
 
-        static IMessageFormatter GetLoanRequestFormatter()
+	                Console.WriteLine("Stopping Application!");
+	            });
+
+	        client.Process();
+
+
+	        Console.WriteLine();
+	        Console.WriteLine("Press Enter to exit...");
+	        Console.ReadLine();
+	    }
+
+	    static IMessageFormatter GetLoanRequestFormatter()
         {
             return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteRequest) });
         }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <clients>
-  <client id="92022db8-750a-4481-afc7-dc2dcfb8fc20\1" name="Test Loan Broker" description="">
+  <client id="92022db8-750a-4481-afc7-dc2dcfb8fc20\1" name="Test" description="">
     <group id="">
       <config id="" name="mode" value="loanbroker" />
       <config id="" name="requestQueue" value="loanRequestQueue" />
@@ -16,9 +16,15 @@
       <config id="" name="secondaryCreditQueueName" value="creditRequestQueue_BackupProcessor" />
     </group>
   </client>
-  <client id="" name="" description="">
+  <client id="78d1d920-3aaa-4fe0-b72f-1508aa8cfe4d\1" name="Loan Broker" description="">
     <group id="">
-      <config id="" name="" value="" />
+      <config id="" name="requestQueueName" value="loanRequestQueue" />
+      <config id="" name="creditRequestQueueName" value="creditrequestQueue" />
+      <config id="" name="creditReplyQueueName" value="creditReplyQueue" />
+      <config id="" name="bankReplyQueueName" value="bankReplyQueue" />
+      <config id="" name="controlBusQueue" value="controlbusQueue" />
+      <config id="" name="proxyRequestQueue" value="proxy_loanrequestqueue" />
+      <config id="" name="proxyReplyQueue" value="proxy_loanreplyqueue" />
     </group>
   </client>
   <client id="" name="" description="">

@@ -36,6 +36,11 @@ namespace Messaging.Base
             _receiver.StartReceivingMessages();
         }
 
+        public void StopRunning()
+        {
+            _receiver.StopReceivingMessages();
+        }
+
         public abstract void SendReply(Object responseObject, TMessage originalRequestMessage);
     }
 }

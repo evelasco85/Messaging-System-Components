@@ -9,5 +9,6 @@ namespace Messaging.Base.System_Management.SmartProxy
     public interface ISmartProxyBase
     {
         void Process();
+        void StopProcessing();
     }
 }

@@ -33,5 +33,11 @@ namespace Messaging.Base.System_Management.SmartProxy
             _requestSmartProxyConsumer.Process();     
             _replySmartProxyConsumer.Process();
         }
+
+        public virtual void StopProcessing()
+        {
+            _requestSmartProxyConsumer.StopProcessing();
+            _replySmartProxyConsumer.StopProcessing();
+        }
     }
 }

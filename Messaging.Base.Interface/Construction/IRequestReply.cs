@@ -10,6 +10,7 @@ namespace Messaging.Base.Construction
         void OnMessageReceived(TMessage receivedMessage);
         void SendReply(Object responseObject, TMessage originalRequestMessage);
         void Run();
+        void StopRunning();
     }
 
     public interface IRequestReply_Synchronous

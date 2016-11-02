@@ -9,6 +9,7 @@ namespace Messaging.Base
         IMessageReceiver<TMessageQueue, TMessage> Receiver { get; }
         IMessageSender<TMessageQueue, TMessage> InvalidQueue { get; }
         void Run();
+        void StopRunning();
         void SendReply(Object responseObject, TMessage originalRequestMessage);
     }
 }
