@@ -1,5 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <clients>
+  <client id="23d21d42-caa8-4ef0-91c4-407b76b7a90d\1" name="Management Console" description="">
+    <group id="">
+      <config id="" name="controlBusQueue" value="controlbusQueue" />
+      <config id="" name="serviceQueue" value="creditRequestQueue_PrimaryProcessor" />
+      <config id="" name="monitoringReplyQueue" value="monitorReplyQueue" />
+      <config id="" name="routerControlQueue" value="routerControlQueue" />
+      <config id="" name="secondsInterval" value="5" />
+      <config id="" name="timeoutSecondsInterval" value="10" />
+    </group>
+  </client>
   <client id="92022db8-750a-4481-afc7-dc2dcfb8fc20\1" name="Test" description="">
     <group id="">
       <config id="" name="mode" value="loanbroker" />

@@ -165,7 +165,6 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "ManagementConsole";
             this.Text = "Management Console";
-            this.Load += new System.EventHandler(this.ManagementConsole_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

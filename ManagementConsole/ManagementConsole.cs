@@ -12,9 +12,11 @@ using System.IO;
 using System.Linq;
 using System.Messaging;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using Messaging.Orchestration.Shared.Services;
 using Message = System.Messaging.Message;
 
 namespace ManagementConsole
@@ -24,43 +26,101 @@ namespace ManagementConsole
         private ControlBusConsumer _controlBus;
         private MonitorCreditBureau _monitor;
         IServerService<MessageQueue, Message> _server;
+        private IClientService _client;
         IList<string> _clientIds = new List<string>();
 
         public ManagementConsole(String[] args)
         {
             InitializeComponent();
 
-            if (args.Length == 4)
-            {
-                string controlBusQueue = ToPath(args[0]);
-                string serviceQueue = ToPath(args[1]);
-                string monitoringReplyQueue = ToPath(args[2]);
-                string routerControlQueue = ToPath(args[3]);
+            string clientId = args[0];
+            string serverRequestQueue = ToPath(args[1]);
+            string serverReplyQueue = ToPath(args[2]);
 
-                _controlBus = new ControlBusConsumer(
-                    controlBusQueue,
-                    this.ProcessMessage
-                    );
+            //Queue server setup
+            _server = MQOrchestration.GetInstance().CreateServer(
+               serverRequestQueue,
+               serverReplyQueue
+               );
+            RegisterServer(ref _server);
+            _server.Process();
 
-                _monitor = new MonitorCreditBureau(
-                    controlBusQueue,
-                    serviceQueue,
-                    monitoringReplyQueue,
-                    routerControlQueue,
-                    5,      //Verify status every n-th second(s)
-                    10      //Set n-th second timeout
-                    );
-
-                _server = MQOrchestration.GetInstance().CreateServer(
-                    ToPath("ServerRequestQueue"),
-                    ToPath("ServerReplyQueue")
-                    );
-
-                RegisterServer(_server);
-            }
+            //Queue client setup
+            _client = MQOrchestration.GetInstance().CreateClient(
+                clientId,
+                serverRequestQueue,
+                serverReplyQueue
+                );
+            Thread thread = new Thread(new ThreadStart(_client.Process));
+            RegisterClient(ref _client);
+            
+            thread.Start();
         }
 
-        void RegisterServer(IServerService<MessageQueue, Message> server)
+        void RegisterClient(ref IClientService client)
+        {
+            string controlBusQueue = string.Empty;
+            string serviceQueue = string.Empty;
+            string monitoringReplyQueue = string.Empty;
+            string routerControlQueue = string.Empty;
+            int secondsInterval = 0;
+            int timeoutSecondsInterval = 0;
+
+            client.Register(registration =>
+            {
+                //Server parameter requests
+                registration.RegisterRequiredServerParameters("controlBusQueue", (value) => controlBusQueue = (string)value);
+                registration.RegisterRequiredServerParameters("serviceQueue", (value) => serviceQueue = (string)value);
+                registration.RegisterRequiredServerParameters("monitoringReplyQueue", (value) => monitoringReplyQueue = (string)value);
+                registration.RegisterRequiredServerParameters("routerControlQueue", (value) => routerControlQueue = (string)value);
+                registration.RegisterRequiredServerParameters("secondsInterval", (value) => secondsInterval = Convert.ToInt32(value));
+                registration.RegisterRequiredServerParameters("timeoutSecondsInterval", (value) => timeoutSecondsInterval = Convert.ToInt32(value));
+            },
+                errorMessage =>
+                {
+                    //Invalid registration
+                },
+                () =>
+                {
+                    //Client parameter setup completed
+                    _controlBus = new ControlBusConsumer(
+                        ToPath(controlBusQueue),
+                        this.ProcessMessage
+                        );
+
+                    _monitor = new MonitorCreditBureau(
+                        ToPath(controlBusQueue),
+                        ToPath(serviceQueue),
+                        ToPath(monitoringReplyQueue),
+                        ToPath(routerControlQueue),
+                        secondsInterval, //Verify status every n-th second(s)
+                        timeoutSecondsInterval //Set n-th second timeout
+                        );
+
+                    Console.WriteLine("Configurations ok!");
+                },
+                () =>
+                {
+                    //Stand-by
+                    Console.WriteLine("Stand-by Application!");
+                },
+                () =>
+                {
+                    //Start
+                    _controlBus.Process();
+                    _monitor.Process();
+                    Console.WriteLine("Starting Application!");
+                },
+                () =>
+                {
+                    //Stop
+                    _controlBus.StopProcessing();
+                    _monitor.StopProcessing();
+                    Console.WriteLine("Stopping Application!");
+                });
+        }
+
+        void RegisterServer(ref IServerService<MessageQueue, Message> server)
         {
             ConfigurationLoader loader = new ConfigurationLoader();
 
@@ -93,8 +153,6 @@ namespace ManagementConsole
 
                     return response;
                 });
-
-            server.Process();
         }
 
         void DisplayServerMessage(ServerMessage response)
@@ -226,15 +284,6 @@ namespace ManagementConsole
                 );
 
             this.txtCreditBureauStatus.Text = message + Environment.NewLine + this.txtCreditBureauStatus.Text;
-        }
-
-        private void ManagementConsole_Load(object sender, EventArgs e)
-        {
-            if (_controlBus != null)
-                _controlBus.Process();
-
-            if (_monitor != null)
-                _monitor.Process();
         }
 
         private void btnActivateAll_Click(object sender, EventArgs e)
