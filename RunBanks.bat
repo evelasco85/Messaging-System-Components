@@ -1,7 +1,5 @@
-start Bank bank1Queue CountryClub 1.5 84
-start Bank bank2Queue Deluxe 2 84
-start Bank bank3Queue Retail 3 72
-start Bank bank4Queue Neighborhood 3 72 
-start Bank bank5Queue PawnShop 5 48
-
-REM start Bank bank5Queue PawnShop 5 48
+start Bank 73755835-d21a-404d-b6eb-d7865941debf\1 ServerRequestQueue ServerReplyQueue CountryClub
+start Bank 73755835-d21a-404d-b6eb-d7865941debf\2 ServerRequestQueue ServerReplyQueue Deluxe
+start Bank 73755835-d21a-404d-b6eb-d7865941debf\3 ServerRequestQueue ServerReplyQueue Retail
+start Bank 73755835-d21a-404d-b6eb-d7865941debf\4 ServerRequestQueue ServerReplyQueue Neighborhood
+start Bank 73755835-d21a-404d-b6eb-d7865941debf\5 ServerRequestQueue ServerReplyQueue PawnShop

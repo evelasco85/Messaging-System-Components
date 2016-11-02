@@ -1,4 +1,4 @@
-TITLE Bank [%2]
+TITLE Bank [%4]
 Color 27
-Bank\bin\Debug\Bank %1 %2 %3 %4
+Bank\bin\Debug\Bank %1 %2 %3
 exit

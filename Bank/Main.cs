@@ -8,21 +8,66 @@
 
 using System;
 using Gateway;
+using Messaging.Orchestration.Shared.Services;
+using MsmqGateway;
 
 namespace Bank
 {
     public class Run
     {
+        private static Bank _bank;
         public static void Main(String[] args)
         {
-            if(args.Length != 4) 
+            String requestQueue = string.Empty;
+            String bankName = string.Empty;
+            String ratePremium = string.Empty;
+            String maxLoanTerm = string.Empty;
+
+            IClientService client = MQOrchestration.GetInstance().CreateClient(
+                args[0],
+                ToPath(args[1]),
+                ToPath(args[2])
+                );
+
+            client.Register(registration =>
             {
-                Console.WriteLine("Usage: "	+ Environment.GetCommandLineArgs()[0] +" <req_queue> <name> <premium> <maxloanterm>");
-                return;
-            } 
-            Bank bank = new Bank(ToPath(args[0]), args[1], System.Convert.ToDouble(args[2]), System.Convert.ToInt32(args[3]));
-            bank.Run();
-            
+                //Server parameter requests
+                registration.RegisterRequiredServerParameters("requestQueue", (value) => requestQueue = (string)value);
+                registration.RegisterRequiredServerParameters("bankName", (value) => bankName = (string)value);
+                registration.RegisterRequiredServerParameters("ratePremium", (value) => ratePremium = (string)value);
+                registration.RegisterRequiredServerParameters("maxLoanTerm", (value) => maxLoanTerm = (string)value);
+            },
+                errorMessage =>
+                {
+                    //Invalid registration
+                },
+                () =>
+                {
+                    //Client parameter setup completed
+                    _bank = new Bank(ToPath(requestQueue), bankName, System.Convert.ToDouble(ratePremium), System.Convert.ToInt32(maxLoanTerm));
+
+                    Console.WriteLine("Configurations ok!");
+                },
+                () =>
+                {
+                    //Stand-by
+                    Console.WriteLine("Stand-by Application!");
+                },
+                () =>
+                {
+                    //Start
+                    _bank.Run();
+                    Console.WriteLine("Starting Application!");
+                },
+                () =>
+                {
+                    //Stop
+                    _bank.StopRunning();
+                    Console.WriteLine("Stopping Application!");
+                });
+
+            client.Process();
+
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");
             Console.ReadLine();
