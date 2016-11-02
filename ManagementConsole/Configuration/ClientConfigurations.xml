@@ -10,10 +10,10 @@
   </client>
   <client id="962c38f8-35a1-4ace-811e-73a100295e6f\1" name="CreditBureauFailOver" description="">
     <group id="">
-      <config id="" name="" value="routerControlQueue" />
-      <config id="" name="" value="creditRequestQueue" />
-      <config id="" name="" value="creditRequestQueue_PrimaryProcessor" />
-      <config id="" name="" value="creditRequestQueue_BackupProcessor" />
+      <config id="" name="routerControlQueueName" value="routerControlQueue" />
+      <config id="" name="creditQueueName" value="creditRequestQueue" />
+      <config id="" name="primaryCreditQueueName" value="creditRequestQueue_PrimaryProcessor" />
+      <config id="" name="secondaryCreditQueueName" value="creditRequestQueue_BackupProcessor" />
     </group>
   </client>
   <client id="" name="" description="">

@@ -21,23 +21,17 @@ namespace Test
         [STAThread]
         static void Main(string[] args)
         {
-            IClientService client = MQOrchestration.GetInstance().CreateClient(
-                args[0],
-                ToPath(args[1]),
-                ToPath(args[2])
-                );
-
-            //IClientService client = MQOrchestration.GetInstance().CreateClient(
-            //   @"92022db8-750a-4481-afc7-dc2dcfb8fc20\1",
-            //   ToPath("ServerRequestQueue"),
-            //   ToPath("ServerReplyQueue")
-            //   );
-
             int numMessages = 0;
             TestLoanBroker test = null;
             string requestQueue = string.Empty;
             string replyQueue = string.Empty;
             string mode = string.Empty;
+
+            IClientService client = MQOrchestration.GetInstance().CreateClient(
+               args[0],
+               ToPath(args[1]),
+               ToPath(args[2])
+               );
 
             client.Register(registration =>
             {
@@ -54,23 +48,25 @@ namespace Test
                 () =>
                 {
                     //Client parameter setup completed
-                    Console.WriteLine("Configurations ok!");
                     test = new TestLoanBroker(ToPath(requestQueue), ToPath(replyQueue), numMessages);
+                    Console.WriteLine("Configurations ok!");
                 },
                 () =>
                 {
                     //Stand-by
-                    Console.WriteLine("Test Loan Broker Parameters Prepared!");
+                    Console.WriteLine("Stand-by Application!");
                 },
                 () =>
                 {
                     //Start
                     test.Process();
+                    Console.WriteLine("Starting Application!");
                 },
                 () =>
                 {
                     //Stop
                     test.StopProcessing();
+                    Console.WriteLine("Stopping Application!");
                 });
 
             client.Process();
