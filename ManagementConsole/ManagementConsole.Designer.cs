@@ -39,6 +39,7 @@
             this.btnActivateAll = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.txtServerResponse = new System.Windows.Forms.TextBox();
+            this.btnStopAllClients = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -117,6 +118,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnStopAllClients);
             this.groupBox2.Controls.Add(this.btnActivateAll);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.txtServerResponse);
@@ -156,6 +158,16 @@
             this.txtServerResponse.Size = new System.Drawing.Size(456, 200);
             this.txtServerResponse.TabIndex = 12;
             // 
+            // btnStopAllClients
+            // 
+            this.btnStopAllClients.Location = new System.Drawing.Point(164, 261);
+            this.btnStopAllClients.Name = "btnStopAllClients";
+            this.btnStopAllClients.Size = new System.Drawing.Size(115, 23);
+            this.btnStopAllClients.TabIndex = 15;
+            this.btnStopAllClients.Text = "Stop Clients";
+            this.btnStopAllClients.UseVisualStyleBackColor = true;
+            this.btnStopAllClients.Click += new System.EventHandler(this.btnStopAllClients_Click);
+            // 
             // ManagementConsole
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -186,6 +198,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtServerResponse;
         private System.Windows.Forms.Button btnActivateAll;
+        private System.Windows.Forms.Button btnStopAllClients;
     }
 }
 

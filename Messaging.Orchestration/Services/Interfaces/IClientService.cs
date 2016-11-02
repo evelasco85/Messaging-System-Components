@@ -33,7 +33,8 @@ namespace Messaging.Orchestration.Shared.Services
             ClientParameterSetupCompleteDelegate clientParameterSetupCompleteSequence,
             StandByDelegate standbySequence,
             StartDelegate startSequence,
-            StopDelegate stopSequence);
+            StopDelegate stopSequence
+            );
         void StopReceivingMessages();
     }
 }

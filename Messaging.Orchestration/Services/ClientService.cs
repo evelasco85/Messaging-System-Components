@@ -22,7 +22,6 @@ namespace Messaging.Orchestration.Shared.Services
         IMessageSender<TMessageQueue, TMessage> _serverRequestSender;
         private IMessageReceiver<TMessageQueue, TMessage> _serverReplyReceiver;
 
-
         private ConvertToServerResponseDelegate<TMessage> _serverResponseConverter;
         private SendRequestToServerDelegate<TMessageQueue, TMessage> _sendRequest;
         ClientParameterSetupCompleteDelegate _clientParameterSetupComplete;

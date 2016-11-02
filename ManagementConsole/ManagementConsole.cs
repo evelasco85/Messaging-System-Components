@@ -148,6 +148,22 @@ namespace ManagementConsole
             }
         }
 
+        void StopClients()
+        {
+
+            foreach (string clientId in _clientIds)
+            {
+                ServerMessage serverMessage = new ServerMessage
+                {
+                    ClientId = clientId,
+                    ClientStatus = ClientCommandStatus.Stop
+                };
+
+                _server.SendClientMessage(serverMessage);
+                DisplayServerMessage(serverMessage);
+            }
+        }
+
         ServerMessage ProcessRegistration(ConfigurationLoader loader, ServerRequest request)
         {
             IList<Tuple<string, string>> configurations = loader.GetConfiguration(request.ClientId);
@@ -248,6 +264,11 @@ namespace ManagementConsole
         private void btnActivateAll_Click(object sender, EventArgs e)
         {
             ActivateClients();
+        }
+
+        private void btnStopAllClients_Click(object sender, EventArgs e)
+        {
+            StopClients();
         }
     }
 }
