@@ -6,6 +6,7 @@ namespace Messaging.Base.Construction
 {
     public interface IRequestReply<TMessageQueue, TMessage>
     {
+        bool Running { get; }
         IQueueService<TMessageQueue, TMessage> QueueService { get; set; }
         void OnMessageReceived(TMessage receivedMessage);
         void SendReply(Object responseObject, TMessage originalRequestMessage);

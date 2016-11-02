@@ -82,18 +82,28 @@ namespace MessageGateway{
 
         public override void StartReceivingMessages()
         {
+            if(Started)
+                return;
+
             if (GetQueue().Formatter == null)
                 GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
 
             GetQueue().ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
 
             GetQueue().BeginReceive();
+
+            Started = true;
         }
 
         public override void StopReceivingMessages()
         {
+            if(!Started)
+                return;
+
             GetQueue().ReceiveCompleted -= new ReceiveCompletedEventHandler(OnReceiveCompleted);
             GetQueue().Close();
+
+            Started = false;
         }
 
         private void OnReceiveCompleted(Object source, ReceiveCompletedEventArgs asyncResult)

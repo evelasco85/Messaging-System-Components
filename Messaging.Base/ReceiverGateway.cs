@@ -13,6 +13,13 @@ namespace Messaging.Base
     public abstract class ReceiverGateway<TMessageQueue, TMessage> : IMessageReceiver<TMessageQueue, TMessage>
     {
         IQueueGateway<TMessageQueue> _queueGateway;
+        private bool _started = false;
+
+        public bool Started
+        {
+            get { return _started;}
+            protected set { _started = value; }
+        }
 
         public abstract MessageDelegate<TMessage> ReceiveMessageProcessor
         {

@@ -62,5 +62,7 @@ namespace Gateway.Mock
         {
 
         }
+
+        public bool Started { get { return false;} }
     }
 }

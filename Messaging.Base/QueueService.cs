@@ -14,6 +14,11 @@ namespace Messaging.Base
         IMessageReceiver<TMessageQueue, TMessage> _receiver;
         private IMessageSender<TMessageQueue, TMessage> _invalidQueue;
 
+        public bool Running
+        {
+            get { return _receiver.Started; }
+        }
+
         public IMessageSender<TMessageQueue, TMessage> InvalidQueue
         {
             get { return _invalidQueue; }

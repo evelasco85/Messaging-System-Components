@@ -13,6 +13,7 @@ namespace Messaging.Base
             set;
         }
 
+        bool Started { get; }
         IReturnAddress<TMessage> AsReturnAddress();
         void StartReceivingMessages();
         void StopReceivingMessages();

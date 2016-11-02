@@ -42,6 +42,11 @@ namespace Messaging.Base.Constructions
         {
             _queueService.StopRunning();
         }
+
+        public bool Running
+        {
+            get { return _queueService.Running; }
+        }
     }
 
     public abstract class RequestReply_Synchronous<TMessageQueue, TMessage> : RequestReply<TMessageQueue, TMessage>, IRequestReply_Synchronous
