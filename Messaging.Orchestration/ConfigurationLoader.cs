@@ -46,7 +46,6 @@ namespace Messaging.Orchestration.Shared
         public void SetClientInfo(string clientId, ref ServerMessage response)
         {
             XmlNode clientNode = GetClientNode(clientId);
-            string name = string.Empty;
 
             if ((string.IsNullOrEmpty(clientId)) || (clientNode == null) || (response == null))
                 return;
@@ -58,7 +57,7 @@ namespace Messaging.Orchestration.Shared
         {
             IList<Tuple<string, string>> configurations = new List<Tuple<string, string>>();
             XmlNode clientNode = GetClientNode(clientId);
-            string configurationPath = "//group/config";
+            string configurationPath = "group/config";
             XmlNodeList configNodes = clientNode.SelectNodes(configurationPath);
 
             for(int index = 0; index < configNodes.Count; index++)
