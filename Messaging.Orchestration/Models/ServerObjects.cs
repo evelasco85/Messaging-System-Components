@@ -33,6 +33,7 @@ namespace Messaging.Orchestration.Shared.Models
     {
         //public QueueTypeEnum QueueType { get; set; }
         public string ClientId { get; set; }
+        public string ClientName { get; set; }
         public ClientCommandStatus ClientStatus { get; set; }
         public List<ParameterEntry> ClientParameters { get; set; }
         public string Message { get; set; }

@@ -119,6 +119,7 @@ namespace ManagementConsole
             StringBuilder data = new StringBuilder();
 
             data.AppendLine(string.Format("Client ID: {0}", response.ClientId));
+            data.AppendLine(string.Format("Client Name: {0}", response.ClientName));
             data.AppendLine(string.Format("Client Status: {0}", response.ClientStatus.ToString()));
 
             for(int index = 0; (response.ClientParameters != null) && (index < response.ClientParameters.Count); index++)
@@ -184,6 +185,7 @@ namespace ManagementConsole
             };
 
             _clientIds.Add(request.ClientId);
+            loader.SetClientInfo(request.ClientId, ref response);
 
             return response;
         }

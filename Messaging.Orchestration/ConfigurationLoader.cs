@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Messaging.Orchestration.Shared.Models;
 
 namespace Messaging.Orchestration.Shared
 {
@@ -11,6 +12,7 @@ namespace Messaging.Orchestration.Shared
     {
         void LoadXml(string xml);
         IList<Tuple<string, string>> GetConfiguration(string clientId);
+        void SetClientInfo(string clientId, ref ServerMessage response);
     }
 
     public class ConfigurationLoader : IConfigurationLoader
@@ -31,13 +33,33 @@ namespace Messaging.Orchestration.Shared
             _configuration.LoadXml(xml);
         }
 
+        XmlNode GetClientNode(string clientId)
+        {
+            string configurationPath =
+                string.Format("//clients/client[@id='{0}']", clientId);
+
+            XmlNode clientNode = _configuration.SelectSingleNode(configurationPath);
+
+            return clientNode;
+        }
+
+        public void SetClientInfo(string clientId, ref ServerMessage response)
+        {
+            XmlNode clientNode = GetClientNode(clientId);
+            string name = string.Empty;
+
+            if ((string.IsNullOrEmpty(clientId)) || (clientNode == null) || (response == null))
+                return;
+
+            response.ClientName = GetAttributeValue(clientNode.Attributes, "name");
+        }
+
         public IList<Tuple<string, string>> GetConfiguration(string clientId)
         {
             IList<Tuple<string, string>> configurations = new List<Tuple<string, string>>();
-            string configurationPath =
-                string.Format("//clients/client[@id='{0}']/group/config", clientId);
-
-            XmlNodeList configNodes = _configuration.SelectNodes(configurationPath);
+            XmlNode clientNode = GetClientNode(clientId);
+            string configurationPath = "//group/config";
+            XmlNodeList configNodes = clientNode.SelectNodes(configurationPath);
 
             for(int index = 0; index < configNodes.Count; index++)
             {
