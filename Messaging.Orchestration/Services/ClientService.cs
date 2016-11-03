@@ -12,6 +12,7 @@ namespace Messaging.Orchestration.Shared.Services
 {
     public class ClientService<TMessageQueue, TMessage> : IClientService
     {
+        private ClientCommandStatus _lastClientStatus = ClientCommandStatus.Inactive;
         string _clientId;
         InvalidRegistrationDelegate _invalidRegistrationSequence;
         StandByDelegate _standbySequence;
@@ -116,7 +117,9 @@ namespace Messaging.Orchestration.Shared.Services
 
         void ReceiveServerCommand(ServerMessage response)
         {
-            switch(response.ClientStatus)
+            ClientCommandStatus clientStatus = response.ClientStatus;
+
+            switch(clientStatus)
             {
                 case ClientCommandStatus.InvalidRegistration:
                     InvokeInvalidRegistration(response.Message);
@@ -140,6 +143,8 @@ namespace Messaging.Orchestration.Shared.Services
                         _stopSequence();
                     break;
             }
+
+            _lastClientStatus = clientStatus;
         }
 
         void SetupClientParameters(IDictionary<string, SetParameterDelegate> serverParametersRequest, List<ParameterEntry> clientParameters)
