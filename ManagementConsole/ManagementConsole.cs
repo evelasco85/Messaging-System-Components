@@ -4,6 +4,7 @@ using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services.Interfaces;
 using MsmqGateway;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,7 +27,7 @@ namespace ManagementConsole
         private ControlBusConsumer _controlBus;
         private MonitorCreditBureau _monitor;
         IServerService<MessageQueue, Message> _server;
-        IList<string> _clientIds = new List<string>();
+        IList<Tuple<string, string>> _clients = new List<Tuple<string, string>>();
 
         public ManagementConsole(String[] args)
         {
@@ -136,11 +137,12 @@ namespace ManagementConsole
         void ActivateClients()
         {
 
-            foreach (string clientId in _clientIds)
+            foreach (Tuple<string, string> client in _clients)
             {
                 ServerMessage serverMessage = new ServerMessage
                 {
-                    ClientId = clientId,
+                    ClientId = client.Item1,
+                    ClientName = client.Item2,
                     ClientStatus = ClientCommandStatus.Start
                 };
 
@@ -152,11 +154,11 @@ namespace ManagementConsole
         void StopClients()
         {
 
-            foreach (string clientId in _clientIds)
+            foreach (Tuple<string, string> client in _clients)
             {
                 ServerMessage serverMessage = new ServerMessage
                 {
-                    ClientId = clientId,
+                    ClientId = client.Item1,
                     ClientStatus = ClientCommandStatus.Stop
                 };
 
@@ -184,8 +186,8 @@ namespace ManagementConsole
                 ClientParameters = paramList
             };
 
-            _clientIds.Add(request.ClientId);
             loader.SetClientInfo(request.ClientId, ref response);
+            _clients.Add(new Tuple<string, string>(response.ClientId, response.ClientName));
 
             return response;
         }
