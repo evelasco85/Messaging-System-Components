@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Utilities", "Mess
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Orchestration.Tests", "Messaging.Orchestration.Tests\Messaging.Orchestration.Tests.csproj", "{0220105E-7B51-4A56-B8CE-064B97604666}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{534A95A1-37AB-453D-A037-94557B986DF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,10 @@ Global
 		{0220105E-7B51-4A56-B8CE-064B97604666}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0220105E-7B51-4A56-B8CE-064B97604666}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0220105E-7B51-4A56-B8CE-064B97604666}.Release|Any CPU.Build.0 = Release|Any CPU
+		{534A95A1-37AB-453D-A037-94557B986DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{534A95A1-37AB-453D-A037-94557B986DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{534A95A1-37AB-453D-A037-94557B986DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{534A95A1-37AB-453D-A037-94557B986DF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,5 +125,6 @@ Global
 		{B3A80A60-25D1-43D8-AB2F-EC6084FC8161} = {5BE5EF12-88B8-4010-AB66-7006D3212122}
 		{1CFF82B3-BFB8-44AF-A237-AA9BC5ECCC95} = {193AF034-D8C7-4478-9738-E0ED53CD495C}
 		{0220105E-7B51-4A56-B8CE-064B97604666} = {5BE5EF12-88B8-4010-AB66-7006D3212122}
+		{534A95A1-37AB-453D-A037-94557B986DF8} = {9DAEFC8A-4D07-4F9D-9E74-47D7E0789B24}
 	EndGlobalSection
 EndGlobal
