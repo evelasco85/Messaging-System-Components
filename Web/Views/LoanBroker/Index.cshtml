@@ -11,6 +11,8 @@
 <table id="tblLoan" class="table table-striped table-bordered table-hover table-condensed">
     <thead>
         <tr>
+            <th>Client ID</th>
+            <th>Request ID</th>
             <th>SSN</th>
             <th>Loan Amount</th>
             <th>Loan Term</th>
@@ -26,19 +28,48 @@
     {
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#btnAddLoan').on('click', function () {
-
-                var newRow = $("<tr/>");
-
-                newRow.append("<td>test" + "</td>");
-                newRow.append("<td>" + "</td>");
-                newRow.append("<td>" + "</td>");
-
-                var targetItemTable = $("#tblLoan > tbody");
-
-                targetItemTable.append(newRow);
-            });
+            //$('#btnAddLoan').on('click', function () {
+            //    LoadRandomizedLoanRequests();
+            //});
+            LoadRandomizedLoanRequests();
         });
+
+        function LoadRandomizedLoanRequests()
+        {
+            var min = 1;
+
+            for(index = 1; index < 30; index++)
+            {
+                var ssn = index;
+                var loanAmount = ((Randomize(20) * 5000) + 25000);
+                var loanTerm = (Randomize(72) + 12);
+
+                AppendLoanRequest("", "", ssn, loanAmount, loanTerm);
+            }
+        }
+
+        function Randomize(max)
+        {
+            var min = 1;
+
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function AppendLoanRequest(clientId, requestId,
+            ssn, loanAmount, loanTerm)
+        {
+            var newRow = $("<tr/>");
+
+            newRow.append("<td>" + clientId + "</td>");
+            newRow.append("<td>" + requestId + "</td>");
+            newRow.append("<td>" + ssn + "</td>");
+            newRow.append("<td>" + loanAmount + "</td>");
+            newRow.append("<td>" + loanTerm + "</td>");
+
+            var targetItemTable = $("#tblLoan > tbody");
+
+            targetItemTable.append(newRow);
+        }
     </script>
 }
 
