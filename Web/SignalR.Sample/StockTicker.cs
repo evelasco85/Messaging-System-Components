@@ -6,6 +6,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 
 namespace Microsoft.AspNet.SignalR.StockTicker
 {
+    //-->Client instances container
     public class StockTicker
     {
         // Singleton instance
@@ -41,6 +42,9 @@ namespace Microsoft.AspNet.SignalR.StockTicker
             }
         }
 
+        //Contains references from connected clients
+        //Calls to client specific javascript attached implementation is possible here
+        //To attach javascript function/method to clients, register them in '$.extend(ticker.client,...'
         private IHubConnectionContext<dynamic> Clients
         {
             get;
@@ -166,9 +170,11 @@ namespace Microsoft.AspNet.SignalR.StockTicker
             switch (marketState)
             {
                 case MarketState.Open:
+                    //Execute registered 'marketOpened(...)' method in SignalR.StockTicker.js
                     Clients.All.marketOpened();
                     break;
                 case MarketState.Closed:
+                    //Execute registered 'marketClosed(...)' method in SignalR.StockTicker.js
                     Clients.All.marketClosed();
                     break;
                 default:
@@ -178,11 +184,13 @@ namespace Microsoft.AspNet.SignalR.StockTicker
 
         private void BroadcastMarketReset()
         {
+            //Execute registered 'marketReset(...)' method in SignalR.StockTicker.js
             Clients.All.marketReset();
         }
 
         private void BroadcastStockPrice(Stock stock)
         {
+            //Execute registered 'updateStockPrice(...)' method in SignalR.StockTicker.js
             Clients.All.updateStockPrice(stock);
         }
     }

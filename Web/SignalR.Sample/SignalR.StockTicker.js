@@ -26,6 +26,10 @@ jQuery.fn.flash = function (color, duration) {
 
 $(function () {
 
+    //-->ticker A.K.A 'StockTickerHub' contains both client and server objects of SignalR
+    //-->'ticker.client' for client specific implementation
+    //-->'ticker.server' for hub specific(non-extendible) implementation
+    //-->'$.connection.stockTicker' where 'stockTicker' is the hubname in server implementation
     var ticker = $.connection.stockTicker, // the generated client-side hub proxy
         up = '▲',
         down = '▼',
@@ -56,9 +60,12 @@ $(function () {
     }
 
     function init() {
+        //-->Calls StockTickerHub.GetAllStocks()
+        //-->Retrieve enumerated 'stocks'
         return ticker.server.getAllStocks().done(function (stocks) {
             $stockTableBody.empty();
             $stockTickerUl.empty();
+            //-->Perform iteration against enumerated stocks
             $.each(stocks, function () {
                 var stock = formatStock(this);
                 $stockTableBody.append(rowTemplate.supplant(stock));
@@ -68,7 +75,11 @@ $(function () {
     }
 
     // Add client-side hub methods that the server will call
+    //-->Attach dynamic/new function/method to client that the server can call
+    //-->Register exposable client-side implementations to server
+    //-->Extending 'this' SignalR client
     $.extend(ticker.client, {
+        //-->Available in server as 'Clients.All.updateStockPrice(stock)'
         updateStockPrice: function (stock) {
             var displayStock = formatStock(stock),
                 $row = $(rowTemplate.supplant(displayStock)),
@@ -86,6 +97,7 @@ $(function () {
             $li.flash(bg, 1000);
         },
 
+        //-->Available in server as 'Clients.All.marketOpened()'
         marketOpened: function () {
             $("#open").prop("disabled", true);
             $("#close").prop("disabled", false);
@@ -93,6 +105,7 @@ $(function () {
             scrollTicker();
         },
 
+        //-->Available in server as 'Clients.All.marketClosed()'
         marketClosed: function () {
             $("#open").prop("disabled", false);
             $("#close").prop("disabled", true);
@@ -100,6 +113,7 @@ $(function () {
             stopTicker();
         },
 
+        //-->Available in server as 'Clients.All.marketReset()'
         marketReset: function () {
             return init();
         }
@@ -109,25 +123,31 @@ $(function () {
     $.connection.hub.start()
         .then(init)
         .then(function () {
+            //-->Invokes server call('StockTickerHub.GetMarketState()')
             return ticker.server.getMarketState();
         })
         .done(function (state) {
             if (state === 'Open') {
+                //-->Invokes attached/created 'marketOpened()' method, specific to 'this' client
                 ticker.client.marketOpened();
             } else {
+                //-->Invokes attached/created 'marketClosed()' method, specific to 'this' client
                 ticker.client.marketClosed();
             }
 
             // Wire up the buttons
             $("#open").click(function () {
+                //-->Invokes server call('StockTickerHub.openMarket()')
                 ticker.server.openMarket();
             });
 
             $("#close").click(function () {
+                //-->Invokes server call('StockTickerHub.closeMarket()')
                 ticker.server.closeMarket();
             });
 
             $("#reset").click(function () {
+                //-->Invokes server call('StockTickerHub.reset()')
                 ticker.server.reset();
             });
         });
