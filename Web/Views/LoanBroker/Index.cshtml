@@ -28,24 +28,22 @@
     {
     <script type="text/javascript">
         $(document).ready(function () {
-            //$('#btnAddLoan').on('click', function () {
-            //    LoadRandomizedLoanRequests();
-            //});
-            LoadRandomizedLoanRequests();
+            $('#btnAddLoan').on('click', function () {
+                LoadRandomizedLoanRequests(123);
+            });
+
+            for (index = 1; index <= 30; index++) {
+                LoadRandomizedLoanRequests(index);
+            }
         });
 
-        function LoadRandomizedLoanRequests()
-        {
+        function LoadRandomizedLoanRequests(ssn) {
             var min = 1;
 
-            for(index = 1; index < 30; index++)
-            {
-                var ssn = index;
-                var loanAmount = ((Randomize(20) * 5000) + 25000);
-                var loanTerm = (Randomize(72) + 12);
+            var loanAmount = ((Randomize(20) * 5000) + 25000);
+            var loanTerm = (Randomize(72) + 12);
 
-                AppendLoanRequest("", "", ssn, loanAmount, loanTerm);
-            }
+            AppendLoanRequest("", "", ssn, loanAmount, loanTerm);
         }
 
         function Randomize(max)
