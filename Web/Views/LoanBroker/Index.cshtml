@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<input type="button" id="btnAddLoan" value="Add" />
+<br />
+<br />
+<table id="tblLoan" class="table table-striped table-bordered table-hover table-condensed">
+    <thead>
+        <tr>
+            <th>SSN</th>
+            <th>Loan Amount</th>
+            <th>Loan Term</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnAddLoan').on('click', function () {
+
+                var newRow = $("<tr/>");
+
+                newRow.append("<td>test" + "</td>");
+                newRow.append("<td>" + "</td>");
+                newRow.append("<td>" + "</td>");
+
+                var targetItemTable = $("#tblLoan > tbody");
+
+                targetItemTable.append(newRow);
+            });
+        });
+    </script>
+}
+
+
