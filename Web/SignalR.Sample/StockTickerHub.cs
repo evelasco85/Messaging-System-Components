@@ -7,7 +7,7 @@ namespace Microsoft.AspNet.SignalR.StockTicker
 {
     //Server hub
     //Available to http client javascript implementation
-    //Reference in SignalR.StockTiker..js by pointing to '$.connection.stockTicker'
+    //Reference in SignalR.StockTiker.js by pointing to '$.connection.stockTicker'
     [HubName("stockTicker")]
     public class StockTickerHub : Hub
     {
