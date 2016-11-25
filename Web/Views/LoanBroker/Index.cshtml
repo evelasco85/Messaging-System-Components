@@ -3,6 +3,19 @@
     ViewBag.Title = "Index";
 }
 
+@section Scripts
+{
+    <!--Required JQuery files-->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.color-2.1.2.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
+    <script src="../signalr/hubs"></script>
+    <!--*********************-->
+    <!--Hook-up Signal R implementation-->
+    <script src="~/Scripts/SignalR.LoanBroker.js"></script>
+    <!--*******************************-->
+}
+
 <h2>Index</h2>
 
 <input type="button" id="btnAddLoan" value="Add" />
@@ -23,64 +36,6 @@
     <tbody></tbody>
 </table>
 
-<!--Required JQuery files-->
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
-<script src="~/Scripts/jquery.color-2.1.2.min.js"></script>
-<script src="~/Scripts/jquery.signalR-2.2.1.js"></script>
-<script src="../signalr/hubs"></script>
-<!--*********************-->
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#btnAddLoan').on('click', function () {
-            UpdateLoanRequest(3, 321, 123);
-        });
-
-        for (index = 1; index <= 30; index++) {
-            LoadRandomizedLoanRequests(index);
-        }
-    });
-
-    function LoadRandomizedLoanRequests(ssn) {
-        var min = 1;
-
-        var loanAmount = ((Randomize(20) * 5000) + 25000);
-        var loanTerm = (Randomize(72) + 12);
-
-        AppendLoanRequest("", "", ssn, loanAmount, loanTerm);
-    }
-
-    function Randomize(max) {
-        var min = 1;
-
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function AppendLoanRequest(clientId, requestId,
-        ssn, loanAmount, loanTerm) {
-        var newRow = $("<tr id='row_ssn_" + ssn + "'/>");
-
-        newRow.append("<td>" + clientId + "</td>");
-        newRow.append("<td>" + requestId + "</td>");
-        newRow.append("<td>" + ssn + "</td>");
-        newRow.append("<td>" + loanAmount + "</td>");
-        newRow.append("<td>" + loanTerm + "</td>");
-        newRow.append("<td id='interestRate'>" + 0 + "</td>");
-        newRow.append("<td id='quoteId'>" + 0 + "</td>");
-
-        var targetItemTable = $("#tblLoan > tbody");
-
-        targetItemTable.append(newRow);
-    }
-
-    function UpdateLoanRequest(ssn, interestRate, quoteId) {
-        var selector = "#row_ssn_" + ssn;
-        var interestRateCell = $(selector + " > #interestRate");
-        var quoteIdCell = $(selector + " > #quoteId");
-
-        interestRateCell.text(interestRate);
-        quoteIdCell.text(quoteId);
-    }
-</script>
 
 

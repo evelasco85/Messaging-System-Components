@@ -126,6 +126,7 @@ $(function () {
             //-->Invokes server call('StockTickerHub.GetMarketState()')
             return ticker.server.getMarketState();
         })
+        //-->Result from 'StockTickerHub.GetMarketState()' call is returned/assigned to 'state' parameter
         .done(function (state) {
             if (state === 'Open') {
                 //-->Invokes attached/created 'marketOpened()' method, specific to 'this' client

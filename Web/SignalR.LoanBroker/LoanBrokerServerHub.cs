@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Web.SignalR.LoanBroker
 {
-    [HubName("LoanBroker")]
+    [HubName("loanBroker")]
     public class LoanBrokerServerHub : Hub
     {
         private readonly LoanBrokerClients _clients;
@@ -21,6 +21,11 @@ namespace Web.SignalR.LoanBroker
         public LoanBrokerServerHub(LoanBrokerClients clients)
         {
             _clients = clients;
+        }
+
+        public void SetupMessageQueue()
+        {
+
         }
     }
 }
