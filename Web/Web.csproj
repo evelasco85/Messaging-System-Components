@@ -179,6 +179,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LoanBrokerController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -220,10 +221,8 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="SignalR.LoanBroker\jquery-1.10.2.min.js" />
-    <Content Include="SignalR.LoanBroker\jquery.color-2.1.2.min.js" />
     <Content Include="SignalR.Sample\jquery-1.10.2.min.js" />
-    <Content Include="SignalR.Sample\jquery.color-2.1.2.min.js" />
+    <Content Include="Scripts\jquery.color-2.1.2.min.js" />
     <Content Include="SignalR.Sample\SignalR.StockTicker.js" />
     <Content Include="SignalR.Sample\StockTicker.css" />
     <Content Include="SignalR.Sample\StockTicker.html" />
@@ -263,8 +262,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="SignalR.Sample\jquery-1.10.2.min.map" />
-    <Content Include="SignalR.LoanBroker\LoanBrokerServer.html" />
-    <Content Include="SignalR.LoanBroker\jquery-1.10.2.min.map" />
+    <Content Include="Views\LoanBroker\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
