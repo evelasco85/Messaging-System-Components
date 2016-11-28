@@ -1,10 +1,4 @@
-﻿using LoanBroker.Models.LoanBroker;
-using Messaging.Base.Transformation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Messaging.Base.Transformation;
 using CommonObjects;
 
 namespace LoanBroker.LoanBroker.Translators

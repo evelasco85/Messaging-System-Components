@@ -1,11 +1,8 @@
 ﻿using LoanBroker.Bank;
-using LoanBroker.Models.LoanBroker;
 using MessageGateway;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Messaging;
-using System.Text;
+using CommonObjects;
 using Messaging.Base.Routing;
 
 namespace LoanBroker.LoanBroker

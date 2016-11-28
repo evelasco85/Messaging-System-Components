@@ -13,7 +13,6 @@ using MessageGateway;
 using Messaging.Base;
 using LoanBroker.Bank;
 using LoanBroker.LoanBroker;
-using LoanBroker.Models.LoanBroker;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 

@@ -1,9 +1,5 @@
 ﻿using Bank;
 using LoanBroker.LoanBroker.Translators;
-using LoanBroker.Models.LoanBroker;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using CommonObjects;
 
 namespace LoanBroker.LoanBroker
