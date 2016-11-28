@@ -28,11 +28,12 @@ $(function () {
 
 
     $('#btnStartLoanBroker').on('click', function () {
+
+        $("#tblLoan > tbody").html("");
+
         for (index = 1; index <= 30; index++) {
             LoadRandomizedLoanRequests(index);
         }
-
-        //UpdateLoanRequest(3, 321, 123);
     });
 
     function LoadRandomizedLoanRequests(ssn) {
