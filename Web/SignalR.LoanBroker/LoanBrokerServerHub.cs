@@ -46,7 +46,7 @@ namespace Web.SignalR.LoanBroker
             return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
         }
 
-        public void SendRequest(int ssn, double loanAmount, int loanTerm )
+        public string SendRequest(int ssn, double loanAmount, int loanTerm )
         {
             LoanQuoteRequest req = new LoanQuoteRequest();
 
@@ -61,6 +61,10 @@ namespace Web.SignalR.LoanBroker
             _requestQueue.Send(msg);
 
             Thread.Sleep(100);
+
+            string messageId = msg.Id;
+
+            return messageId;
         }
 
         void OnMessage(Message msg)

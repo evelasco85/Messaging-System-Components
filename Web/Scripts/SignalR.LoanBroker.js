@@ -10,17 +10,17 @@ if (!String.prototype.supplant) {
     };
 }
 
-$(function () {
+$(function() {
     /*Signal-r Implementation*/
     var loanBroker = $.connection.loanBroker;
     var clientConnectionId;
 
     $.connection.hub.start()
-       .then(Initialize)
-       .then(function () {
+        .then(Initialize)
+        .then(function() {
             return loanBroker.server.getConnectionId();
         })
-       .done(function (connectionId) {
+        .done(function(connectionId) {
             clientConnectionId = connectionId;
         });
 
@@ -30,14 +30,16 @@ $(function () {
     /*************************/
 
 
-    $('#btnStartLoanBroker').on('click', function () {
+    $('#btnStartLoanBroker')
+        .on('click',
+            function() {
 
-        $("#tblLoan > tbody").html("");
+                $("#tblLoan > tbody").html("");
 
-        for (index = 1; index <= 30; index++) {
-            LoadRandomizedLoanRequests(index);
-        }
-    });
+                for (index = 1; index <= 30; index++) {
+                    LoadRandomizedLoanRequests(index);
+                }
+            });
 
     function LoadRandomizedLoanRequests(ssn) {
         var min = 1;
@@ -45,8 +47,12 @@ $(function () {
         var loanAmount = ((Randomize(20) * 5000) + 25000);
         var loanTerm = (Randomize(72) + 12);
 
-        loanBroker.server.sendRequest(ssn, loanAmount, loanTerm);
-        AppendLoanRequest(clientConnectionId, "", ssn, loanAmount, loanTerm);
+        loanBroker
+            .server
+            .sendRequest(ssn, loanAmount, loanTerm)
+            .done(function (messageId) {
+                AppendLoanRequest(clientConnectionId, messageId, ssn, loanAmount, loanTerm);
+            });
     }
 
     function Randomize(max) {
