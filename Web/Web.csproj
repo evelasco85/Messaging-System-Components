@@ -52,6 +52,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -274,6 +275,24 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonObjects\CommonObjects.csproj">
+      <Project>{4fa085c4-4a66-45a3-a1e4-f81a7fdc5573}</Project>
+      <Name>CommonObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Messaging.Base.Interface\Messaging.Base.Interface.csproj">
+      <Project>{04c09384-803c-46e9-8578-7afbc269a9b0}</Project>
+      <Name>Messaging.Base.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Messaging.Base\Messaging.Base.csproj">
+      <Project>{62819694-7de4-49ed-86d5-3bb599ecb41a}</Project>
+      <Name>Messaging.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MsmqGateway\MsmqGateway.csproj">
+      <Project>{e2dcbaac-ea99-4c68-9523-aa69251570a8}</Project>
+      <Name>MsmqGateway</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

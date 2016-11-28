@@ -10,6 +10,7 @@ using System;
 using System.Messaging;
 using System.Collections;
 using System.Threading;
+using CommonObjects;
 using MessageGateway;
 using LoanBroker;
 using Messaging.Base;

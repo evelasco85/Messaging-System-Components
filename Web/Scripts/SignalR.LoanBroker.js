@@ -14,10 +14,6 @@ $(function () {
     /*Signal-r Implementation*/
     var loanBroker = $.connection.loanBroker;
 
-    function Initialize()
-    {
-    }
-
     $.connection.hub.start()
        .then(Initialize)
        .then(function () {
@@ -25,16 +21,19 @@ $(function () {
        .done(function () {
        });
 
+    function Initialize() {
+    }
+
     /*************************/
 
 
-    $('#btnAddLoan').on('click', function () {
-        UpdateLoanRequest(3, 321, 123);
-    });
+    $('#btnStartLoanBroker').on('click', function () {
+        for (index = 1; index <= 30; index++) {
+            LoadRandomizedLoanRequests(index);
+        }
 
-    for (index = 1; index <= 30; index++) {
-        LoadRandomizedLoanRequests(index);
-    }
+        //UpdateLoanRequest(3, 321, 123);
+    });
 
     function LoadRandomizedLoanRequests(ssn) {
         var min = 1;
@@ -42,6 +41,7 @@ $(function () {
         var loanAmount = ((Randomize(20) * 5000) + 25000);
         var loanTerm = (Randomize(72) + 12);
 
+        loanBroker.server.sendRequest(ssn, loanAmount, loanTerm);
         AppendLoanRequest("", "", ssn, loanAmount, loanTerm);
     }
 
@@ -76,5 +76,12 @@ $(function () {
         interestRateCell.text(interestRate);
         quoteIdCell.text(quoteId);
     }
+
+    $.extend(loanBroker.client,
+    {
+        messageQueueReplyReceived : function(loanReply) {
+            UpdateLoanRequest(loanReply.SSN, loanReply.InterestRate, loanReply.QuoteID);
+        }
+    });
 });
 
