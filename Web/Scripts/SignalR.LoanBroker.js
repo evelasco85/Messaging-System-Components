@@ -63,7 +63,7 @@ $(function() {
 
     function AppendLoanRequest(clientId, requestId,
         ssn, loanAmount, loanTerm) {
-        var newRow = $("<tr id='row_ssn_" + ssn + "'/>");
+        var newRow = $("<tr id='row_msg_id_" + requestId.replace("\\","_") + "'/>");
 
         newRow.append("<td>" + clientId + "</td>");
         newRow.append("<td>" + requestId + "</td>");
@@ -78,8 +78,8 @@ $(function() {
         targetItemTable.append(newRow);
     }
 
-    function UpdateLoanRequest(ssn, interestRate, quoteId) {
-        var selector = "#row_ssn_" + ssn;
+    function UpdateLoanRequest(messageId, ssn, interestRate, quoteId) {
+        var selector = "#row_msg_id_" + messageId.replace("\\", "_");
         var interestRateCell = $(selector + " > #interestRate");
         var quoteIdCell = $(selector + " > #quoteId");
 
@@ -89,8 +89,8 @@ $(function() {
 
     $.extend(loanBroker.client,
     {
-        messageQueueReplyReceived : function(loanReply) {
-            UpdateLoanRequest(loanReply.SSN, loanReply.InterestRate, loanReply.QuoteID);
+        messageQueueReplyReceived : function(messageId, loanReply) {
+            UpdateLoanRequest(messageId, loanReply.SSN, loanReply.InterestRate, loanReply.QuoteID);
         }
     });
 });
