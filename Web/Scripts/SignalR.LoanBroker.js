@@ -13,13 +13,16 @@ if (!String.prototype.supplant) {
 $(function () {
     /*Signal-r Implementation*/
     var loanBroker = $.connection.loanBroker;
+    var clientConnectionId;
 
     $.connection.hub.start()
        .then(Initialize)
        .then(function () {
-       })
-       .done(function () {
-       });
+            return loanBroker.server.getConnectionId();
+        })
+       .done(function (connectionId) {
+            clientConnectionId = connectionId;
+        });
 
     function Initialize() {
     }
@@ -43,7 +46,7 @@ $(function () {
         var loanTerm = (Randomize(72) + 12);
 
         loanBroker.server.sendRequest(ssn, loanAmount, loanTerm);
-        AppendLoanRequest("", "", ssn, loanAmount, loanTerm);
+        AppendLoanRequest(clientConnectionId, "", ssn, loanAmount, loanTerm);
     }
 
     function Randomize(max) {

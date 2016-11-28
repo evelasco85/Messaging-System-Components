@@ -23,7 +23,6 @@ namespace Web.SignalR.LoanBroker
         public LoanBrokerServerHub() :
             this(LoanBrokerClients.Instance)
         {
-
         }
 
         public LoanBrokerServerHub(LoanBrokerClients clients)
@@ -89,6 +88,11 @@ namespace Web.SignalR.LoanBroker
         String ToPath(String arg)
         {
             return ".\\private$\\" + arg;
+        }
+
+        public string GetConnectionId()
+        {
+            return Context.ConnectionId;
         }
     }
 }
