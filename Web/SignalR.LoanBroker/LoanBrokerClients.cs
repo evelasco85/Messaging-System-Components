@@ -36,17 +36,23 @@ namespace Web.SignalR.LoanBroker
             Clients = clients;
         }
 
-        public void LoanReplyReceived(LoanQuoteReply reply)
+        public void LoanReplyReceived(IEnumerable<string> connectionIds, LoanQuoteReply reply)
         {
             lock (_messageQueueReplyLock)
             {
-                BroadcastLoanReply(reply);
+                foreach (string connectionId in connectionIds)
+                {
+                    Clients.Client(connectionId).messageQueueReplyReceived(reply);
+                }
             }
         }
 
-        void BroadcastLoanReply(LoanQuoteReply reply)
+        public void BroadcastLoanReplyReceived(LoanQuoteReply reply)
         {
-            Clients.All.messageQueueReplyReceived(reply);
+            lock (_messageQueueReplyLock)
+            {
+                Clients.All.messageQueueReplyReceived(reply);
+            }
         }
     }
 }

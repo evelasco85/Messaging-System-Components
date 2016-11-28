@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using CommonObjects;
 using MessageGateway;
@@ -15,10 +16,11 @@ namespace Web.SignalR.LoanBroker
     [HubName("loanBroker")]
     public class LoanBrokerServerHub : Hub
     {
-        private readonly LoanBrokerClients _clients;
-        
+        readonly LoanBrokerClients _clients;
         MessageReceiverGateway _replyQueue;
         IMessageSender<MessageQueue, Message> _requestQueue;
+        readonly static ConnectionMapper _connectionMap = new ConnectionMapper();
+
 
         public LoanBrokerServerHub() :
             this(LoanBrokerClients.Instance)
@@ -46,7 +48,7 @@ namespace Web.SignalR.LoanBroker
             return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
         }
 
-        public string SendRequest(int ssn, double loanAmount, int loanTerm )
+        public string SendRequest(int ssn, double loanAmount, int loanTerm)
         {
             LoanQuoteRequest req = new LoanQuoteRequest();
 
@@ -63,6 +65,9 @@ namespace Web.SignalR.LoanBroker
             Thread.Sleep(100);
 
             string messageId = msg.Id;
+            string connectionId = GetConnectionId();
+
+            _connectionMap.Add(connectionId, messageId);
 
             return messageId;
         }
@@ -75,8 +80,20 @@ namespace Web.SignalR.LoanBroker
                 if (msg.Body is LoanQuoteReply)
                 {
                     LoanQuoteReply reply = (LoanQuoteReply)msg.Body;
+                    string correlationId = msg.CorrelationId;
+                    IEnumerable<string> connections = _connectionMap.GetConnections(correlationId);
 
-                    _clients.LoanReplyReceived(reply);
+                    if (connections.Any())
+                    {
+                        _clients.LoanReplyReceived(connections, reply);
+                    }
+                    else
+                    {
+                        //Try broadcasting if not correlation found
+                        _clients.BroadcastLoanReplyReceived(reply);
+                    }
+
+                    _connectionMap.RemoveByMessageId(correlationId);
                 }
                 else
                 {
@@ -97,6 +114,23 @@ namespace Web.SignalR.LoanBroker
         public string GetConnectionId()
         {
             return Context.ConnectionId;
+        }
+
+        public override Task OnConnected()
+        {
+            return base.OnConnected();
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            _connectionMap.RemoveByConnectionId(GetConnectionId());
+
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public override Task OnReconnected()
+        {
+            return base.OnReconnected();
         }
     }
 }

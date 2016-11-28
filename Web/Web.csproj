@@ -191,7 +191,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalR.LoanBroker\LoanBrokerClients.cs" />
     <Compile Include="SignalR.LoanBroker\LoanBrokerServerHub.cs" />
-    <Compile Include="SignalR.LoanBroker\LoanBrokerViewModel.cs" />
+    <Compile Include="SignalR.LoanBroker\LoanBrokerMessageConnectionMap.cs" />
     <Compile Include="SignalR.LoanBroker\Startup.cs" />
     <Compile Include="SignalR.Sample\Startup.cs" />
     <Compile Include="SignalR.Sample\Stock.cs" />
