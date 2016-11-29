@@ -5,10 +5,18 @@ using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
-    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>
+    public interface IMessageSender
+    {
+        void SetupSender();
+    }
+
+    public interface IMessageSender<TMessage>
     {
         IReturnAddress<TMessage> AsReturnAddress();
         void Send(TMessage message);
-        void SetupSender();
+    }
+
+    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>, IMessageSender
+    {
     }
 }

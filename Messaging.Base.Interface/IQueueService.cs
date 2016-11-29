@@ -4,13 +4,21 @@ using System.Text;
 
 namespace Messaging.Base
 {
-    public interface IQueueService<TMessageQueue, TMessage>
+    public interface IQueueService
     {
         bool Running { get; }
-        IMessageReceiver<TMessageQueue, TMessage> Receiver { get; }
-        IMessageSender<TMessageQueue, TMessage> InvalidQueue { get; }
         void Run();
         void StopRunning();
+    }
+
+    public interface IQueueService<TMessage>
+    {
         void SendReply(Object responseObject, TMessage originalRequestMessage);
+    }
+
+    public interface IQueueService<TMessageQueue, TMessage> : IQueueService<TMessage>, IQueueService
+    {
+        IMessageReceiver<TMessageQueue, TMessage> Receiver { get; }
+        IMessageSender<TMessageQueue, TMessage> InvalidQueue { get; }
     }
 }
