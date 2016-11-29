@@ -1,17 +1,15 @@
 ﻿using MessageGateway;
 using System;
-using System.Collections.Generic;
 using System.Messaging;
-using System.Text;
 using Messaging.Base;
 
 namespace LoanBroker.Bank
 {
     internal abstract class Connection
     {
-        protected IMessageSender<MessageQueue, Message> queue;
+        protected IMessageSender<Message> queue;
         
-        public IMessageSender<MessageQueue, Message> Queue
+        public IMessageSender<Message> Queue
         {
             get { return queue; }
         }
@@ -20,7 +18,6 @@ namespace LoanBroker.Bank
         {
             this.queue = new MessageSenderGateway(ToPath(queueName));
         }
-
 
         public abstract bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount);
 

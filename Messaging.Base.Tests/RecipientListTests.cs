@@ -9,7 +9,7 @@ namespace Messaging.Base.Tests
     [TestClass]
     public class RecipientListTests
     {
-        IRecipientList<BaseRecipient, MessageQueue, Message> _recipientList = new RecipientList<BaseRecipient, MessageQueue, Message>(recipient => recipient.Queue);
+        IRecipientList<BaseRecipient, Message> _recipientList = new RecipientList<BaseRecipient, Message>(recipient => recipient.Queue);
 
         [TestInitialize]
         public void Init()
@@ -31,7 +31,7 @@ namespace Messaging.Base.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Test_FailedCondition()
         {
-            IRecipientList<BaseRecipient, MessageQueue, Message> recipientList = new RecipientList<BaseRecipient, MessageQueue, Message>(null);
+            IRecipientList<BaseRecipient, Message> recipientList = new RecipientList<BaseRecipient, Message>(null);
         }
 
         [TestMethod]

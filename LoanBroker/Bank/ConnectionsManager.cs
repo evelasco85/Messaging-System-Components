@@ -17,7 +17,7 @@ namespace LoanBroker.Bank
     // Modified connection manager that sends requests to Bank 5 only if there are not other takers
     internal class ConnectionsManager
     {
-        static protected IRecipientList<Connection, MessageQueue, Message> bankRecipientList = new RecipientList<Connection, MessageQueue, Message>(
+        static protected IRecipientList<Connection, Message> bankRecipientList = new RecipientList<Connection, Message>(
             (recipient => recipient.Queue),
             new Bank1(), new Bank2(), new Bank3(), new Bank4()
             );

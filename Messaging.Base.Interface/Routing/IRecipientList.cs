@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messaging.Base.Routing
 {
-    public interface IRecipientList<TBaseEntity, TMessageQueue, TMessage>
+    public interface IRecipientList<TBaseEntity, TMessage>
     {
         void AddRecipient(TBaseEntity baseEntity);
         void AddRecipient(params TBaseEntity[] recipients);
