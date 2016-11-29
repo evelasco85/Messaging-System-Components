@@ -18,31 +18,6 @@ namespace CreditBureau
 {
     internal class CreditBureau
     {
-        private IRequestReply_Synchronous _queueService;
-
-        public IRequestReply_Synchronous QueueService
-        {
-            get { return _queueService; }
-        }
-
-        public CreditBureau(String requestQueueName)
-        {
-            _queueService = new MQRequestReplyService_Synchronous(
-                 requestQueueName,
-                 new ProcessMessageDelegate(ProcessRequestMessage),
-                 null,
-                 new GetRequestBodyTypeDelegate(GetRequestBodyType));
-        }
-
-        public CreditBureau(IMessageReceiver<MessageQueue, Message> requestQueue)
-        {
-            _queueService = new MQRequestReplyService_Synchronous(
-                requestQueue,
-                new ProcessMessageDelegate(ProcessRequestMessage),
-                null,
-                new GetRequestBodyTypeDelegate(GetRequestBodyType));
-        }
-
         private Random random = new Random();
 
         private int getCreditScore(int ssn) 
@@ -55,12 +30,7 @@ namespace CreditBureau
             return (int)(random.Next(19) + 1);
         }
 
-        Type GetRequestBodyType()
-        {
-            return typeof(CreditBureauRequest);
-        }
-
-        Object ProcessRequestMessage(Object o)
+        public Object ProcessRequestMessage(Object o)
         {
             CreditBureauRequest requestStruct;
 

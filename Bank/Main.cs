@@ -7,7 +7,9 @@
  */
 
 using System;
-using Gateway;
+using Bank.Models;
+using MessageGateway;
+using Messaging.Base.Construction;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 
@@ -15,7 +17,6 @@ namespace Bank
 {
     public class Run
     {
-        private static Bank _bank;
         public static void Main(String[] args)
         {
             String requestQueue = string.Empty;
@@ -23,6 +24,7 @@ namespace Bank
             String ratePremium = string.Empty;
             String maxLoanTerm = string.Empty;
 
+            IRequestReply_Synchronous queueService = null;
             IClientService client = MQOrchestration.GetInstance().CreateClient(
                 args[0],
                 "MSMQ",
@@ -45,7 +47,12 @@ namespace Bank
                 () =>
                 {
                     //Client parameter setup completed
-                    _bank = new Bank(ToPath(requestQueue), bankName, System.Convert.ToDouble(ratePremium), System.Convert.ToInt32(maxLoanTerm));
+                    Bank bank = new Bank(bankName, System.Convert.ToDouble(ratePremium), System.Convert.ToInt32(maxLoanTerm));
+                    queueService = new MQRequestReplyService_Synchronous(
+                        ToPath(requestQueue),
+                        new ProcessMessageDelegate(bank.ProcessRequestMessage),
+                        null,
+                        new GetRequestBodyTypeDelegate(() => { return typeof(BankQuoteRequest); }));
 
                     Console.WriteLine("Configurations ok!");
                 },
@@ -57,13 +64,13 @@ namespace Bank
                 () =>
                 {
                     //Start
-                    _bank.QueueService.Run();
+                    queueService.Run();
                     Console.WriteLine("Starting Application!");
                 },
                 () =>
                 {
                     //Stop
-                    _bank.QueueService.StopRunning();
+                    queueService.StopRunning();
                     Console.WriteLine("Stopping Application!");
                 });
 

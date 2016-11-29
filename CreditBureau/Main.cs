@@ -7,8 +7,9 @@
  */
 
 using System;
-using System.Messaging;
+using CreditBureau.Models;
 using MessageGateway;
+using Messaging.Base.Construction;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 
@@ -17,10 +18,12 @@ namespace CreditBureau
 
     public class Run
     {
-        private static CreditBureau _proc;
+        
         public static void Main(String[] args)
         {
             String requestQueueName = string.Empty;
+
+            IRequestReply_Synchronous queueService = null;
             IClientService client = MQOrchestration.GetInstance().CreateClient(
                 args[0],
                 "MSMQ",
@@ -40,7 +43,14 @@ namespace CreditBureau
                 () =>
                 {
                     //Client parameter setup completed
-                    _proc = new CreditBureau(ToPath(requestQueueName));
+                    CreditBureau proc = new CreditBureau();
+                    queueService = new MQRequestReplyService_Synchronous(
+                        ToPath(requestQueueName),
+                        new ProcessMessageDelegate(proc.ProcessRequestMessage),
+                        null,
+                        new GetRequestBodyTypeDelegate(() => { return typeof(CreditBureauRequest); }));
+
+
                     Console.WriteLine("Configurations ok!");
                 },
                 () =>
@@ -51,13 +61,13 @@ namespace CreditBureau
                 () =>
                 {
                     //Start
-                    _proc.QueueService.Run();
+                    queueService.Run();
                     Console.WriteLine("Starting Application!");
                 },
                 () =>
                 {
                     //Stop
-                    _proc.QueueService.StopRunning();
+                    queueService.StopRunning();
                     Console.WriteLine("Stopping Application!");
                 });
 

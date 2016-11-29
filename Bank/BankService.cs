@@ -57,33 +57,11 @@ namespace Bank
             }
         }
 
-        private IRequestReply_Synchronous _queueService;
-
-        public IRequestReply_Synchronous QueueService
-        {
-            get { return _queueService;}
-        }
-
-        public Bank(String requestQueue)
-        {
-            _queueService = new MQRequestReplyService_Synchronous(
-                requestQueue,
-                new ProcessMessageDelegate(ProcessRequestMessage),
-                null,
-                new GetRequestBodyTypeDelegate(GetRequestBodyType));
-        }
-
-        public Bank(String requestQueue, String bankName, double ratePremium, int maxLoanTerm) 
-            : this(requestQueue)
+        public Bank(String bankName, double ratePremium, int maxLoanTerm) 
         {
             BankName = bankName;
             RatePremium = ratePremium;
             MaxLoanTerm = maxLoanTerm;
-        }
-
-        Type GetRequestBodyType()
-        {
-            return typeof(BankQuoteRequest);
         }
 
         protected BankQuoteReply ComputeBankReply(BankQuoteRequest requestStruct)
@@ -107,7 +85,7 @@ namespace Bank
             return replyStruct;
         }
 
-        Object ProcessRequestMessage(Object o)
+        public Object ProcessRequestMessage(Object o)
         {
             BankQuoteRequest requestStruct;
             BankQuoteReply replyStruct;
