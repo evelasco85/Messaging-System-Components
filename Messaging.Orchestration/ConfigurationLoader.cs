@@ -45,16 +45,10 @@ namespace Messaging.Orchestration.Shared
 
         XmlNode GetClientNode(string clientId, string groupId)
         {
-            //string configurationPath =
-            //    string.Format("//clients/client[@id='{0}']/group[@id='{1}']", clientId, groupId);
-
-            //XmlNode clientNode = _configuration.SelectSingleNode(configurationPath);
-
             string configurationPath = string.Format("group[@id='{0}']", groupId);
             XmlNode clientNode = GetClientNode(clientId);
             XmlNode groupNode = clientNode.SelectSingleNode(configurationPath);
 
-            //return clientNode;
             return groupNode;
         }
 
