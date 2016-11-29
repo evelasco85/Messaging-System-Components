@@ -19,14 +19,14 @@ namespace Messaging.Base.Routing
             return s_instance;
         }
 
-        public void SendToRecipent<TMessageQueue, TMessag>(TMessag message, IList<IMessageSender<TMessageQueue, TMessag>> recipientList)
+        public void SendToRecipent<TMessage>(TMessage message, IList<IMessageSender<TMessage>> recipientList)
         {
             if ((message == null) || (recipientList == null))
                 return;
 
             for (int index = 0; index < recipientList.Count; index++)
             {
-                IMessageSender<TMessageQueue, TMessag> sendTo = recipientList[index];
+                IMessageSender<TMessage> sendTo = recipientList[index];
 
                 if(sendTo == null)
                     continue;

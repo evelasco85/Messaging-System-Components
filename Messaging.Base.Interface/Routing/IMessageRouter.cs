@@ -8,7 +8,7 @@ namespace Messaging.Base.Routing
 {
     public interface IMessageRouter
     {
-        void SendToRecipent<TMessageQueue, TMessag>(TMessag message,
-            IList<IMessageSender<TMessageQueue, TMessag>> recipientList);
+        void SendToRecipent<TMessage>(TMessage message,
+            IList<IMessageSender<TMessage>> recipientList);
     }
 }

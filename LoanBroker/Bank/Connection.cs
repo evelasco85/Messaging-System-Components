@@ -3,24 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.Messaging;
 using System.Text;
+using Messaging.Base;
 
 namespace LoanBroker.Bank
 {
     internal abstract class Connection
     {
-        protected MessageSenderGateway queue;
-        protected String bankName = "";
-        public MessageSenderGateway Queue
+        protected IMessageSender<MessageQueue, Message> queue;
+        
+        public IMessageSender<MessageQueue, Message> Queue
         {
             get { return queue; }
         }
-        public String BankName
+
+        public Connection(String queueName)
         {
-            get { return bankName; }
+            this.queue = new MessageSenderGateway(ToPath(queueName));
         }
-        public Connection(MessageQueue queue) { this.queue = new MessageSenderGateway(queue); }
-        public Connection(String queueName) { this.queue = new MessageSenderGateway(queueName); }
+
 
         public abstract bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount);
+
+        private static String ToPath(String arg)
+        {
+            return ".\\private$\\" + arg;
+        }
     }
 }

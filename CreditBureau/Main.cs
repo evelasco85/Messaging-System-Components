@@ -18,7 +18,6 @@ namespace CreditBureau
 
     public class Run
     {
-        
         public static void Main(String[] args)
         {
             String requestQueueName = string.Empty;

@@ -9,6 +9,7 @@
 using System;
 using System.Messaging;
 using System.Collections;
+using System.Linq;
 using MessageGateway;
 using Bank;
 using Messaging.Base;
@@ -58,7 +59,7 @@ namespace LoanBroker
 
             requestMessage.AppSpecific = aggregationCorrelationID;
             
-            IMessageSender<MessageQueue, Message> [] eligibleBanks = 
+            IMessageSender<Message> [] eligibleBanks = 
                 connectionManager.GetEligibleBankQueues(quoteRequest.CreditScore, quoteRequest.HistoryLength, 
                 quoteRequest.LoanAmount);
 
@@ -67,7 +68,7 @@ namespace LoanBroker
 
             MessageRouter
                 .GetInstance()
-                .SendToRecipent(requestMessage, eligibleBanks);
+                .SendToRecipent(requestMessage, eligibleBanks.ToList());
         }
 
 

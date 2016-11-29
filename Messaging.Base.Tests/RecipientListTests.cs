@@ -37,8 +37,8 @@ namespace Messaging.Base.Tests
         [TestMethod]
         public void TestCondition_1()
         {
-            IList<IMessageSender<MessageQueue, Message>> recipients = _recipientList.GetRecipients(recipient => recipient.Queue.Value > 3);
-            Func<IMessageSender<MessageQueue, Message>, MessageSenderGateway> cast = (sender => (MessageSenderGateway)sender);
+            IList<IMessageSender<Message>> recipients = _recipientList.GetRecipients(recipient => recipient.Queue.Value > 3);
+            Func<IMessageSender<Message>, MessageSenderGateway> cast = (sender => (MessageSenderGateway)sender);
 
             Assert.AreEqual(recipients.Count, 2);
             Assert.AreEqual(cast(recipients[0]).Value, 4);
@@ -48,8 +48,8 @@ namespace Messaging.Base.Tests
         [TestMethod]
         public void TestCondition_2()
         {
-            IList<IMessageSender<MessageQueue, Message>> recipients = _recipientList.GetRecipients(recipient => recipient.Queue.Value < 3);
-            Func<IMessageSender<MessageQueue, Message>, MessageSenderGateway> cast = (sender => (MessageSenderGateway)sender);
+            IList<IMessageSender<Message>> recipients = _recipientList.GetRecipients(recipient => recipient.Queue.Value < 3);
+            Func<IMessageSender<Message>, MessageSenderGateway> cast = (sender => (MessageSenderGateway)sender);
 
             Assert.AreEqual(recipients.Count, 2);
             Assert.AreEqual(cast(recipients[0]).Value, 1);
@@ -59,8 +59,8 @@ namespace Messaging.Base.Tests
         [TestMethod]
         public void TestCondition_3()
         {
-            IList<IMessageSender<MessageQueue, Message>> recipients = _recipientList.GetRecipients(recipient => recipient.Queue.Value == 3);
-            Func<IMessageSender<MessageQueue, Message>, MessageSenderGateway> cast = (sender => (MessageSenderGateway)sender);
+            IList<IMessageSender<Message>> recipients = _recipientList.GetRecipients(recipient => recipient.Queue.Value == 3);
+            Func<IMessageSender<Message>, MessageSenderGateway> cast = (sender => (MessageSenderGateway)sender);
 
             Assert.AreEqual(recipients.Count, 1);
             Assert.AreEqual(cast(recipients[0]).Value, 3);
@@ -69,7 +69,7 @@ namespace Messaging.Base.Tests
         [TestMethod]
         public void TestCondition_SelectAll()
         {
-            IList<IMessageSender<MessageQueue, Message>> recipients = _recipientList.GetRecipients();
+            IList<IMessageSender<Message>> recipients = _recipientList.GetRecipients();
 
             Assert.AreEqual(recipients.Count, 5);
         }
@@ -77,7 +77,7 @@ namespace Messaging.Base.Tests
         [TestMethod]
         public void TestCondition_SelectAll2()
         {
-            IList<IMessageSender<MessageQueue, Message>> recipients = _recipientList.GetRecipients(null);
+            IList<IMessageSender<Message>> recipients = _recipientList.GetRecipients(null);
 
             Assert.AreEqual(recipients.Count, 5);
         }

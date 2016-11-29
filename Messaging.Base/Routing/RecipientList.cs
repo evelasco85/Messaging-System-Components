@@ -9,7 +9,7 @@ namespace Messaging.Base.Routing
 {    
     public class RecipientList<TBaseEntity, TMessageQueue, TMessage> : IRecipientList<TBaseEntity, TMessageQueue, TMessage>
     {
-        IList<Tuple<TBaseEntity, IMessageSender<TMessageQueue, TMessage>>> _recipients = new List<Tuple<TBaseEntity, IMessageSender<TMessageQueue, TMessage>>>();
+        IList<Tuple<TBaseEntity, IMessageSender<TMessage>>> _recipients = new List<Tuple<TBaseEntity, IMessageSender<TMessage>>>();
         Func<TBaseEntity, IMessageSender<TMessageQueue, TMessage>> _messageSenderLocator;
 
         public RecipientList(Func<TBaseEntity, IMessageSender<TMessageQueue, TMessage>> messageSenderLocator)
@@ -36,12 +36,12 @@ namespace Messaging.Base.Routing
         public void AddRecipient(TBaseEntity baseEntity)
         {
             IMessageSender<TMessageQueue, TMessage> messageSender = _messageSenderLocator(baseEntity);
-            Tuple<TBaseEntity, IMessageSender<TMessageQueue, TMessage>> recipient = new Tuple<TBaseEntity, IMessageSender<TMessageQueue, TMessage>>(baseEntity, messageSender);
+            Tuple<TBaseEntity, IMessageSender<TMessage>> recipient = new Tuple<TBaseEntity, IMessageSender<TMessage>>(baseEntity, messageSender);
 
             _recipients.Add(recipient);
         }
 
-        public IList<IMessageSender<TMessageQueue, TMessage>> GetRecipients(Func<TBaseEntity, bool> recipientCondition)
+        public IList<IMessageSender<TMessage>> GetRecipients(Func<TBaseEntity, bool> recipientCondition)
         {
             if (recipientCondition == null)
                 return GetRecipients();
@@ -52,7 +52,7 @@ namespace Messaging.Base.Routing
                 .ToList();
         }
 
-        public IList<IMessageSender<TMessageQueue, TMessage>> GetRecipients()
+        public IList<IMessageSender<TMessage>> GetRecipients()
         {
             return GetRecipients((entity) => true);
         }

@@ -8,7 +8,7 @@ namespace LoanBroker.Bank
     {
         protected String bankname = "Exclusive Country Club Bankers";
 
-        public Bank1() : base(".\\private$\\bank1Queue") { }
+        public Bank1() : base("bank1Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 75000 && CreditScore >= 600 && HistoryLength >= 8;
@@ -19,7 +19,7 @@ namespace LoanBroker.Bank
     {
         protected String bankname = "Acme Deluxe Bankers";
 
-        public Bank2() : base(".\\private$\\bank2Queue") { }
+        public Bank2() : base("bank2Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 75000 && CreditScore >= 600 && HistoryLength >= 8;
@@ -30,7 +30,7 @@ namespace LoanBroker.Bank
     {
         protected String bankname = "General Retail Bankers";
 
-        public Bank3() : base(".\\private$\\bank3Queue") { }
+        public Bank3() : base("bank3Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 10000 && LoanAmount < 75000 && CreditScore >= 400 && HistoryLength >= 3;
@@ -41,7 +41,7 @@ namespace LoanBroker.Bank
     {
         protected String bankname = "Neighborhood Bankers";
 
-        public Bank4() : base(".\\private$\\bank4Queue") { }
+        public Bank4() : base("bank4Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 10000 && LoanAmount < 75000 && CreditScore >= 400 && HistoryLength >= 3;
@@ -52,7 +52,7 @@ namespace LoanBroker.Bank
     {
         protected String bankname = "Mom and Pop Generic Loan Sharks and Pawn Shop";
 
-        public Bank5() : base(".\\private$\\bank5Queue") { }
+        public Bank5() : base("bank5Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return true;
