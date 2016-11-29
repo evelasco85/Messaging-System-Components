@@ -20,7 +20,6 @@ using MsmqGateway;
 namespace LoanBroker {
 
 	internal class Run{
-        private static LoanBrokerProxy _loanBrokerProxy;
 
 	    public static void Main(String[] args)
 	    {
@@ -33,6 +32,7 @@ namespace LoanBroker {
 	        string proxyReplyQueue = string.Empty;
 	        string controlBusQueue = string.Empty;
 
+	        LoanBrokerProxy loanBrokerProxy = null;
             IRequestReply_Asynchronous<Message> queueService = null;
 	        IClientService client = MQOrchestration.GetInstance().CreateClient(
 	            args[0],
@@ -67,23 +67,26 @@ namespace LoanBroker {
 	            () =>
 	            {
 	                //Client parameter setup completed
-
 	                IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
 	                    ToPath(proxyReplyQueue),
 	                    GetLoanReplyFormatter()
 	                    );
-	                _loanBrokerProxy = new LoanBrokerProxy(
+	                loanBrokerProxy = new LoanBrokerProxy(
 	                    new MessageReceiverGateway(ToPath(requestQueueName), GetLoanRequestFormatter()),
 	                    new MessageSenderGateway(ToPath(proxyRequestQueue)),
 	                    proxyReplyReceiver,
 	                    new MessageSenderGateway(ToPath(controlBusQueue)),
 	                    3);
 
-                    ProcessManager<Message> processManager = new ProcessManager<Message>(
-	                    ToPath(creditRequestQueueName),
-	                    ToPath(creditReplyQueueName),
+                    BankGateway bankInterface = new BankGateway(
                         ToPath(bankReplyQueueName),
-	                    new ConnectionsManager()
+                        new ConnectionsManager());
+                    ICreditBureauGateway creditBureauInterface = new CreditBureauGatewayImp(
+                        ToPath(creditRequestQueueName),
+                        ToPath(creditReplyQueueName));
+                    ProcessManager<Message> processManager = new ProcessManager<Message>(
+                        bankInterface,
+                        creditBureauInterface
                         );
 
                     queueService = new MQRequestReplyService_Asynchronous(
@@ -91,12 +94,14 @@ namespace LoanBroker {
                         new ProcessMessageDelegate2(processManager.ProcessRequestMessage),
                         null,
                         new GetRequestBodyTypeDelegate(processManager.GetRequestBodyType)
-                        ); 
-	                
-                    processManager.AddSetup(
-                        queueService,
-                        (message => { return message.Id; })
                         );
+
+                    processManager.AddSetup(
+                       queueService,
+                       (message => { return message.Id; })
+                       );
+                    processManager.CreditBureauInterface.Listen();
+                    processManager.BankInterface.Listen();
 
 	                Console.WriteLine("Configurations ok!");
 	            },
@@ -108,7 +113,7 @@ namespace LoanBroker {
 	            () =>
 	            {
 	                //Start
-	                _loanBrokerProxy.Process();
+	                loanBrokerProxy.Process();
                     queueService.Run();
 
 	                Console.WriteLine("Starting Application!");
@@ -116,7 +121,7 @@ namespace LoanBroker {
 	            () =>
 	            {
 	                //Stop
-	                _loanBrokerProxy.StopProcessing();
+	                loanBrokerProxy.StopProcessing();
                     queueService.StopRunning();
 
 	                Console.WriteLine("Stopping Application!");

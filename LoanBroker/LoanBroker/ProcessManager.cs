@@ -8,38 +8,33 @@ namespace LoanBroker.LoanBroker
 {
     internal class ProcessManager<TMessage>
     {
-        public ICreditBureauGateway CreditBureauInterface { get; private set; }
-        public BankGateway BankInterface { get; private set; }
-
         IProcessManager<string, Process<TMessage>, ProcessManager<TMessage>> _manager;
         private IRequestReply_Asynchronous<TMessage> _queueService;
         private Func<TMessage, string> _extractProcessIdFunc;
+        private BankGateway _bankInterface;
+        private ICreditBureauGateway _creditBureauInterface;
 
         public ProcessManager(
-            String creditRequestQueueName, String creditReplyQueueName,
-            String bankReplyQueueName, ConnectionsManager connectionManager)
-            :this(
-                 (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName)),
-                 bankReplyQueueName,
-                 connectionManager)
-        {}
-
-        public ProcessManager(
-            ICreditBureauGateway creditBureau,
-            String bankReplyQueueName, ConnectionsManager connectionManager)
+            BankGateway bankInterface,
+            ICreditBureauGateway creditBureauInterface
+            )
         {
-
-            CreditBureauInterface = creditBureau;
-            CreditBureauInterface.Listen();
-
-            BankInterface = new BankGateway(bankReplyQueueName, connectionManager);
-            BankInterface.Listen();
-
+            _bankInterface = bankInterface;
+            _creditBureauInterface = creditBureauInterface;
             _manager = new ProcessManager<string, Process<TMessage>, ProcessManager<TMessage>>(
                 this,
                 ChildProcessNotification
                 );
+        }
 
+        public BankGateway BankInterface
+        {
+            get { return _bankInterface; }
+        }
+
+        public ICreditBureauGateway CreditBureauInterface
+        {
+            get { return _creditBureauInterface; }
         }
 
         public Type GetRequestBodyType()
@@ -77,7 +72,7 @@ namespace LoanBroker.LoanBroker
         void ChildProcessNotification(IProcess<string, Process<TMessage>, ProcessManager<TMessage>> process)
         {
             _manager.RemoveProcess(process);
-            Console.WriteLine("Current outstanding aggregate count: {0}", BankInterface.GetOutstandingAggregateCount());
+            Console.WriteLine("Current outstanding aggregate count: {0}", _bankInterface.GetOutstandingAggregateCount());
         }
     }
 }
