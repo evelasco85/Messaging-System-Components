@@ -2,35 +2,34 @@
 using LoanBroker.CreditBureau;
 using Messaging.Base.Routing;
 using System;
-using System.Messaging;
 using CommonObjects;
 
 namespace LoanBroker.LoanBroker
 {
-    internal class Process : Process<string, LoanBroker.Process, LoanBroker.ProcessManager>
+    internal class Process<TMessage> : Process<string, Process<TMessage>, ProcessManager<TMessage>>
     {
         public override string GetKey()
         {
             return _processID;
         }
 
-        public override Process GetProcessData()
+        public override Process<TMessage> GetProcessData()
         {
             return this;
         }
 
         String _processID;
         LoanQuoteRequest _loanRequest;
-        Message _originalMessage;
+        TMessage _originalMessage;
 
-        public Process(String processID, LoanQuoteRequest loanRequest, Message originalMessage) 
+        public Process(String processID, LoanQuoteRequest loanRequest, TMessage originalMessage) 
         {
             this._processID = processID;
             this._loanRequest = loanRequest;
             this._originalMessage = originalMessage;
         }
 
-        public override void StartProcess(ProcessManager processor)
+        public override void StartProcess(ProcessManager<TMessage> processor)
         {
             CreditBureauRequest creditRequest = Translator.GetCreditBureauRequest(_loanRequest);
 

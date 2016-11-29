@@ -1,66 +1,80 @@
 ﻿using LoanBroker.Bank;
-using MessageGateway;
 using System;
-using System.Messaging;
 using CommonObjects;
+using Messaging.Base.Construction;
 using Messaging.Base.Routing;
 
 namespace LoanBroker.LoanBroker
 {
-    internal class ProcessManager : MQRequestReplyService_Asynchronous
+    internal class ProcessManager<TMessage>
     {
         public ICreditBureauGateway CreditBureauInterface { get; private set; }
         public BankGateway BankInterface { get; private set; }
 
-        IProcessManager<string, Process, ProcessManager> _manager;
+        IProcessManager<string, Process<TMessage>, ProcessManager<TMessage>> _manager;
+        private IRequestReply_Asynchronous<TMessage> _queueService;
+        private Func<TMessage, string> _extractProcessIdFunc;
 
         public ProcessManager(
-            String requestQueueName,
             String creditRequestQueueName, String creditReplyQueueName,
             String bankReplyQueueName, ConnectionsManager connectionManager)
-            :this(requestQueueName,
+            :this(
                  (new CreditBureauGatewayImp(creditRequestQueueName, creditReplyQueueName)),
                  bankReplyQueueName,
                  connectionManager)
         {}
 
         public ProcessManager(
-            String requestQueueName,
             ICreditBureauGateway creditBureau,
             String bankReplyQueueName, ConnectionsManager connectionManager)
-            : base(requestQueueName)
         {
+
             CreditBureauInterface = creditBureau;
             CreditBureauInterface.Listen();
 
             BankInterface = new BankGateway(bankReplyQueueName, connectionManager);
             BankInterface.Listen();
 
-            _manager = new ProcessManager<string, Process, ProcessManager>(
+            _manager = new ProcessManager<string, Process<TMessage>, ProcessManager<TMessage>>(
                 this,
                 ChildProcessNotification
                 );
+
         }
 
-        public override Type GetRequestBodyType()
+        public Type GetRequestBodyType()
         {
             return typeof(LoanQuoteRequest);
         }
 
-        public override void ProcessRequestMessage(Object o, Message incomingMessage)
+        public void ProcessRequestMessage(Object o, TMessage incomingMessage)
         {
-            LoanQuoteRequest quoteRequest;
-            quoteRequest = (LoanQuoteRequest)o;
+            LoanQuoteRequest quoteRequest = (LoanQuoteRequest)o;
 
-            String processID = incomingMessage.Id;
-            Process newProcess = new Process(processID, quoteRequest, incomingMessage);
+            String processID = _extractProcessIdFunc(incomingMessage);
+            Process<TMessage> newProcess = new Process<TMessage>(processID, quoteRequest, incomingMessage);
 
             _manager.AddProcess(newProcess);
 
             newProcess.StartProcess();
         }
 
-        void ChildProcessNotification(IProcess<string, Process, ProcessManager> process)
+        public void AddSetup(
+            IRequestReply_Asynchronous<TMessage> queueService,
+            Func<TMessage, string> extractProcessIdFunc
+            )
+        {
+            _queueService = queueService;
+            _extractProcessIdFunc = extractProcessIdFunc;
+        }
+
+        public void SendReply(Object responseObject, TMessage originalRequestMessage)
+        {
+            if(_queueService != null)
+                _queueService.SendReply(responseObject, originalRequestMessage);
+        }
+
+        void ChildProcessNotification(IProcess<string, Process<TMessage>, ProcessManager<TMessage>> process)
         {
             _manager.RemoveProcess(process);
             Console.WriteLine("Current outstanding aggregate count: {0}", BankInterface.GetOutstandingAggregateCount());

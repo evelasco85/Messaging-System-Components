@@ -13,6 +13,7 @@ using MessageGateway;
 using Messaging.Base;
 using LoanBroker.Bank;
 using LoanBroker.LoanBroker;
+using Messaging.Base.Construction;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 
@@ -20,7 +21,6 @@ namespace LoanBroker {
 
 	internal class Run{
         private static LoanBrokerProxy _loanBrokerProxy;
-	    private static MQRequestReplyService_Asynchronous _broker;
 
 	    public static void Main(String[] args)
 	    {
@@ -33,6 +33,7 @@ namespace LoanBroker {
 	        string proxyReplyQueue = string.Empty;
 	        string controlBusQueue = string.Empty;
 
+            IRequestReply_Asynchronous<Message> queueService = null;
 	        IClientService client = MQOrchestration.GetInstance().CreateClient(
 	            args[0],
                 "MSMQ",
@@ -77,10 +78,25 @@ namespace LoanBroker {
 	                    proxyReplyReceiver,
 	                    new MessageSenderGateway(ToPath(controlBusQueue)),
 	                    3);
-	                _broker = new ProcessManager(
-	                    ToPath(proxyRequestQueue), ToPath(creditRequestQueueName),
-	                    ToPath(creditReplyQueueName), ToPath(bankReplyQueueName),
-	                    new ConnectionsManager());
+
+                    ProcessManager<Message> processManager = new ProcessManager<Message>(
+	                    ToPath(creditRequestQueueName),
+	                    ToPath(creditReplyQueueName),
+                        ToPath(bankReplyQueueName),
+	                    new ConnectionsManager()
+                        );
+
+                    queueService = new MQRequestReplyService_Asynchronous(
+                        ToPath(proxyRequestQueue),
+                        new ProcessMessageDelegate2(processManager.ProcessRequestMessage),
+                        null,
+                        new GetRequestBodyTypeDelegate(processManager.GetRequestBodyType)
+                        ); 
+	                
+                    processManager.AddSetup(
+                        queueService,
+                        (message => { return message.Id; })
+                        );
 
 	                Console.WriteLine("Configurations ok!");
 	            },
@@ -93,7 +109,7 @@ namespace LoanBroker {
 	            {
 	                //Start
 	                _loanBrokerProxy.Process();
-	                _broker.Run();
+                    queueService.Run();
 
 	                Console.WriteLine("Starting Application!");
 	            },
@@ -101,7 +117,7 @@ namespace LoanBroker {
 	            {
 	                //Stop
 	                _loanBrokerProxy.StopProcessing();
-	                _broker.StopRunning();
+                    queueService.StopRunning();
 
 	                Console.WriteLine("Stopping Application!");
 	            });
