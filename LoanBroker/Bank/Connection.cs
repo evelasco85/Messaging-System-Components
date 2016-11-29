@@ -19,13 +19,7 @@ namespace LoanBroker.Bank
             this.queue = queue;
         }
 
-        //public Connection(String queueName)
-        //{
-        //    this.queue = new MessageSenderGateway(ToPath(queueName));
-        //}
-
         public abstract bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount);
-
         
     }
 }
