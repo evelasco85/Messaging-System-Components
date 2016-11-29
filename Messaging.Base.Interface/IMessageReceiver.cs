@@ -5,7 +5,15 @@ using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
-    public interface IMessageReceiver<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>
+    public interface IMessageReceiver
+    {
+        bool Started { get; }
+        void StartReceivingMessages();
+        void StopReceivingMessages();
+        void SetupReceiver();
+    }
+
+    public interface IMessageReceiver<TMessage>
     {
         MessageDelegate<TMessage> ReceiveMessageProcessor
         {
@@ -13,10 +21,11 @@ namespace Messaging.Base
             set;
         }
 
-        bool Started { get; }
+
         IReturnAddress<TMessage> AsReturnAddress();
-        void StartReceivingMessages();
-        void StopReceivingMessages();
-        void SetupReceiver();
+    }
+
+    public interface IMessageReceiver<TMessageQueue, TMessage> : IMessageReceiver<TMessage>, IMessageCore<TMessageQueue>, IMessageReceiver
+    {
     }
 }
