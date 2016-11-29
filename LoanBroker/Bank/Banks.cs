@@ -1,58 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Messaging.Base;
 
 namespace LoanBroker.Bank
 {
-    internal class Bank1 : Connection
+    internal class Bank1<TMessage> : Connection<TMessage>
     {
         protected String bankname = "Exclusive Country Club Bankers";
 
-        public Bank1() : base("bank1Queue") { }
+        public Bank1(IMessageSender<TMessage> queue) : base(queue) { }
+        //public Bank1() : base("bank1Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 75000 && CreditScore >= 600 && HistoryLength >= 8;
         }
     }
 
-    internal class Bank2 : Connection
+    internal class Bank2<TMessage> : Connection<TMessage>
     {
         protected String bankname = "Acme Deluxe Bankers";
 
-        public Bank2() : base("bank2Queue") { }
+        public Bank2(IMessageSender<TMessage> queue) : base(queue) { }
+        //public Bank2() : base("bank2Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 75000 && CreditScore >= 600 && HistoryLength >= 8;
         }
     }
 
-    internal class Bank3 : Connection
+    internal class Bank3<TMessage> : Connection<TMessage>
     {
         protected String bankname = "General Retail Bankers";
 
-        public Bank3() : base("bank3Queue") { }
+        public Bank3(IMessageSender<TMessage> queue) : base(queue) { }
+        //public Bank3() : base("bank3Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 10000 && LoanAmount < 75000 && CreditScore >= 400 && HistoryLength >= 3;
         }
     }
 
-    internal class Bank4 : Connection
+    internal class Bank4<TMessage> : Connection<TMessage>
     {
         protected String bankname = "Neighborhood Bankers";
 
-        public Bank4() : base("bank4Queue") { }
+        public Bank4(IMessageSender<TMessage> queue) : base(queue) { }
+        //public Bank4() : base("bank4Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return LoanAmount >= 10000 && LoanAmount < 75000 && CreditScore >= 400 && HistoryLength >= 3;
         }
     }
 
-    internal class Bank5 : Connection
+    internal class Bank5<TMessage> : Connection<TMessage>
     {
         protected String bankname = "Mom and Pop Generic Loan Sharks and Pawn Shop";
 
-        public Bank5() : base("bank5Queue") { }
+        public Bank5(IMessageSender<TMessage> queue) : base(queue) { }
+        //public Bank5() : base("bank5Queue") { }
         public override bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount)
         {
             return true;

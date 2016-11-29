@@ -5,25 +5,27 @@ using Messaging.Base;
 
 namespace LoanBroker.Bank
 {
-    internal abstract class Connection
+    internal abstract class Connection<TMessage>
     {
-        protected IMessageSender<Message> queue;
-        
-        public IMessageSender<Message> Queue
+        protected IMessageSender<TMessage> queue;
+
+        public IMessageSender<TMessage> Queue
         {
             get { return queue; }
         }
 
-        public Connection(String queueName)
+        public Connection(IMessageSender<TMessage> queue)
         {
-            this.queue = new MessageSenderGateway(ToPath(queueName));
+            this.queue = queue;
         }
+
+        //public Connection(String queueName)
+        //{
+        //    this.queue = new MessageSenderGateway(ToPath(queueName));
+        //}
 
         public abstract bool CanHandleLoanRequest(int CreditScore, int HistoryLength, int LoanAmount);
 
-        private static String ToPath(String arg)
-        {
-            return ".\\private$\\" + arg;
-        }
+        
     }
 }
