@@ -8,21 +8,60 @@ using System.Text;
 
 namespace MessageGateway
 {
-    public abstract class MQRequestReplyService_Synchronous : RequestReply_Synchronous<MessageQueue, Message>
+    public delegate object ProcessMessageDelegate(object receivedMessageObject);
+    public delegate IMessageFormatter GetFormatterDelegate();
+    public delegate Type GetRequestBodyTypeDelegate();
+
+    public class MQRequestReplyService_Synchronous : RequestReply_Synchronous<MessageQueue, Message>
     {
-        public MQRequestReplyService_Synchronous(IMessageReceiver<MessageQueue, Message> receiver)
+        private ProcessMessageDelegate _processMessageInvocator;
+        private GetFormatterDelegate _getFormatterInvocator;
+        private GetRequestBodyTypeDelegate _getRequestBodyTypeInvocator;
+
+        MQRequestReplyService_Synchronous(
+            ProcessMessageDelegate processMessageInvocator,
+            GetFormatterDelegate getFormatterInvocator,
+            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            )
+        {
+            _processMessageInvocator = processMessageInvocator;
+
+            if (getFormatterInvocator == null)
+                _getFormatterInvocator = new GetFormatterDelegate(DefaultGetFormatter);
+            else
+                _getFormatterInvocator = getFormatterInvocator;
+
+            if (getRequestBodyTypeInvocator == null)
+                _getRequestBodyTypeInvocator = new GetRequestBodyTypeDelegate(DefaultGetRequestBodyType);
+            else
+                _getRequestBodyTypeInvocator = getRequestBodyTypeInvocator;
+        }
+
+        public MQRequestReplyService_Synchronous(
+            IMessageReceiver<MessageQueue, Message> receiver,
+            ProcessMessageDelegate processMessageInvocator,
+            GetFormatterDelegate getFormatterInvocator,
+            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            ) :
+            this(processMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
             QueueService = new MQService(receiver);
         }
 
-        public MQRequestReplyService_Synchronous(String requestQueueName)
+        public MQRequestReplyService_Synchronous(
+            String requestQueueName,
+            ProcessMessageDelegate processMessageInvocator,
+            GetFormatterDelegate getFormatterInvocator, 
+            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            ):
+            this(processMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
-            QueueService = new MQService(new MessageReceiverGateway(requestQueueName, GetFormatter()));
+            QueueService = new MQService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
         }
 
         public override void OnMessageReceived(Message receivedMessage)
         {
-            receivedMessage.Formatter = GetFormatter();
+            receivedMessage.Formatter = _getFormatterInvocator();
             Object inBody = GetTypedMessageBody(receivedMessage);
 
             if (inBody != null)
@@ -35,13 +74,24 @@ namespace MessageGateway
                 }
             }
         }
+        
 
-        public virtual IMessageFormatter GetFormatter()
+        public override object ProcessRequestMessage(object receivedMessageObject)
         {
-            return new XmlMessageFormatter(new Type[] { GetRequestBodyType() });
+            object result = null;
+
+            if (_processMessageInvocator != null)
+                result = _processMessageInvocator(receivedMessageObject);
+
+            return result;
         }
 
-        public virtual Type GetRequestBodyType()
+        IMessageFormatter DefaultGetFormatter()
+        {
+            return new XmlMessageFormatter(new Type[] { _getRequestBodyTypeInvocator() });
+        }
+
+        Type DefaultGetRequestBodyType()
         {
             return typeof(System.String);
         }
@@ -50,7 +100,7 @@ namespace MessageGateway
         {
             try
             {
-                if (msg.Body.GetType().Equals(GetRequestBodyType()))
+                if (msg.Body.GetType().Equals(_getRequestBodyTypeInvocator()))
                 {
                     return msg.Body;
                 }

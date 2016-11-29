@@ -11,10 +11,11 @@ using System.Messaging;
 using System.Threading;
 using MessageGateway;
 using Bank.Models;
+using Messaging.Base.Construction;
 
 namespace Bank
 {
-    internal class Bank : MQRequestReplyService_Synchronous
+    internal class Bank
     {
         private readonly double PrimeRate = 3.5;
 
@@ -56,24 +57,36 @@ namespace Bank
             }
         }
 
-        public Bank(String requestQueue) : base(requestQueue)
+        private IRequestReply_Synchronous _queueService;
+
+        public IRequestReply_Synchronous QueueService
         {
-        }   
+            get { return _queueService;}
+        }
+
+        public Bank(String requestQueue)
+        {
+            _queueService = new MQRequestReplyService_Synchronous(
+                requestQueue,
+                new ProcessMessageDelegate(ProcessRequestMessage),
+                null,
+                new GetRequestBodyTypeDelegate(GetRequestBodyType));
+        }
 
         public Bank(String requestQueue, String bankName, double ratePremium, int maxLoanTerm) 
-            : base(requestQueue)
+            : this(requestQueue)
         {
             BankName = bankName;
             RatePremium = ratePremium;
             MaxLoanTerm = maxLoanTerm;
-        }   
+        }
 
-        public override Type GetRequestBodyType()
+        Type GetRequestBodyType()
         {
             return typeof(BankQuoteRequest);
         }
 
-        protected  BankQuoteReply ComputeBankReply(BankQuoteRequest requestStruct)
+        protected BankQuoteReply ComputeBankReply(BankQuoteRequest requestStruct)
         {
             BankQuoteReply replyStruct = new BankQuoteReply();
 
@@ -94,7 +107,7 @@ namespace Bank
             return replyStruct;
         }
 
-        public override Object ProcessRequestMessage(Object o)
+        Object ProcessRequestMessage(Object o)
         {
             BankQuoteRequest requestStruct;
             BankQuoteReply replyStruct;

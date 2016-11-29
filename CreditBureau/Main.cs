@@ -51,13 +51,13 @@ namespace CreditBureau
                 () =>
                 {
                     //Start
-                    _proc.Run();
+                    _proc.QueueService.Run();
                     Console.WriteLine("Starting Application!");
                 },
                 () =>
                 {
                     //Stop
-                    _proc.StopRunning();
+                    _proc.QueueService.StopRunning();
                     Console.WriteLine("Stopping Application!");
                 });
 

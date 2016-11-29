@@ -57,13 +57,13 @@ namespace Bank
                 () =>
                 {
                     //Start
-                    _bank.Run();
+                    _bank.QueueService.Run();
                     Console.WriteLine("Starting Application!");
                 },
                 () =>
                 {
                     //Stop
-                    _bank.StopRunning();
+                    _bank.QueueService.StopRunning();
                     Console.WriteLine("Stopping Application!");
                 });
 

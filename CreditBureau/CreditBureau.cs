@@ -12,17 +12,36 @@ using System.Threading;
 using MessageGateway;
 using Messaging.Base;
 using CreditBureau.Models;
+using Messaging.Base.Construction;
 
 namespace CreditBureau
 {
-    internal class CreditBureau : MQRequestReplyService_Synchronous
+    internal class CreditBureau
     {
+        private IRequestReply_Synchronous _queueService;
 
-        public CreditBureau (IMessageReceiver<MessageQueue, Message> requestQueue) : base (requestQueue)
-        {}
+        public IRequestReply_Synchronous QueueService
+        {
+            get { return _queueService; }
+        }
 
-        public CreditBureau (String requestQueueName) : base (requestQueueName)
-        {}
+        public CreditBureau(String requestQueueName)
+        {
+            _queueService = new MQRequestReplyService_Synchronous(
+                 requestQueueName,
+                 new ProcessMessageDelegate(ProcessRequestMessage),
+                 null,
+                 new GetRequestBodyTypeDelegate(GetRequestBodyType));
+        }
+
+        public CreditBureau(IMessageReceiver<MessageQueue, Message> requestQueue)
+        {
+            _queueService = new MQRequestReplyService_Synchronous(
+                requestQueue,
+                new ProcessMessageDelegate(ProcessRequestMessage),
+                null,
+                new GetRequestBodyTypeDelegate(GetRequestBodyType));
+        }
 
         private Random random = new Random();
 
@@ -36,12 +55,12 @@ namespace CreditBureau
             return (int)(random.Next(19) + 1);
         }
 
-        public override Type GetRequestBodyType()
+        Type GetRequestBodyType()
         {
             return typeof(CreditBureauRequest);
         }
 
-        public override Object ProcessRequestMessage(Object o)
+        Object ProcessRequestMessage(Object o)
         {
             CreditBureauRequest requestStruct;
 
@@ -58,6 +77,5 @@ namespace CreditBureau
             Console.WriteLine("  Score {0} History {1} months", replyStruct.CreditScore, replyStruct.HistoryLength);
             return replyStruct;
         }
-
     }
 }
