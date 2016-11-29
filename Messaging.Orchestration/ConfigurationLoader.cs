@@ -11,8 +11,8 @@ namespace Messaging.Orchestration.Shared
     public interface IConfigurationLoader
     {
         void LoadXml(string xml);
-        IList<Tuple<string, string>> GetConfiguration(string clientId);
-        void SetClientInfo(string clientId, ref ServerMessage response);
+        IList<Tuple<string, string>> GetConfiguration(string clientId, string groupId);
+        void SetClientInfo(string clientId, string groupId, ref ServerMessage response);
     }
 
     public class ConfigurationLoader : IConfigurationLoader
@@ -43,7 +43,22 @@ namespace Messaging.Orchestration.Shared
             return clientNode;
         }
 
-        public void SetClientInfo(string clientId, ref ServerMessage response)
+        XmlNode GetClientNode(string clientId, string groupId)
+        {
+            //string configurationPath =
+            //    string.Format("//clients/client[@id='{0}']/group[@id='{1}']", clientId, groupId);
+
+            //XmlNode clientNode = _configuration.SelectSingleNode(configurationPath);
+
+            string configurationPath = string.Format("group[@id='{0}']", groupId);
+            XmlNode clientNode = GetClientNode(clientId);
+            XmlNode groupNode = clientNode.SelectSingleNode(configurationPath);
+
+            //return clientNode;
+            return groupNode;
+        }
+
+        public void SetClientInfo(string clientId, string groupId, ref ServerMessage response)
         {
             XmlNode clientNode = GetClientNode(clientId);
 
@@ -53,11 +68,11 @@ namespace Messaging.Orchestration.Shared
             response.ClientName = GetAttributeValue(clientNode.Attributes, "name");
         }
 
-        public IList<Tuple<string, string>> GetConfiguration(string clientId)
+        public IList<Tuple<string, string>> GetConfiguration(string clientId, string groupId)
         {
             IList<Tuple<string, string>> configurations = new List<Tuple<string, string>>();
-            XmlNode clientNode = GetClientNode(clientId);
-            string configurationPath = "group/config";
+            XmlNode clientNode = GetClientNode(clientId, groupId);
+            string configurationPath = "config";
             XmlNodeList configNodes = clientNode.SelectNodes(configurationPath);
 
             for(int index = 0; index < configNodes.Count; index++)

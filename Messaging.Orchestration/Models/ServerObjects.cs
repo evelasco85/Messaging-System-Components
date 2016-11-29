@@ -31,9 +31,9 @@ namespace Messaging.Orchestration.Shared.Models
 
     public class ServerMessage
     {
-        //public QueueTypeEnum QueueType { get; set; }
         public string ClientId { get; set; }
         public string ClientName { get; set; }
+        public string GroupId { get; set; }
         public ClientCommandStatus ClientStatus { get; set; }
         public List<ParameterEntry> ClientParameters { get; set; }
         public string Message { get; set; }
@@ -43,6 +43,7 @@ namespace Messaging.Orchestration.Shared.Models
     {
         public ServerRequestType RequestType { get; set; }
         public string ClientId { get; set; }
+        public string GroupId { get; set; }
         public List<string> ParameterList { get; set; }
     }
 }

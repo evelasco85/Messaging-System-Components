@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <clients>
   <client id="92022db8-750a-4481-afc7-dc2dcfb8fc20\1" name="Test" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="mode" value="loanbroker" />
       <config id="" name="requestQueue" value="loanRequestQueue" />
       <config id="" name="replyQueue" value="loanReplyQueue" />
@@ -9,7 +9,7 @@
     </group>
   </client>
   <client id="962c38f8-35a1-4ace-811e-73a100295e6f\1" name="CreditBureauFailOver" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="routerControlQueueName" value="routerControlQueue" />
       <config id="" name="creditQueueName" value="creditRequestQueue" />
       <config id="" name="primaryCreditQueueName" value="creditRequestQueue_PrimaryProcessor" />
@@ -17,7 +17,7 @@
     </group>
   </client>
   <client id="78d1d920-3aaa-4fe0-b72f-1508aa8cfe4d\1" name="Loan Broker" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueueName" value="loanRequestQueue" />
       <config id="" name="creditRequestQueueName" value="creditrequestQueue" />
       <config id="" name="creditReplyQueueName" value="creditReplyQueue" />
@@ -28,17 +28,17 @@
     </group>
   </client>
   <client id="f0b2fc66-008d-4941-a6da-5f3c741609d5\1" name="Primary Credit Bureau" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueueName" value="creditRequestQueue_PrimaryProcessor" />
     </group>
   </client>
   <client id="c8b74dd1-b34c-43ae-8e35-40c0637a2ad4\1" name="Backup Credit Bureau" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueueName" value="creditRequestQueue_BackupProcessor" />
     </group>
   </client>
   <client id="73755835-d21a-404d-b6eb-d7865941debf\1" name="Bank 1" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueue" value="bank1Queue" />
       <config id="" name="bankName" value="CountryClub" />
       <config id="" name="ratePremium" value="1.5" />
@@ -46,7 +46,7 @@
     </group>
   </client>
   <client id="73755835-d21a-404d-b6eb-d7865941debf\2" name="Bank 2" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueue" value="bank2Queue" />
       <config id="" name="bankName" value="Deluxe" />
       <config id="" name="ratePremium" value="2" />
@@ -54,7 +54,7 @@
     </group>
   </client>
   <client id="73755835-d21a-404d-b6eb-d7865941debf\3" name="Bank 3" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueue" value="bank3Queue" />
       <config id="" name="bankName" value="Retail" />
       <config id="" name="ratePremium" value="3" />
@@ -62,7 +62,7 @@
     </group>
   </client>
   <client id="73755835-d21a-404d-b6eb-d7865941debf\4" name="Bank 4" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueue" value="bank4Queue" />
       <config id="" name="bankName" value="Neighborhood" />
       <config id="" name="ratePremium" value="3" />
@@ -70,7 +70,7 @@
     </group>
   </client>
   <client id="73755835-d21a-404d-b6eb-d7865941debf\5" name="Bank 5" description="">
-    <group id="">
+    <group id="MSMQ">
       <config id="" name="requestQueue" value="bank5Queue" />
       <config id="" name="bankName" value="PawnShop" />
       <config id="" name="ratePremium" value="5" />

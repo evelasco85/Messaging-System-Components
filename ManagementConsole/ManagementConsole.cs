@@ -4,20 +4,13 @@ using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services.Interfaces;
 using MsmqGateway;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Messaging;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using Messaging.Orchestration.Shared.Services;
 using Message = System.Messaging.Message;
 
 namespace ManagementConsole
@@ -27,7 +20,7 @@ namespace ManagementConsole
         private ControlBusConsumer _controlBus;
         private MonitorCreditBureau _monitor;
         IServerService<MessageQueue, Message> _server;
-        IList<Tuple<string, string>> _clients = new List<Tuple<string, string>>();
+        IList<Tuple<string, string, string>> _clients = new List<Tuple<string, string, string>>();
 
         public ManagementConsole(String[] args)
         {
@@ -121,6 +114,7 @@ namespace ManagementConsole
 
             data.AppendLine(string.Format("Client ID: {0}", response.ClientId));
             data.AppendLine(string.Format("Client Name: {0}", response.ClientName));
+            data.AppendLine(string.Format("Group Id: {0}", response.GroupId));
             data.AppendLine(string.Format("Client Status: {0}", response.ClientStatus.ToString()));
 
             for(int index = 0; (response.ClientParameters != null) && (index < response.ClientParameters.Count); index++)
@@ -137,12 +131,13 @@ namespace ManagementConsole
         void ActivateClients()
         {
 
-            foreach (Tuple<string, string> client in _clients)
+            foreach (Tuple<string, string, string> client in _clients)
             {
                 ServerMessage serverMessage = new ServerMessage
                 {
-                    ClientId = client.Item1,
-                    ClientName = client.Item2,
+                    GroupId = client.Item1,
+                    ClientId = client.Item2,
+                    ClientName = client.Item3,
                     ClientStatus = ClientCommandStatus.Start
                 };
 
@@ -154,11 +149,12 @@ namespace ManagementConsole
         void StopClients()
         {
 
-            foreach (Tuple<string, string> client in _clients)
+            foreach (Tuple<string, string, string> client in _clients)
             {
                 ServerMessage serverMessage = new ServerMessage
                 {
-                    ClientId = client.Item1,
+                    GroupId = client.Item1,
+                    ClientId = client.Item2,
                     ClientStatus = ClientCommandStatus.Stop
                 };
 
@@ -167,9 +163,9 @@ namespace ManagementConsole
             }
         }
 
-        ServerMessage ProcessRegistration(ConfigurationLoader loader, ServerRequest request)
+        ServerMessage ProcessRegistration(IConfigurationLoader loader, ServerRequest request)
         {
-            IList<Tuple<string, string>> configurations = loader.GetConfiguration(request.ClientId);
+            IList<Tuple<string, string>> configurations = loader.GetConfiguration(request.ClientId, request.GroupId);
             List<ParameterEntry> paramList = configurations
                 .Where(config => request.ParameterList.Any(param => param == config.Item1))
                 .Select(param => new ParameterEntry
@@ -181,13 +177,14 @@ namespace ManagementConsole
 
             ServerMessage response = new ServerMessage
             {
+                GroupId = request.GroupId,
                 ClientId = request.ClientId,
                 ClientStatus = ClientCommandStatus.SetupClientParameters,
                 ClientParameters = paramList
             };
 
-            loader.SetClientInfo(request.ClientId, ref response);
-            _clients.Add(new Tuple<string, string>(response.ClientId, response.ClientName));
+            loader.SetClientInfo(request.ClientId, request.GroupId, ref response);
+            _clients.Add(new Tuple<string, string, string>(response.GroupId, response.ClientId, response.ClientName));
 
             return response;
         }

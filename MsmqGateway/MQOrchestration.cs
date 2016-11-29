@@ -13,7 +13,7 @@ namespace MsmqGateway
 {
     public interface IMQOrchestration
     {
-        IClientService CreateClient(string clientId, string serverRequestQueue, string serverReplyQueue);
+        IClientService CreateClient(string clientId, string groupId, string serverRequestQueue, string serverReplyQueue);
         IServerService<MessageQueue, Message> CreateServer(string serverRequestQueue, string serverReplyQueue);
         ServerRequestConverterDelegate<Message> CreateServerRequestConverter();
         SendResponseDelegate<MessageQueue, Message> CreateServerSendResponse();
@@ -32,10 +32,11 @@ namespace MsmqGateway
             return s_instance;
         }
 
-        public IClientService CreateClient(string clientId, string serverRequestQueue, string serverReplyQueue)
+        public IClientService CreateClient(string clientId, string groupId, string serverRequestQueue, string serverReplyQueue)
         {
             IClientService client = new ClientService<MessageQueue, Message>(
                 clientId,
+                groupId,
                 new MessageSenderGateway(serverRequestQueue),
                 new MQSelectiveConsumer(
                     serverReplyQueue,

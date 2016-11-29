@@ -14,6 +14,7 @@ namespace Messaging.Orchestration.Shared.Services
     {
         private ClientCommandStatus _lastClientStatus = ClientCommandStatus.Inactive;
         string _clientId;
+        private string _groupId;
         InvalidRegistrationDelegate _invalidRegistrationSequence;
         StandByDelegate _standbySequence;
         StartDelegate _startSequence;
@@ -28,7 +29,8 @@ namespace Messaging.Orchestration.Shared.Services
         ClientParameterSetupCompleteDelegate _clientParameterSetupComplete;
 
         public ClientService(
-            string clientId, 
+            string clientId,
+            string groupId,
             IMessageSender<TMessageQueue, TMessage> serverRequestSender,
             IMessageReceiver<TMessageQueue, TMessage> serverReplyReceiver,
             SendRequestToServerDelegate<TMessageQueue, TMessage> sendRequest,
@@ -38,6 +40,7 @@ namespace Messaging.Orchestration.Shared.Services
             serverReplyReceiver.ReceiveMessageProcessor += ProcessMessage;
 
             _clientId = clientId;
+            _groupId = groupId;
             _serverReplyReceiver = serverReplyReceiver;
             _serverRequestSender = serverRequestSender;
             _serverResponseConverter = serverResponseConverter;
@@ -102,6 +105,7 @@ namespace Messaging.Orchestration.Shared.Services
             ServerRequest request = new ServerRequest
             {
                 ClientId = _clientId,
+                GroupId = _groupId,
                 RequestType = ServerRequestType.Register
             };
 

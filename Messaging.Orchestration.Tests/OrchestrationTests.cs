@@ -29,10 +29,12 @@ namespace Messaging.Orchestration.Tests
             string requestQueue = "ServerRequestQueue";
             string replyQueue = "ServerReplyQueue";
             string clientId = @"1c4054c1-6ae4-4a3c-b540-55d768988994\123";
+            string groupId = "MSMQ";
             string nameValue = string.Empty;
 
             _client = new ClientService<MessageQueue, Message>(
                 clientId,
+                groupId,
                 new MessageSenderGateway(ToPath(requestQueue)),
                 new MQSelectiveConsumer(
                     ToPath(replyQueue),

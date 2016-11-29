@@ -25,6 +25,7 @@ namespace Bank
 
             IClientService client = MQOrchestration.GetInstance().CreateClient(
                 args[0],
+                "MSMQ",
                 ToPath(args[1]),
                 ToPath(args[2])
                 );
