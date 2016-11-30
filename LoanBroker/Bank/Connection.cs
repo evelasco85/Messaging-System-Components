@@ -1,7 +1,4 @@
-﻿using MessageGateway;
-using System;
-using System.Messaging;
-using Messaging.Base;
+﻿using Messaging.Base;
 
 namespace LoanBroker.Bank
 {

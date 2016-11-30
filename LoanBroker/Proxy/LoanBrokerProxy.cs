@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using MessageGateway;
 using Messaging.Base;
-using Messaging.Base.Constructions;
 using Messaging.Base.System_Management.SmartProxy;
 
 namespace LoanBroker
@@ -30,7 +25,7 @@ namespace LoanBroker
 
     public class LoanBrokerProxy : SmartProxyBase<MessageQueue, Message, ProxyJournal>, IDisposable
     {
-        private IMessageSender<MessageQueue, Message> _controlBus;
+        private IMessageSender<Message> _controlBus;
 
         static ArrayList s_performanceStats = ArrayList.Synchronized(new ArrayList());
         static ArrayList s_queueStats = ArrayList.Synchronized(new ArrayList());
@@ -47,10 +42,10 @@ namespace LoanBroker
         }
 
         public LoanBrokerProxy(
-            IMessageReceiver<MessageQueue, Message> input,
-            IMessageSender<MessageQueue, Message> serviceRequestSender,
-            IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
-            IMessageSender<MessageQueue, Message> controlBus,
+            IMessageReceiver<Message> input,
+            IMessageSender<Message> serviceRequestSender,
+            IMessageReceiver<Message> serviceReplyReceiver,
+            IMessageSender<Message> controlBus,
             int interval): base(
                 new LoanBrokerProxySmartProxyRequestConsumer(input, serviceRequestSender, serviceReplyReceiver.AsReturnAddress(), s_queueStats),
                 new LoanBrokerProxySmartProxyReplyConsumer(serviceReplyReceiver, s_queueStats, s_performanceStats, controlBus)
@@ -107,7 +102,7 @@ namespace LoanBroker
                         .Sum() / queueCount,
                 };
 
-                _controlBus.GetQueue().Send(stat);
+                _controlBus.Send(new Message(stat));
             }
         }
     }

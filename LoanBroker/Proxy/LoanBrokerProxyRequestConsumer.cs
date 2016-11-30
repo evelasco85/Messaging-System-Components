@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using Messaging.Base;
 using Messaging.Base.Constructions;
 using Messaging.Base.System_Management.SmartProxy;
-using MsmqGateway;
 
 namespace LoanBroker
 {
@@ -17,8 +11,8 @@ namespace LoanBroker
         ArrayList _queueStats;
 
         public LoanBrokerProxySmartProxyRequestConsumer(
-            IMessageReceiver<MessageQueue, Message> requestReceiver,
-            IMessageSender<MessageQueue, Message> serviceRequestSender,
+            IMessageReceiver<Message> requestReceiver,
+            IMessageSender<Message> serviceRequestSender,
             IReturnAddress<Message> serviceReplyReturnAddress,
             ArrayList queueStats
             )

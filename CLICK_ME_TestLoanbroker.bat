@@ -1,7 +1,7 @@
 call runbanks
 
-start StartCreditBureau_Primary
-start StartCreditBureau_Primary
+::start StartCreditBureau_Primary
+::start StartCreditBureau_Primary
 start StartCreditBureau_Backup
 start StartCreditBureau_Backup
 

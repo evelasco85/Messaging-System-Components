@@ -1,5 +1,4 @@
-﻿using LoanBroker.Bank;
-using System;
+﻿using System;
 using CommonObjects;
 using Messaging.Base.Construction;
 using Messaging.Base.Routing;

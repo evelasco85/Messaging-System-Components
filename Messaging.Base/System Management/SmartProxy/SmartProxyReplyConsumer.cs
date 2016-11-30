@@ -9,7 +9,7 @@ namespace Messaging.Base.System_Management.SmartProxy
     public abstract class SmartProxySmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> : SmartProxySmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal>, ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, TJournal>
     {
         public SmartProxySmartProxyReplyConsumer(
-            IMessageReceiver<TMessageQueue, TMessage> serviceReplyReceiver
+            IMessageReceiver<TMessage> serviceReplyReceiver
             ) : base(serviceReplyReceiver)
         {
         }

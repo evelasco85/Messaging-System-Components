@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
 
@@ -20,14 +16,14 @@ namespace LoanBroker
 
         private ArrayList _queueStats;
         private ArrayList _performanceStats;
-        private IMessageSender<MessageQueue, Message> _controlBus;
+        private IMessageSender<Message> _controlBus;
 
         public LoanBrokerProxySmartProxyReplyConsumer
             (
-            IMessageReceiver<MessageQueue, Message> serviceReplyReceiver,
+            IMessageReceiver<Message> serviceReplyReceiver,
             ArrayList queueStats,
             ArrayList performanceStats,
-            IMessageSender<MessageQueue, Message> controlBus
+            IMessageSender<Message> controlBus
             ) : base(serviceReplyReceiver)
         {
             _queueStats = queueStats;
@@ -56,7 +52,7 @@ namespace LoanBroker
                             outstandingReferenceDataCount)
                 };
 
-                _controlBus.GetQueue().Send(info);
+                _controlBus.Send(new Message(info));
             }
         }
 
