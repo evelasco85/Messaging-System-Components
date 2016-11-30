@@ -8,23 +8,23 @@ using System.Text;
 
 namespace MessageGateway
 {
-    public delegate object ProcessMessageDelegate(object receivedMessageObject);
+    public delegate object SyncProcessMessageDelegate(object receivedMessageObject);
     public delegate IMessageFormatter GetFormatterDelegate();
     public delegate Type GetRequestBodyTypeDelegate();
 
     public class MQRequestReplyService_Synchronous : RequestReply_Synchronous<MessageQueue, Message>
     {
-        private ProcessMessageDelegate _processMessageInvocator;
+        private SyncProcessMessageDelegate _syncProcessMessageInvocator;
         private GetFormatterDelegate _getFormatterInvocator;
         private GetRequestBodyTypeDelegate _getRequestBodyTypeInvocator;
 
         MQRequestReplyService_Synchronous(
-            ProcessMessageDelegate processMessageInvocator,
+            SyncProcessMessageDelegate syncProcessMessageInvocator,
             GetFormatterDelegate getFormatterInvocator,
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             )
         {
-            _processMessageInvocator = processMessageInvocator;
+            _syncProcessMessageInvocator = syncProcessMessageInvocator;
 
             if (getFormatterInvocator == null)
                 _getFormatterInvocator = new GetFormatterDelegate(DefaultGetFormatter);
@@ -39,22 +39,22 @@ namespace MessageGateway
 
         public MQRequestReplyService_Synchronous(
             IMessageReceiver<MessageQueue, Message> receiver,
-            ProcessMessageDelegate processMessageInvocator,
+            SyncProcessMessageDelegate syncProcessMessageInvocator,
             GetFormatterDelegate getFormatterInvocator,
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             ) :
-            this(processMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            this(syncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
             QueueService = new MQService(receiver);
         }
 
         public MQRequestReplyService_Synchronous(
             String requestQueueName,
-            ProcessMessageDelegate processMessageInvocator,
+            SyncProcessMessageDelegate syncProcessMessageInvocator,
             GetFormatterDelegate getFormatterInvocator, 
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             ):
-            this(processMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            this(syncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
             QueueService = new MQService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
         }
@@ -80,8 +80,8 @@ namespace MessageGateway
         {
             object result = null;
 
-            if (_processMessageInvocator != null)
-                result = _processMessageInvocator(receivedMessageObject);
+            if (_syncProcessMessageInvocator != null)
+                result = _syncProcessMessageInvocator(receivedMessageObject);
 
             return result;
         }

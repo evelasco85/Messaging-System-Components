@@ -50,7 +50,7 @@ namespace Bank
                     Bank bank = new Bank(bankName, System.Convert.ToDouble(ratePremium), System.Convert.ToInt32(maxLoanTerm));
                     queueService = new MQRequestReplyService_Synchronous(
                         ToPath(requestQueue),
-                        new ProcessMessageDelegate(bank.ProcessRequestMessage),
+                        new SyncProcessMessageDelegate(bank.ProcessRequestMessage),
                         null,
                         new GetRequestBodyTypeDelegate(() => { return typeof(BankQuoteRequest); }));
 

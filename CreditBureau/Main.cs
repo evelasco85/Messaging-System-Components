@@ -45,7 +45,7 @@ namespace CreditBureau
                     CreditBureau proc = new CreditBureau();
                     queueService = new MQRequestReplyService_Synchronous(
                         ToPath(requestQueueName),
-                        new ProcessMessageDelegate(proc.ProcessRequestMessage),
+                        new SyncProcessMessageDelegate(proc.ProcessRequestMessage),
                         null,
                         new GetRequestBodyTypeDelegate(() => { return typeof(CreditBureauRequest); }));
 

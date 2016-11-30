@@ -172,7 +172,7 @@ namespace LoanBroker {
 
                     queueService = new MQRequestReplyService_Asynchronous(
                         ToPath(proxyRequestQueue),
-                        new ProcessMessageDelegate2(processManager.ProcessRequestMessage),
+                        new AsyncProcessMessageDelegate(processManager.ProcessRequestMessage),
                         null,
                         new GetRequestBodyTypeDelegate(processManager.GetRequestBodyType)
                         );

@@ -8,21 +8,21 @@ using System.Text;
 
 namespace MessageGateway
 {
-    public delegate void ProcessMessageDelegate2(Object receivedMessageObject, Message msg);
+    public delegate void AsyncProcessMessageDelegate(Object receivedMessageObject, Message msg);
 
     public class MQRequestReplyService_Asynchronous : RequestReply_Asynchronous<MessageQueue, Message>
     {
-        private ProcessMessageDelegate2 _processMessageInvocator;
+        private AsyncProcessMessageDelegate _asyncProcessMessageInvocator;
         private GetFormatterDelegate _getFormatterInvocator;
         private GetRequestBodyTypeDelegate _getRequestBodyTypeInvocator;
 
         MQRequestReplyService_Asynchronous(
-            ProcessMessageDelegate2 processMessageInvocator,
+            AsyncProcessMessageDelegate asyncProcessMessageInvocator,
             GetFormatterDelegate getFormatterInvocator,
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             )
         {
-            _processMessageInvocator = processMessageInvocator;
+            _asyncProcessMessageInvocator = asyncProcessMessageInvocator;
 
             if (getFormatterInvocator == null)
                 _getFormatterInvocator = new GetFormatterDelegate(DefaultGetFormatter);
@@ -37,22 +37,22 @@ namespace MessageGateway
 
         public MQRequestReplyService_Asynchronous(
             IMessageReceiver<MessageQueue, Message> receiver,
-            ProcessMessageDelegate2 processMessageInvocator,
+            AsyncProcessMessageDelegate asyncProcessMessageInvocator,
             GetFormatterDelegate getFormatterInvocator,
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             )
-            : this(processMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            : this(asyncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
             QueueService = new MQService(receiver);
         }
 
         public MQRequestReplyService_Asynchronous(
             String requestQueueName,
-            ProcessMessageDelegate2 processMessageInvocator,
+            AsyncProcessMessageDelegate asyncProcessMessageInvocator,
             GetFormatterDelegate getFormatterInvocator,
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             )
-            : this(processMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            : this(asyncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
             QueueService = new MQService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
         }
@@ -70,8 +70,8 @@ namespace MessageGateway
 
         public override void ProcessRequestMessage(Object receivedMessageObject, Message msg)
         {
-            if (_processMessageInvocator != null)
-                _processMessageInvocator(receivedMessageObject, msg);
+            if (_asyncProcessMessageInvocator != null)
+                _asyncProcessMessageInvocator(receivedMessageObject, msg);
         }
 
         IMessageFormatter DefaultGetFormatter()
