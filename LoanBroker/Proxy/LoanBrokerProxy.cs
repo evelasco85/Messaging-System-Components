@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Messaging;
 using System.Threading;
 using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
@@ -23,14 +22,27 @@ namespace LoanBroker
         public double AverageOutstandingRequest { get; set; }
     }
 
-    public class LoanBrokerProxy : SmartProxyBase<MessageQueue, Message, ProxyJournal>, IDisposable
+    public class LoanBrokerProxy<TMessageQueue, TMessage> : SmartProxyBase<TMessageQueue, TMessage, ProxyJournal>, IDisposable
     {
-        private IMessageSender<Message> _controlBus;
-
         static ArrayList s_performanceStats = ArrayList.Synchronized(new ArrayList());
         static ArrayList s_queueStats = ArrayList.Synchronized(new ArrayList());
+
+
+        private IMessageSender<TMessage> _controlBus;
         private Timer _timer;
         private int _interval;
+
+        public static ArrayList S_PerformanceStats
+        {
+            get { return s_performanceStats; }
+            set { s_performanceStats = value; }
+        }
+
+        public static ArrayList SQueueStats
+        {
+            get { return s_queueStats; }
+            set { s_queueStats = value; }
+        }
 
         public void Dispose()
         {
@@ -42,14 +54,14 @@ namespace LoanBroker
         }
 
         public LoanBrokerProxy(
-            IMessageReceiver<Message> input,
-            IMessageSender<Message> serviceRequestSender,
-            IMessageReceiver<Message> serviceReplyReceiver,
-            IMessageSender<Message> controlBus,
-            int interval): base(
-                new LoanBrokerProxySmartProxyRequestConsumer(input, serviceRequestSender, serviceReplyReceiver.AsReturnAddress(), s_queueStats),
-                new LoanBrokerProxySmartProxyReplyConsumer(serviceReplyReceiver, s_queueStats, s_performanceStats, controlBus)
-            )
+            IMessageSender<TMessage> controlBus,
+            ISmartProxyRequestSmartProxyConsumer<TMessageQueue, TMessage, ProxyJournal> requestSmartProxyConsumer,
+            ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, ProxyJournal> replySmartProxyConsumer,
+            int interval) :
+                base(
+                requestSmartProxyConsumer,
+                replySmartProxyConsumer
+                )
         {
             _controlBus = controlBus;
             _interval = interval;
