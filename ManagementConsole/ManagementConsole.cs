@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Messaging;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -19,7 +18,7 @@ namespace ManagementConsole
     {
         private ControlBusConsumer _controlBus;
         private MonitorCreditBureau _monitor;
-        IServerService<MessageQueue, Message> _server;
+        IServerService<Message> _server;
         IList<Tuple<string, string, string>> _clients = new List<Tuple<string, string, string>>();
 
         public ManagementConsole(String[] args)
@@ -73,7 +72,7 @@ namespace ManagementConsole
             _monitor.Process();
         }
 
-        void RegisterServer(ref IServerService<MessageQueue, Message> server)
+        void RegisterServer(ref IServerService<Message> server)
         {
             ConfigurationLoader loader = new ConfigurationLoader();
 

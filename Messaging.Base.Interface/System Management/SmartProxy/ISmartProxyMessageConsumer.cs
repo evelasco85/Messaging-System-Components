@@ -13,7 +13,7 @@ namespace Messaging.Base.System_Management.SmartProxy
         TMessageQueue OriginalReturnAddress { get; set; }
     }
 
-    public interface ISmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessageQueue, TMessage>
+    public interface ISmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal> : IMessageConsumer<TMessage>
     {
         IList<IMessageReferenceData<TMessageQueue, TJournal>> ReferenceData { get; set; }
     }

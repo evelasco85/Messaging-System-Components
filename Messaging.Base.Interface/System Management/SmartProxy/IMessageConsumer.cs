@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public interface IMessageConsumer<TMessageQueue, TMessage>
+    public interface IMessageConsumer
     {
         bool ProcessStarted { get; }
         bool Process();
         void StopProcessing();
+    }
+
+    public interface IMessageConsumer<TMessage> : IMessageConsumer
+    {
         void ProcessMessage(TMessage message);
     }
 }

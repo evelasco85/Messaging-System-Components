@@ -8,7 +8,6 @@ using Messaging.Orchestration.Shared.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MsmqGateway;
 using Messaging.Orchestration.Shared.Services.Interfaces;
-using System.Threading;
 
 namespace Messaging.Orchestration.Tests
 {
@@ -21,7 +20,7 @@ namespace Messaging.Orchestration.Tests
         }
 
         IClientService _client;
-        IServerService<MessageQueue, Message> _server;
+        IServerService<Message> _server;
 
         [TestMethod]
         public void TestMethod1()
@@ -100,7 +99,7 @@ namespace Messaging.Orchestration.Tests
                     //Thread.CurrentThread.Join();
                 });
 
-            _server = new ServerService<MessageQueue, Message>
+            _server = new ServerService<Message>
                 (
                 new MessageReceiverGateway(
                     ToPath(requestQueue),

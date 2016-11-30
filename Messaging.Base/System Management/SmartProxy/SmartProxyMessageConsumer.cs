@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Messaging.Base.System_Management.SmartProxy
 {
@@ -13,7 +9,7 @@ namespace Messaging.Base.System_Management.SmartProxy
         public TMessageQueue OriginalReturnAddress { get; set; }
     }
 
-    public abstract class SmartProxySmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessageQueue, TMessage> , ISmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal>
+    public abstract class SmartProxySmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessage> , ISmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
         IList<IMessageReferenceData<TMessageQueue, TJournal>> _references;
 
@@ -23,11 +19,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             set { _references = value; }
         }
 
-        public SmartProxySmartProxyMessageConsumer(IMessageSender<TMessageQueue, TMessage> sender) : base(sender)
-        {
-        }
-
-        public SmartProxySmartProxyMessageConsumer(IMessageReceiver<TMessageQueue, TMessage> receiver) : base(receiver)
+        public SmartProxySmartProxyMessageConsumer(IMessageReceiver<TMessage> receiver) : base(receiver)
         {
         }
     }

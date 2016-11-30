@@ -3,20 +3,16 @@ using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services;
 using Messaging.Orchestration.Shared.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MsmqGateway
 {
     public interface IMQOrchestration
     {
         IClientService CreateClient(string clientId, string groupId, string serverRequestQueue, string serverReplyQueue);
-        IServerService<MessageQueue, Message> CreateServer(string serverRequestQueue, string serverReplyQueue);
+        IServerService<Message> CreateServer(string serverRequestQueue, string serverReplyQueue);
         ServerRequestConverterDelegate<Message> CreateServerRequestConverter();
-        SendResponseDelegate<MessageQueue, Message> CreateServerSendResponse();
+        SendResponseDelegate<Message> CreateServerSendResponse();
     }
 
     public class MQOrchestration : IMQOrchestration
@@ -61,9 +57,9 @@ namespace MsmqGateway
 
         
 
-        public IServerService<MessageQueue, Message> CreateServer(string serverRequestQueue, string serverReplyQueue)
+        public IServerService<Message> CreateServer(string serverRequestQueue, string serverReplyQueue)
         {
-            IServerService<MessageQueue, Message> server = new ServerService<MessageQueue, Message>
+            IServerService<Message> server = new ServerService<Message>
                 (
                 new MessageReceiverGateway(
                     serverRequestQueue,
@@ -88,9 +84,9 @@ namespace MsmqGateway
             return converter;
         }
 
-        public SendResponseDelegate<MessageQueue, Message> CreateServerSendResponse()
+        public SendResponseDelegate<Message> CreateServerSendResponse()
         {
-            SendResponseDelegate<MessageQueue, Message> sendResponse = (sender, response) =>
+            SendResponseDelegate<Message> sendResponse = (sender, response) =>
             {
                 Message message = new Message(response);
 

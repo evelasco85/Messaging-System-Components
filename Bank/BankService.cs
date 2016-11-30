@@ -7,11 +7,8 @@
  */
 
 using System;
-using System.Messaging;
 using System.Threading;
-using MessageGateway;
 using Bank.Models;
-using Messaging.Base.Construction;
 
 namespace Bank
 {

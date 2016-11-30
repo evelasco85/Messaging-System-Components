@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Messaging.Base;
+﻿using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
 using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services.Interfaces;
-using System.Threading;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public class ServerService<TMessageQueue, TMessage> : MessageConsumer<TMessageQueue, TMessage>, IServerService<TMessageQueue, TMessage>
+    public class ServerService<TMessage> : MessageConsumer<TMessage>, IServerService<TMessage>
     {
         private ProcessRequestDelegate _processRequest;
-        private IMessageSender<TMessageQueue, TMessage> _serverReplySender;
-        private SendResponseDelegate<TMessageQueue, TMessage> _sendResponse;
+        private IMessageSender<TMessage> _serverReplySender;
+        private SendResponseDelegate<TMessage> _sendResponse;
         private ServerRequestConverterDelegate<TMessage> _serverRequestConverter;
 
         public ServerService(
-            IMessageReceiver<TMessageQueue, TMessage> serverRequestReceiver,
-            IMessageSender<TMessageQueue, TMessage> serverReplySender
+            IMessageReceiver<TMessage> serverRequestReceiver,
+            IMessageSender<TMessage> serverReplySender
             )
             : base(serverRequestReceiver)
         {
@@ -29,7 +23,7 @@ namespace Messaging.Orchestration.Shared.Services
 
         public void Register(
             ServerRequestConverterDelegate<TMessage> serverRequestConverter,
-            SendResponseDelegate<TMessageQueue, TMessage> sendResponse,
+            SendResponseDelegate<TMessage> sendResponse,
             ProcessRequestDelegate processRequest
             )
         {

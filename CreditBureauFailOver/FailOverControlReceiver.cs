@@ -2,18 +2,14 @@
 using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CreditBureauFailOver
 {
-    public class FailOverControlReceiver : MessageConsumer<MessageQueue, Message>
+    public class FailOverControlReceiver : MessageConsumer<Message>
     {
         FailOverRouter _failOverRouter;
-        public FailOverControlReceiver(IMessageReceiver<MessageQueue, Message> inputQueue, FailOverRouter failOverRouter)
+        public FailOverControlReceiver(IMessageReceiver<Message> inputQueue, FailOverRouter failOverRouter)
             : base(inputQueue)
         {
             _failOverRouter = failOverRouter;

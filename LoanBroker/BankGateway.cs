@@ -7,16 +7,12 @@
  */
 
 using System;
-using System.Messaging;
-using System.Collections;
 using System.Linq;
-using MessageGateway;
 using Bank;
 using Messaging.Base;
 using LoanBroker.Bank;
 using Messaging.Base.Routing;
 using Messaging.Base.Constructions;
-using MsmqGateway;
 
 namespace LoanBroker
 {

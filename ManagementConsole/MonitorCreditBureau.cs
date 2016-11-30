@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Messaging;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using CommonObjects;
 using MessageGateway;
 using Messaging.Base;
-using Messaging.Base.Constructions;
 using Messaging.Base.System_Management;
-using Messaging.Base.System_Management.SmartProxy;
-using MsmqGateway;
 
 namespace ManagementConsole
 {
@@ -31,7 +24,7 @@ namespace ManagementConsole
         public string MessageBody { get; set; }
     }
 
-    public class MonitorCreditBureau : TestMessage<MessageQueue, Message>, IDisposable
+    public class MonitorCreditBureau : TestMessage<Message>, IDisposable
     {
         private Timer _sendTimer;
         private Timer _timeoutTimer;

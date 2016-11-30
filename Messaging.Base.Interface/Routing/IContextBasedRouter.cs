@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.Routing
 {
-    public interface IContextBasedRouter<TMessageQueue, TMessage, TInput> : IMessageConsumer<TMessageQueue, TMessage>
+    public interface IContextBasedRouter<TMessage, TInput> : IMessageConsumer<TMessage>
     {
         bool DestinationIsSet { get; }
-        IContextBasedRouter<TMessageQueue, TMessage, TInput> AddSender(Func<TInput, bool> triggerFunction, IMessageSender<TMessageQueue, TMessage> destination);
+        IContextBasedRouter<TMessage, TInput> AddSender(Func<TInput, bool> triggerFunction, IMessageSender<TMessage> destination);
         void SwitchDestination(TInput inputToVerify);
     }
 }

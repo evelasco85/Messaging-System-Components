@@ -7,12 +7,8 @@
  */
 
 using System;
-using System.Messaging;
 using System.Threading;
-using MessageGateway;
-using Messaging.Base;
 using CreditBureau.Models;
-using Messaging.Base.Construction;
 
 namespace CreditBureau
 {

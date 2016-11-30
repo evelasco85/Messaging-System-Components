@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Messaging;
 using MessageGateway;
 using Messaging.Base.System_Management.SmartProxy;
 
 namespace ManagementConsole
 {
-    public class ControlBusConsumer : MessageConsumer<MessageQueue, Message>
+    public class ControlBusConsumer : MessageConsumer<Message>
     {
         public delegate  void MessageReceived(Message message);
 

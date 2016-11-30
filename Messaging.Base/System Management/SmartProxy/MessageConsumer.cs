@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Messaging.Base.System_Management.SmartProxy
 {
-    public abstract class MessageConsumer<TMessageQueue, TMessage> : IMessageConsumer<TMessageQueue, TMessage>
+    public abstract class MessageConsumer<TMessage> : IMessageConsumer<TMessage>
     {
-        private IMessageCore<TMessageQueue> _messageQueue;
+        private IMessageReceiver<TMessage> _receiver;
         bool _processStarted = false;
 
         public bool ProcessStarted
@@ -16,28 +11,18 @@ namespace Messaging.Base.System_Management.SmartProxy
             get { return _processStarted; }
         }
 
-        public MessageConsumer(IMessageCore<TMessageQueue> messageQueue)
+        public MessageConsumer(IMessageReceiver<TMessage> receiver)
         {
-            _messageQueue = messageQueue;
-        }
+            _receiver = receiver;
 
-        public MessageConsumer(IMessageSender<TMessageQueue, TMessage> sender) : this((IMessageCore<TMessageQueue>)sender)
-        {
-        }
-
-        public MessageConsumer(IMessageReceiver<TMessageQueue, TMessage> receiver)
-            : this((IMessageCore<TMessageQueue>)receiver)
-        {
-            receiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(ProcessMessage);
+            _receiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(ProcessMessage);
         }
 
         public bool Process()
         {
-            IMessageReceiver<TMessageQueue, TMessage> receiver = ((IMessageReceiver<TMessageQueue, TMessage>)_messageQueue);
-
-            if ((receiver != null) && (!_processStarted))
+            if ((_receiver != null) && (!_processStarted))
             {
-                receiver.StartReceivingMessages();
+                _receiver.StartReceivingMessages();
 
                 _processStarted = true;
             }
@@ -49,11 +34,9 @@ namespace Messaging.Base.System_Management.SmartProxy
 
         public virtual void StopProcessing()
         {
-            IMessageReceiver<TMessageQueue, TMessage> receiver = ((IMessageReceiver<TMessageQueue, TMessage>)_messageQueue);
-
-            if ((receiver != null) && (_processStarted))
+            if ((_receiver != null) && (_processStarted))
             {
-                receiver.StopReceivingMessages();
+                _receiver.StopReceivingMessages();
 
                 _processStarted = false;
             }

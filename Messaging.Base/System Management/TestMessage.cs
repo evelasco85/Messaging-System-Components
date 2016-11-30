@@ -8,16 +8,16 @@ using Messaging.Base.System_Management.SmartProxy;
 
 namespace Messaging.Base.System_Management
 {
-    public abstract class TestMessage<TMessageQueue, TMessage> : MessageConsumer<TMessageQueue, TMessage>, ITestMessage<TMessageQueue, TMessage>
+    public abstract class TestMessage<TMessage> : MessageConsumer<TMessage>, ITestMessage<TMessage>
     {
-        IMessageSender<TMessageQueue, TMessage> _controlBusQueue;
+        IMessageSender<TMessage> _controlBusQueue;
         IReturnAddress<TMessage> _monitorQueueReturnAddress;
-        IMessageSender<TMessageQueue, TMessage> _serviceQueue;
+        IMessageSender<TMessage> _serviceQueue;
 
         public TestMessage(
-            IMessageSender<TMessageQueue, TMessage> controlBusQueue,
-            IMessageSender<TMessageQueue, TMessage> serviceQueue,
-            IMessageReceiver<TMessageQueue, TMessage> receiver)
+            IMessageSender<TMessage> controlBusQueue,
+            IMessageSender<TMessage> serviceQueue,
+            IMessageReceiver<TMessage> receiver)
             : base(receiver)
         {
             _controlBusQueue = controlBusQueue;

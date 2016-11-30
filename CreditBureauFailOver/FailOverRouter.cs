@@ -2,19 +2,14 @@
 using MessageGateway;
 using Messaging.Base;
 using Messaging.Base.Routing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CreditBureauFailOver
 {
-    public class FailOverRouter : ContextBasedRouter<MessageQueue, Message, FailOverRouteEnum>
+    public class FailOverRouter : ContextBasedRouter<Message, FailOverRouteEnum>
     {
         public FailOverRouter(string primaryOutputQueue, string backupOutputQueue,
-            IMessageReceiver<MessageQueue, Message> inputQueue)
+            IMessageReceiver<Message> inputQueue)
             : base(inputQueue)
         {
             SetRoute(primaryOutputQueue, backupOutputQueue);

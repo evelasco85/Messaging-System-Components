@@ -1,11 +1,7 @@
 ﻿using CommonObjects;
 using MessageGateway;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 
@@ -47,12 +43,16 @@ namespace CreditBureauFailOver
                     //Client parameter setup completed
                     _failOverRouter = new FailOverRouter(
                         ToPath(primaryCreditQueueName), ToPath(secondaryCreditQueueName),
-                        new MessageReceiverGateway(ToPath(creditQueueName),
-                            new XmlMessageFormatter(new Type[] {typeof(CreditBureauRequest)}))
+                        new MessageReceiverGateway(
+                            ToPath(creditQueueName),
+                            new XmlMessageFormatter(new Type[] {typeof(CreditBureauRequest)})
+                            )
                         );
                     _failOverControlReceiver = new FailOverControlReceiver(
-                        new MessageReceiverGateway(ToPath(routerControlQueueName),
-                            new XmlMessageFormatter(new Type[] {typeof(FailOverRouteEnum)})),
+                        new MessageReceiverGateway(
+                            ToPath(routerControlQueueName),
+                            new XmlMessageFormatter(new Type[] {typeof(FailOverRouteEnum)})
+                            ),
                         _failOverRouter
                         );
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Messaging.Base.System_Management
 {
-    public interface ITestMessage<TMessageQueue, TMessage>
+    public interface ITestMessage<TMessage>
     {
         void SendControlBusStatus(TMessage statusMessage);
         void SendTestMessage(TMessage message);

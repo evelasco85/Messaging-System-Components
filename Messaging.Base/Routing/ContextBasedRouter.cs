@@ -1,30 +1,27 @@
 ﻿using Messaging.Base.System_Management.SmartProxy;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messaging.Base.Routing
 {
-    public class ContextBasedRouter<TMessageQueue, TMessage, TInput> : MessageConsumer<TMessageQueue, TMessage>, IContextBasedRouter<TMessageQueue, TMessage, TInput>
+    public class ContextBasedRouter<TMessage, TInput> : MessageConsumer<TMessage>, IContextBasedRouter<TMessage, TInput>
     {
-        IList<Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>> _destinations;
-        IMessageSender<TMessageQueue, TMessage> _currentDestinationSender;
+        IList<Tuple<Func<TInput, bool>, IMessageSender<TMessage>>> _destinations;
+        IMessageSender<TMessage> _currentDestinationSender;
 
         public bool DestinationIsSet
         {
             get { return _currentDestinationSender != null; }
         }
 
-        public ContextBasedRouter(IMessageReceiver<TMessageQueue, TMessage> inputQueue) : base(inputQueue)
+        public ContextBasedRouter(IMessageReceiver<TMessage> inputQueue) : base(inputQueue)
         {
-            _destinations = new List<Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>>();
+            _destinations = new List<Tuple<Func<TInput, bool>, IMessageSender<TMessage>>>();
         }
 
-        public IContextBasedRouter<TMessageQueue, TMessage, TInput> AddSender(Func<TInput, bool> invocationConditionFunction, IMessageSender<TMessageQueue, TMessage> destination)
+        public IContextBasedRouter<TMessage, TInput> AddSender(Func<TInput, bool> invocationConditionFunction, IMessageSender<TMessage> destination)
         {
-            _destinations.Add(new Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>>(invocationConditionFunction, destination));
+            _destinations.Add(new Tuple<Func<TInput, bool>, IMessageSender<TMessage>>(invocationConditionFunction, destination));
 
             return this;
         }
@@ -33,7 +30,7 @@ namespace Messaging.Base.Routing
         {
             for(int index = 0; index < _destinations.Count; index++)
             {
-                Tuple<Func<TInput, bool>, IMessageSender<TMessageQueue, TMessage>> destination = _destinations[index];
+                Tuple<Func<TInput, bool>, IMessageSender<TMessage>> destination = _destinations[index];
 
                 if ((destination == null) || (destination.Item1 == null) || (destination.Item2 == null))
                     continue;
@@ -53,7 +50,7 @@ namespace Messaging.Base.Routing
                 ForwardMessage(_currentDestinationSender, message);
         }
 
-        public virtual void ForwardMessage(IMessageSender<TMessageQueue, TMessage> sender, TMessage message)
+        public virtual void ForwardMessage(IMessageSender<TMessage> sender, TMessage message)
         {
             sender.Send(message);
         }
