@@ -7,10 +7,7 @@
  */
 
 using System;
-using System.Messaging;
-using System.Collections;
 using CommonObjects;
-using MessageGateway;
 using Messaging.Base;
 using LoanBroker.CreditBureau;
 using Messaging.Base.Constructions;
@@ -23,79 +20,73 @@ namespace LoanBroker
         void Listen();
     }
 
-    internal class CreditBureauGatewayImp :	ICreditBureauGateway
+    internal class CreditBureauGatewayImp<TMessageQueue, TMessage> :	ICreditBureauGateway
     {
-        protected IMessageSender<MessageQueue, Message>  creditRequestQueue;
-        protected IMessageReceiver<MessageQueue, Message> creditReplyQueue;
+        protected IMessageSender<TMessageQueue, TMessage> _creditRequestQueue;
+        protected IMessageReceiver<TMessageQueue, TMessage> _creditReplyQueue;
         
         protected Random random = new Random();
 
-        IReturnAddress<Message> _creditReturnAddress;
+        IReturnAddress<TMessage> _creditReturnAddress;
         ICorrelationManager<int, CreditRequestProcess> _correlationManager = new CorrelationManager<int, CreditRequestProcess>();
+        private Func<int, CreditBureauRequest, TMessage> _constructCreditBureauRequestMessageFunc;
+        private Func<TMessage, Tuple<int, bool, CreditBureauReply>> _extractCreditBureauReplyFunc;
 
-        public CreditBureauGatewayImp(String creditRequestQueueName, String	creditReplyQueueName)
+        public CreditBureauGatewayImp(
+            IMessageSender<TMessageQueue, TMessage> creditRequestQueue,
+            IMessageReceiver<TMessageQueue, TMessage> creditReplyQueue,
+            Func<int, CreditBureauRequest, TMessage> constructCreditBureauRequestMessageFunc,
+            Func<TMessage, Tuple<int, bool, CreditBureauReply>> extractCreditBureauReplyFunc
+            )
         {
-            MessageDelegate<Message> responseDelegate = new MessageDelegate<Message>(OnCreditResponse);
+            _constructCreditBureauRequestMessageFunc = constructCreditBureauRequestMessageFunc;
+            _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
 
-            Initialize(
-                new MessageSenderGateway(creditRequestQueueName),
-                new MessageReceiverGateway(creditReplyQueueName, GetFormatter(), responseDelegate),
-                responseDelegate);
+            Initialize(creditRequestQueue, creditReplyQueue, new MessageDelegate<TMessage>(OnCreditResponse));
         }
 
-        public CreditBureauGatewayImp(IMessageSender<MessageQueue, Message>  creditRequestQueue, IMessageReceiver<MessageQueue, Message> creditReplyQueue)
+        void Initialize(IMessageSender<TMessageQueue, TMessage> creditRequestQueue,
+            IMessageReceiver<TMessageQueue, TMessage> creditReplyQueue, MessageDelegate<TMessage> responseDelegate)
         {
-            Initialize(creditRequestQueue, creditReplyQueue, new MessageDelegate<Message>(OnCreditResponse));
-        }
-
-        void Initialize(IMessageSender<MessageQueue, Message> creditRequestQueue,
-            IMessageReceiver<MessageQueue, Message> creditReplyQueue, MessageDelegate<Message> responseDelegate)
-        {
-            this.creditRequestQueue = creditRequestQueue;
-            this.creditReplyQueue = creditReplyQueue;
-            this.creditReplyQueue.ReceiveMessageProcessor += responseDelegate;
+            this._creditRequestQueue = creditRequestQueue;
+            this._creditReplyQueue = creditReplyQueue;
+            this._creditReplyQueue.ReceiveMessageProcessor += responseDelegate;
             _creditReturnAddress = creditReplyQueue.AsReturnAddress();
-        }
-
-        public static IMessageFormatter	GetFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
         }
 
         public void	Listen()
         {
-            creditReplyQueue.StartReceivingMessages();
+            _creditReplyQueue.StartReceivingMessages();
         }
 
         public void	GetCreditScore(CreditBureauRequest quoteRequest, 
             OnCreditReplyEvent OnCreditResponse)
         {
-            Message	requestMessage = new Message(quoteRequest);
+            int appSpecific = random.Next();
+            TMessage requestMessage = _constructCreditBureauRequestMessageFunc(appSpecific, quoteRequest);
 
-            requestMessage.AppSpecific = random.Next();
-            
             _creditReturnAddress.SetMessageReturnAddress(ref requestMessage);
-            _correlationManager.AddEntity(requestMessage.AppSpecific,
+            _correlationManager.AddEntity(appSpecific,
                 new CreditRequestProcess
                 {
                     callback = OnCreditResponse,
                 });
 
-            creditRequestQueue.Send(requestMessage);
+            _creditRequestQueue.Send(requestMessage);
         }
 
-        private	void OnCreditResponse(Message msg)
+        private void OnCreditResponse(TMessage msg)
         {
-            msg.Formatter =	 GetFormatter();
+            Tuple<int, bool, CreditBureauReply> replyInfo = _extractCreditBureauReplyFunc(msg);
 
-            CreditBureauReply replyStruct;
+            int CorrelationID = replyInfo.Item1;
+            bool isCreditBureauReply = replyInfo.Item2;
+            CreditBureauReply replyStruct = replyInfo.Item3;
+
             try	
             {
-                if (msg.Body is	CreditBureauReply) 
+                if (isCreditBureauReply) 
                 {
-                    replyStruct	= (CreditBureauReply)msg.Body;
-                    int	CorrelationID =	msg.AppSpecific;
-
                     if (_correlationManager.EntityExists(CorrelationID))
                     {
                         _correlationManager

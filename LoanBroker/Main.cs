@@ -67,6 +67,7 @@ namespace LoanBroker {
 	            () =>
 	            {
 	                //Client parameter setup completed
+                    //
 	                IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
 	                    ToPath(proxyReplyQueue),
 	                    GetLoanReplyFormatter()
@@ -77,13 +78,45 @@ namespace LoanBroker {
 	                    proxyReplyReceiver,
 	                    new MessageSenderGateway(ToPath(controlBusQueue)),
 	                    3);
-
+                    //
+                    
+                    //
                     BankGateway bankInterface = new BankGateway(
                         ToPath(bankReplyQueueName),
                         new ConnectionsManager());
-                    ICreditBureauGateway creditBureauInterface = new CreditBureauGatewayImp(
-                        ToPath(creditRequestQueueName),
-                        ToPath(creditReplyQueueName));
+                    //
+
+                    /*Credit Bureau Setup*/
+	                IMessageSender<MessageQueue, Message> creditBureauSender =
+                        new MessageSenderGateway(ToPath(creditRequestQueueName));
+	                IMessageReceiver<MessageQueue, Message> creditBureauReceiver =
+	                    new MessageReceiverGateway(
+                            ToPath(creditReplyQueueName),
+                            GetCreditBureauReplyFormatter()
+	                        );
+                    ICreditBureauGateway creditBureauInterface = new CreditBureauGatewayImp<MessageQueue, Message>(
+                        creditBureauSender,
+                        creditBureauReceiver,
+                        ((appSpecific, request) =>
+                        {
+                            return new Message(request)
+                            {
+                                 AppSpecific = appSpecific
+                            };
+                        }),
+                        (message =>
+                        {
+                            message.Formatter = GetCreditBureauReplyFormatter();
+
+                            return new Tuple<int, bool, CreditBureauReply>(
+                                message.AppSpecific,
+                                message.Body is	CreditBureauReply,
+                                (CreditBureauReply)message.Body
+                                );
+                        })
+                        );
+                    /*********************/
+
                     ProcessManager<Message> processManager = new ProcessManager<Message>(
                         bankInterface,
                         creditBureauInterface
@@ -139,9 +172,15 @@ namespace LoanBroker {
         {
             return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteRequest) });
         }
+
         static IMessageFormatter GetLoanReplyFormatter()
         {
             return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
+        }
+
+        static IMessageFormatter GetCreditBureauReplyFormatter()
+        {
+            return new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
         }
 
         private static String ToPath(String arg){
