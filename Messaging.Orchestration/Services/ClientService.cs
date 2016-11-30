@@ -1,16 +1,11 @@
-﻿using Messaging.Orchestration.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Messaging.Base;
 using Messaging.Orchestration.Shared.Models;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public class ClientService<TMessageQueue, TMessage> : IClientService
+    public class ClientService<TMessage> : IClientService
     {
         private ClientCommandStatus _lastClientStatus = ClientCommandStatus.Inactive;
         string _clientId;
@@ -21,19 +16,17 @@ namespace Messaging.Orchestration.Shared.Services
         StopDelegate _stopSequence;
 
         IDictionary<string, SetParameterDelegate> _serverParameterRequests = new Dictionary<string, SetParameterDelegate>();
-        IMessageSender<TMessageQueue, TMessage> _serverRequestSender;
-        private IMessageReceiver<TMessageQueue, TMessage> _serverReplyReceiver;
+        IMessageSender<TMessage> _serverRequestSender;
+        private IMessageReceiver<TMessage> _serverReplyReceiver;
 
         private ConvertToServerResponseDelegate<TMessage> _serverResponseConverter;
-        private SendRequestToServerDelegate<TMessageQueue, TMessage> _sendRequest;
         ClientParameterSetupCompleteDelegate _clientParameterSetupComplete;
 
         public ClientService(
             string clientId,
             string groupId,
-            IMessageSender<TMessageQueue, TMessage> serverRequestSender,
-            IMessageReceiver<TMessageQueue, TMessage> serverReplyReceiver,
-            SendRequestToServerDelegate<TMessageQueue, TMessage> sendRequest,
+            IMessageSender<TMessage> serverRequestSender,
+            IMessageReceiver<TMessage> serverReplyReceiver,
             ConvertToServerResponseDelegate<TMessage> serverResponseConverter
             )
         {
@@ -44,7 +37,6 @@ namespace Messaging.Orchestration.Shared.Services
             _serverReplyReceiver = serverReplyReceiver;
             _serverRequestSender = serverRequestSender;
             _serverResponseConverter = serverResponseConverter;
-            _sendRequest = sendRequest;
         }
 
         public void Process()
@@ -99,9 +91,6 @@ namespace Messaging.Orchestration.Shared.Services
         void PerformClientRegistration(
             IDictionary<string, SetParameterDelegate> serverParametersRequest)
         {
-            if (_sendRequest == null)
-                return;
-
             ServerRequest request = new ServerRequest
             {
                 ClientId = _clientId,
@@ -116,7 +105,7 @@ namespace Messaging.Orchestration.Shared.Services
                     .ToList();
             }
 
-            _sendRequest(_serverRequestSender, request);
+            _serverRequestSender.Send(request);
         }
 
         void ReceiveServerCommand(ServerMessage response)

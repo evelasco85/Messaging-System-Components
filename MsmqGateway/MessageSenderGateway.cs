@@ -34,9 +34,15 @@ namespace MessageGateway{
 	        return _returnAddress;
 	    }
 
-	    public override void Send(Message msg){
-			GetQueue().Send(msg);
-		}
+        public override void Send(Message msg)
+        {
+            GetQueue().Send(msg);
+        }
+
+        public override void Send<TEntity>(TEntity message)
+        {
+            Send(new Message(message));
+        }
 
 	    public override void SetupSender()
 	    {

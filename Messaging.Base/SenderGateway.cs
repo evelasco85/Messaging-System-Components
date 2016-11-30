@@ -30,6 +30,7 @@ namespace Messaging.Base
         public abstract IReturnAddress<TMessage> AsReturnAddress();
 
         public abstract void Send(TMessage message);
+        public abstract void Send<TEntity>(TEntity message);
         public abstract void SetupSender();
     }
 }

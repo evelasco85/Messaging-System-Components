@@ -30,6 +30,11 @@ namespace Messaging.Base.Tests
         {
             throw new NotImplementedException();
         }
+
+        public override void Send<TEntity>(TEntity message)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public abstract class BaseRecipient

@@ -8,15 +8,16 @@ namespace Messaging.Base
     public interface IMessageSender
     {
         void SetupSender();
+        void Send<TEntity>(TEntity message);
     }
 
-    public interface IMessageSender<TMessage>
+    public interface IMessageSender<TMessage> : IMessageSender
     {
         IReturnAddress<TMessage> AsReturnAddress();
         void Send(TMessage message);
     }
 
-    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>, IMessageSender
+    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>
     {
     }
 }

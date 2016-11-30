@@ -102,7 +102,7 @@ namespace LoanBroker
                         .Sum() / queueCount,
                 };
 
-                _controlBus.Send(new Message(stat));
+                _controlBus.Send(stat);
             }
         }
     }

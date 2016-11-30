@@ -52,7 +52,7 @@ namespace LoanBroker
                             outstandingReferenceDataCount)
                 };
 
-                _controlBus.Send(new Message(info));
+                _controlBus.Send(info);
             }
         }
 

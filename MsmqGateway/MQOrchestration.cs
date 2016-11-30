@@ -30,7 +30,7 @@ namespace MsmqGateway
 
         public IClientService CreateClient(string clientId, string groupId, string serverRequestQueue, string serverReplyQueue)
         {
-            IClientService client = new ClientService<MessageQueue, Message>(
+            IClientService client = new ClientService<Message>(
                 clientId,
                 groupId,
                 new MessageSenderGateway(serverRequestQueue),
@@ -38,10 +38,6 @@ namespace MsmqGateway
                     serverReplyQueue,
                     new XmlMessageFormatter(new Type[] { typeof(ServerMessage) }),
                     clientId),
-                (sender, request) => //Concrete sender implementation
-                {
-                    sender.Send(new Message(request));
-                },
                 message => //Concrete receiver implementation
                 {
                     ServerMessage response = null;

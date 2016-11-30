@@ -203,7 +203,7 @@ namespace ManagementConsole
 
         void SwitchRoute(FailOverRouteEnum route)
         {
-            _routerControlQueue.Send(new Message(route));
+            _routerControlQueue.Send(route);
         }
 
         void SendStatus(MonitorStatus status)

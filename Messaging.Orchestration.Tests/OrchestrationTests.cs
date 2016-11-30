@@ -31,7 +31,7 @@ namespace Messaging.Orchestration.Tests
             string groupId = "MSMQ";
             string nameValue = string.Empty;
 
-            _client = new ClientService<MessageQueue, Message>(
+            _client = new ClientService<Message>(
                 clientId,
                 groupId,
                 new MessageSenderGateway(ToPath(requestQueue)),
@@ -39,10 +39,6 @@ namespace Messaging.Orchestration.Tests
                     ToPath(replyQueue),
                     new XmlMessageFormatter(new Type[] {typeof(ServerMessage)}),
                     clientId),
-                (sender, request) => //Concrete sender implementation
-                {
-                    sender.Send(new Message(request));
-                },
                 message => //Concrete receiver implementation
                 {
                     ServerMessage response = null;

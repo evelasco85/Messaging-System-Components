@@ -64,5 +64,10 @@ namespace Gateway.Mock
         }
 
         public bool Started { get { return false;} }
+
+        public void Send<TEntity>(TEntity message)
+        {
+            
+        }
     }
 }
