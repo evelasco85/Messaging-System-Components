@@ -19,7 +19,7 @@ namespace ManagementConsole
 {
     public partial class ManagementConsole : Form
     {
-        private ControlBusConsumer _controlBus;
+        private ControlBusConsumer<Message> _controlBus;
         private MonitorCreditBureau<Message> _monitor;
         IServerService<Message> _server;
         IList<Tuple<string, string, string>> _clients = new List<Tuple<string, string, string>>();
@@ -57,8 +57,8 @@ namespace ManagementConsole
             int secondsInterval, int timeoutSecondsInterval
             )
         {
-            _controlBus = new ControlBusConsumer(
-                controlBusQueue,
+            _controlBus = new ControlBusConsumer<Message>(
+                new MessageReceiverGateway(controlBusQueue),
                 this.ProcessMessage
                 );
 
