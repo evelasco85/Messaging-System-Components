@@ -1,9 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Messaging;
 using System.Threading;
 using CommonObjects;
-using MessageGateway;
 using Messaging.Base;
 using Messaging.Base.System_Management;
 
@@ -24,7 +21,7 @@ namespace ManagementConsole
         public string MessageBody { get; set; }
     }
 
-    public class MonitorCreditBureau : TestMessage<Message>, IDisposable
+    public class MonitorCreditBureau<TMessage> : TestMessage<TMessage>, IDisposable
     {
         private Timer _sendTimer;
         private Timer _timeoutTimer;
@@ -36,7 +33,7 @@ namespace ManagementConsole
         private int _millisecondsInterval;
         private int _timeoutMillisecondsInterval;
         string _lastStatus = String.Empty;
-        IMessageSender<MessageQueue, Message> _routerControlQueue;
+        IMessageSender<TMessage> _routerControlQueue;
 
         public void Dispose()
         {
@@ -52,22 +49,33 @@ namespace ManagementConsole
             }
         }
 
+        private Func<TMessage, Tuple<string, bool, string, CreditBureauReply>> _extractCreditBureauReplyFunc;
+        private Func<CreditBureauRequest, TMessage> _constructCreditBureauRequestMessageFunc;
+        private Func<TMessage, string> _extractMessageCorrelationIdFunc;
+
         public MonitorCreditBureau(
-            string controlBusQueueName,
-            string serviceQueueName, string monitorReplyQueueName,
-            string routerControlQueueName,
-            int secondsInterval, int timeoutSecondsInterval
+            IMessageSender<TMessage> controlBusQueue,
+            IMessageSender<TMessage> serviceQueue,
+            IMessageReceiver<TMessage> monitorReplyQueue,
+            IMessageSender<TMessage> routerControlQueue,
+            int secondsInterval, int timeoutSecondsInterval,
+            Func<CreditBureauRequest, TMessage> constructCreditBureauRequestMessageFunc,
+            Func<TMessage, string> extractMessageCorrelationIdFunc,
+            Func<TMessage, Tuple<string, bool, string, CreditBureauReply>> extractCreditBureauReplyFunc
             )
             : base(
-                new MessageSenderGateway(controlBusQueueName),
-                new MessageSenderGateway(serviceQueueName),
-                new MessageReceiverGateway(monitorReplyQueueName)
+                controlBusQueue,
+                serviceQueue,
+                monitorReplyQueue
                 )
         {
-            _routerControlQueue = new MessageSenderGateway(routerControlQueueName);
-
+            _routerControlQueue = routerControlQueue;
             _millisecondsInterval = secondsInterval*1000;
             _timeoutMillisecondsInterval = timeoutSecondsInterval*1000;
+            _constructCreditBureauRequestMessageFunc = constructCreditBureauRequestMessageFunc;
+            _extractMessageCorrelationIdFunc = extractMessageCorrelationIdFunc;
+            _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
+            
 
             StartMonitoring();
         }
@@ -96,13 +104,12 @@ namespace ManagementConsole
             {
                 SSN = _ssn
             };
-            Message requestMessage = new Message(request);
 
-            requestMessage.Priority = MessagePriority.AboveNormal;
+            TMessage requestMessage = _constructCreditBureauRequestMessageFunc(request);
             
             SendTestMessage(requestMessage);
 
-            _correlationId = requestMessage.Id;
+            _correlationId = _extractMessageCorrelationIdFunc(requestMessage);
         }
 
         void OnSendTimerEvent(object state)
@@ -130,14 +137,18 @@ namespace ManagementConsole
             _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
         }
 
-        public override void ReceiveTestMessageResponse(Message message)
+        public override void ReceiveTestMessageResponse(TMessage message)
         {
             if (_timeoutTimer != null)
                 _timeoutTimer.Dispose();
 
-            message.Formatter = new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
+            Tuple<string, bool, string, CreditBureauReply> replyInfo = _extractCreditBureauReplyFunc(message);
 
-            CreditBureauReply reply;
+            string correlationID = replyInfo.Item1;
+            bool isCreditBureauReply = replyInfo.Item2;
+            string messageBody = replyInfo.Item3;
+            CreditBureauReply reply = replyInfo.Item4;
+
             MonitorStatus status = new MonitorStatus
             {
                 Status = MonitorStatus.STATUS_OK,
@@ -147,11 +158,9 @@ namespace ManagementConsole
 
             try
             {
-                if (message.Body is CreditBureauReply)
+                if (isCreditBureauReply)
                 {
-                    reply = (CreditBureauReply) message.Body;
-
-                    if (message.CorrelationId != _correlationId)
+                    if (correlationID != _correlationId)
                     {
                         status.Status = MonitorStatus.STATUS_FAILED_CORRELATION;
                         status.Description = "Incoming message correlation ID does not match outgoing message ID";
@@ -180,10 +189,7 @@ namespace ManagementConsole
                 status.Description = "Could not deserialize message body";
             }
 
-            using (StreamReader reader = new StreamReader(message.BodyStream))
-            {
-                status.MessageBody = reader.ReadToEnd();
-            }
+            status.MessageBody = messageBody;
 
             bool statusHasChanges = (
                 (status.Status != MonitorStatus.STATUS_OK) ||
@@ -218,7 +224,7 @@ namespace ManagementConsole
                     break;
             }
 
-            SendControlBusStatus(new Message(status));
+            SendControlBusStatus(status);
         }
     }
 }

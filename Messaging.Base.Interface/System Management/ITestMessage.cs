@@ -8,6 +8,7 @@ namespace Messaging.Base.System_Management
 {
     public interface ITestMessage<TMessage>
     {
+        void SendControlBusStatus<TEntity>(TEntity statusMessage);
         void SendControlBusStatus(TMessage statusMessage);
         void SendTestMessage(TMessage message);
         void ReceiveTestMessageResponse(TMessage message);

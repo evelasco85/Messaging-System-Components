@@ -58,7 +58,6 @@
       <DependentUpon>ManagementConsole.cs</DependentUpon>
     </Compile>
     <Compile Include="MonitorCreditBureau.cs" />
-    <Compile Include="OrchestrationServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Configuration\Resources.resx">

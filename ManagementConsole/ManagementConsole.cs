@@ -7,9 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Messaging;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using CommonObjects;
+using MessageGateway;
 using Message = System.Messaging.Message;
 
 namespace ManagementConsole
@@ -17,7 +20,7 @@ namespace ManagementConsole
     public partial class ManagementConsole : Form
     {
         private ControlBusConsumer _controlBus;
-        private MonitorCreditBureau _monitor;
+        private MonitorCreditBureau<Message> _monitor;
         IServerService<Message> _server;
         IList<Tuple<string, string, string>> _clients = new List<Tuple<string, string, string>>();
 
@@ -59,13 +62,42 @@ namespace ManagementConsole
                 this.ProcessMessage
                 );
 
-            _monitor = new MonitorCreditBureau(
-                controlBusQueue,
-                serviceQueue,
-                monitoringReplyQueue,
-                routerControlQueue,
+            _monitor = new MonitorCreditBureau<Message>(
+                new MessageSenderGateway(controlBusQueue),
+                new MessageSenderGateway(serviceQueue),
+                new MessageReceiverGateway(monitoringReplyQueue, new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) })),
+                new MessageSenderGateway(routerControlQueue),
                 secondsInterval, //Verify status every n-th second(s)
-                timeoutSecondsInterval //Set n-th second timeout
+                timeoutSecondsInterval, //Set n-th second timeout,
+                ((request) =>
+                {
+                    Message requestMessage = new Message(request)
+                    {
+                        Priority = MessagePriority.AboveNormal
+                    };
+
+                    return requestMessage;
+                }),
+                (message =>
+                {
+                    return message.Id;
+                }),
+                (message =>
+                {
+                    string messageBody = string.Empty;
+
+                    using (StreamReader reader = new StreamReader(message.BodyStream))
+                    {
+                        messageBody = reader.ReadToEnd();
+                    }
+
+                    return new Tuple<string, bool, string, CreditBureauReply>(
+                        message.CorrelationId,
+                        message.Body is CreditBureauReply,
+                        messageBody,
+                        (CreditBureauReply)message.Body
+                        );
+                })
                 );
 
             _controlBus.Process();

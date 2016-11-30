@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Messaging.Base.Constructions;
+﻿using Messaging.Base.Constructions;
 using Messaging.Base.System_Management.SmartProxy;
 
 namespace Messaging.Base.System_Management
@@ -26,6 +21,11 @@ namespace Messaging.Base.System_Management
         }
 
         public void SendControlBusStatus(TMessage statusMessage)
+        {
+            _controlBusQueue.Send(statusMessage);
+        }
+
+        public void SendControlBusStatus<TEntity>(TEntity statusMessage)
         {
             _controlBusQueue.Send(statusMessage);
         }
