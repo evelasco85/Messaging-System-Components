@@ -13,7 +13,7 @@ namespace Messaging.Base
         void SetupReceiver();
     }
 
-    public interface IMessageReceiver<TMessage>
+    public interface IMessageReceiver<TMessage> : IMessageReceiver
     {
         MessageDelegate<TMessage> ReceiveMessageProcessor
         {
@@ -25,7 +25,7 @@ namespace Messaging.Base
         IReturnAddress<TMessage> AsReturnAddress();
     }
 
-    public interface IMessageReceiver<TMessageQueue, TMessage> : IMessageReceiver<TMessage>, IMessageCore<TMessageQueue>, IMessageReceiver
+    public interface IMessageReceiver<TMessageQueue, TMessage> : IMessageReceiver<TMessage>, IMessageCore<TMessageQueue>
     {
     }
 }

@@ -20,51 +20,52 @@ using MsmqGateway;
 
 namespace LoanBroker
 {
-    internal class BankGateway
+    internal class BankGateway<TMessage>
     {
-        protected IMessageReceiver<MessageQueue, Message> bankReplyQueue;
-        protected ConnectionsManager connectionManager;
-
+        protected IMessageReceiver<TMessage> _bankReplyQueue;
+        protected ConnectionsManager<TMessage> _connectionManager;
         IAggregator<int, BankQuoteReply, BankQuoteReply, BankQuoteAggregate> _aggregator = new Aggregator<int, BankQuoteReply, BankQuoteReply, BankQuoteAggregate>();
+        protected int _aggregationCorrelationID;
+        IReturnAddress<TMessage> _bankReturnAddress;
+        private Func<int, BankQuoteRequest, TMessage> _constructBankQuoteRequestMessageFunc;
+        private Func<TMessage, Tuple<int, bool, BankQuoteReply>> _extractBankQuoteReplyFunc;
 
-        protected int aggregationCorrelationID;
-        IReturnAddress<Message> _bankReturnAddress;
-
-        public BankGateway(String bankReplyQueueName, ConnectionsManager connectionManager)
+        public BankGateway(
+            IMessageReceiver<TMessage> receiver,
+            ConnectionsManager<TMessage> connectionManager,
+            Func<int, BankQuoteRequest, TMessage> constructBankQuoteRequestMessageFunc,
+            Func<TMessage, Tuple<int, bool, BankQuoteReply>> extractBankQuoteReplyFunc
+            )
         {
-            MessageReceiverGateway receiver = 
-                new MessageReceiverGateway(bankReplyQueueName, GetFormatter(), new MessageDelegate<Message>(OnBankMessage));
-            this.bankReplyQueue = (IMessageReceiver<MessageQueue, Message>)receiver;
-            this.connectionManager = connectionManager; 
-            aggregationCorrelationID = 0;
+            receiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(OnBankMessage);
 
-            _bankReturnAddress = bankReplyQueue.AsReturnAddress();
-        }
+            _constructBankQuoteRequestMessageFunc = constructBankQuoteRequestMessageFunc;
+            _extractBankQuoteReplyFunc = extractBankQuoteReplyFunc;
+            _bankReplyQueue = receiver;
+            _connectionManager = connectionManager; 
+            _aggregationCorrelationID = 0;
 
-        public static IMessageFormatter GetFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] {typeof(BankQuoteReply)});
+            _bankReturnAddress = _bankReplyQueue.AsReturnAddress();
         }
 
         public void Listen()
         {
-            bankReplyQueue.StartReceivingMessages();
+            _bankReplyQueue.StartReceivingMessages();
         }
 
         public void GetBestQuote(BankQuoteRequest quoteRequest, OnNotifyAggregationCompletion<BankQuoteReply> onBestQuoteEvent)
         {
-            Message requestMessage = new Message(quoteRequest);
+            TMessage requestMessage = _constructBankQuoteRequestMessageFunc(_aggregationCorrelationID, quoteRequest);
 
             _bankReturnAddress.SetMessageReturnAddress(ref requestMessage);
-
-            requestMessage.AppSpecific = aggregationCorrelationID;
             
-            IMessageSender<Message> [] eligibleBanks = 
-                connectionManager.GetEligibleBankQueues(quoteRequest.CreditScore, quoteRequest.HistoryLength, 
+
+            IMessageSender<TMessage>[] eligibleBanks = 
+                _connectionManager.GetEligibleBankQueues(quoteRequest.CreditScore, quoteRequest.HistoryLength, 
                 quoteRequest.LoanAmount);
 
-            _aggregator.AddAggregate(aggregationCorrelationID, new BankQuoteAggregate(aggregationCorrelationID, eligibleBanks.Length, onBestQuoteEvent));
-            aggregationCorrelationID++;
+            _aggregator.AddAggregate(_aggregationCorrelationID, new BankQuoteAggregate(_aggregationCorrelationID, eligibleBanks.Length, onBestQuoteEvent));
+            _aggregationCorrelationID++;
 
             MessageRouter
                 .GetInstance()
@@ -72,23 +73,23 @@ namespace LoanBroker
         }
 
 
-        private void OnBankMessage(Message msg)
+        private void OnBankMessage(TMessage msg)
         {
-            msg.Formatter =  GetFormatter();
+            Tuple<int, bool, BankQuoteReply> replyInfo = _extractBankQuoteReplyFunc(msg);
 
-            BankQuoteReply replyStruct;
+            int aggregationCorrelationId = replyInfo.Item1;
+            bool isBankQuoteReply = replyInfo.Item2;
+            BankQuoteReply replyStruct = replyInfo.Item3;
 
             try 
             {
-                if (msg.Body is BankQuoteReply) 
+                if (isBankQuoteReply) 
                 {
-                    replyStruct = (BankQuoteReply)msg.Body;
-                    int aggregationCorrelationID = msg.AppSpecific;
-                    Console.WriteLine("Quote {0:0.00}% {1} {2}", 
-                        replyStruct.InterestRate, replyStruct.QuoteID, replyStruct.ErrorCode);
-                    if (_aggregator.Contains(aggregationCorrelationID))
+                    Console.WriteLine("Quote {0:0.00}% {1} {2}", replyStruct.InterestRate, replyStruct.QuoteID, replyStruct.ErrorCode);
+
+                    if (_aggregator.Contains(aggregationCorrelationId))
                     {
-                        BankQuoteAggregate aggregate = _aggregator.GetAggregate(aggregationCorrelationID);
+                        BankQuoteAggregate aggregate = _aggregator.GetAggregate(aggregationCorrelationId);
 
                         aggregate.AggregateValue(replyStruct);
 

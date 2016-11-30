@@ -11,11 +11,11 @@ namespace LoanBroker.LoanBroker
         IProcessManager<string, Process<TMessage>, ProcessManager<TMessage>> _manager;
         private IRequestReply_Asynchronous<TMessage> _queueService;
         private Func<TMessage, string> _extractProcessIdFunc;
-        private BankGateway _bankInterface;
+        private BankGateway<TMessage> _bankInterface;
         private ICreditBureauGateway _creditBureauInterface;
 
         public ProcessManager(
-            BankGateway bankInterface,
+            BankGateway<TMessage> bankInterface,
             ICreditBureauGateway creditBureauInterface
             )
         {
@@ -27,7 +27,7 @@ namespace LoanBroker.LoanBroker
                 );
         }
 
-        public BankGateway BankInterface
+        public BankGateway<TMessage> BankInterface
         {
             get { return _bankInterface; }
         }

@@ -8,6 +8,7 @@
 
 using System;
 using System.Messaging;
+using Bank;
 using CommonObjects;
 using MessageGateway;
 using Messaging.Base;
@@ -80,21 +81,43 @@ namespace LoanBroker {
 	                    3);
                     //
                     
-                    //
-                    BankGateway bankInterface = new BankGateway(
+                    /*Bank Gateway Setup*/
+	                IMessageReceiver<MessageQueue, Message> bankReplyQueue = new MessageReceiverGateway(
                         ToPath(bankReplyQueueName),
-                        new ConnectionsManager());
-                    //
+	                    GetBankQuoteReplyFormatter()
+	                    );
+                    BankGateway<Message> bankInterface = new BankGateway<Message>(
+                        bankReplyQueue,
+                        new ConnectionsManager<Message>(),
+                        ((aggregationCorrelationID, request) =>
+                        {
+                            return new Message(request)
+                            {
+                                AppSpecific = aggregationCorrelationID
+                            };
+                        }),
+                        (message =>
+                        {
+                            message.Formatter = GetBankQuoteReplyFormatter();
+
+                            return new Tuple<int, bool, BankQuoteReply>(
+                                message.AppSpecific,
+                                message.Body is BankQuoteReply,
+                                (BankQuoteReply)message.Body
+                                );
+                        })
+                        );
+                    /********************/
 
                     /*Credit Bureau Setup*/
-	                IMessageSender<MessageQueue, Message> creditBureauSender =
+	                IMessageSender<Message> creditBureauSender =
                         new MessageSenderGateway(ToPath(creditRequestQueueName));
-	                IMessageReceiver<MessageQueue, Message> creditBureauReceiver =
+	                IMessageReceiver<Message> creditBureauReceiver =
 	                    new MessageReceiverGateway(
                             ToPath(creditReplyQueueName),
                             GetCreditBureauReplyFormatter()
 	                        );
-                    ICreditBureauGateway creditBureauInterface = new CreditBureauGatewayImp<MessageQueue, Message>(
+                    ICreditBureauGateway creditBureauInterface = new CreditBureauGatewayImp<Message>(
                         creditBureauSender,
                         creditBureauReceiver,
                         ((appSpecific, request) =>
@@ -181,6 +204,11 @@ namespace LoanBroker {
         static IMessageFormatter GetCreditBureauReplyFormatter()
         {
             return new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
+        }
+
+        static IMessageFormatter GetBankQuoteReplyFormatter()
+        {
+            return new XmlMessageFormatter(new Type[] { typeof(BankQuoteReply) });
         }
 
         private static String ToPath(String arg){

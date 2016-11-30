@@ -20,10 +20,10 @@ namespace LoanBroker
         void Listen();
     }
 
-    internal class CreditBureauGatewayImp<TMessageQueue, TMessage> :	ICreditBureauGateway
+    internal class CreditBureauGatewayImp<TMessage> :	ICreditBureauGateway
     {
-        protected IMessageSender<TMessageQueue, TMessage> _creditRequestQueue;
-        protected IMessageReceiver<TMessageQueue, TMessage> _creditReplyQueue;
+        protected IMessageSender<TMessage> _creditRequestQueue;
+        protected IMessageReceiver<TMessage> _creditReplyQueue;
         
         protected Random random = new Random();
 
@@ -33,8 +33,8 @@ namespace LoanBroker
         private Func<TMessage, Tuple<int, bool, CreditBureauReply>> _extractCreditBureauReplyFunc;
 
         public CreditBureauGatewayImp(
-            IMessageSender<TMessageQueue, TMessage> creditRequestQueue,
-            IMessageReceiver<TMessageQueue, TMessage> creditReplyQueue,
+            IMessageSender<TMessage> creditRequestQueue,
+            IMessageReceiver<TMessage> creditReplyQueue,
             Func<int, CreditBureauRequest, TMessage> constructCreditBureauRequestMessageFunc,
             Func<TMessage, Tuple<int, bool, CreditBureauReply>> extractCreditBureauReplyFunc
             )
@@ -45,8 +45,8 @@ namespace LoanBroker
             Initialize(creditRequestQueue, creditReplyQueue, new MessageDelegate<TMessage>(OnCreditResponse));
         }
 
-        void Initialize(IMessageSender<TMessageQueue, TMessage> creditRequestQueue,
-            IMessageReceiver<TMessageQueue, TMessage> creditReplyQueue, MessageDelegate<TMessage> responseDelegate)
+        void Initialize(IMessageSender<TMessage> creditRequestQueue,
+            IMessageReceiver<TMessage> creditReplyQueue, MessageDelegate<TMessage> responseDelegate)
         {
             this._creditRequestQueue = creditRequestQueue;
             this._creditReplyQueue = creditReplyQueue;
