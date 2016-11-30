@@ -72,28 +72,28 @@ namespace LoanBroker {
 	            {
 	                //Client parameter setup completed
                     //
+
+                    /*Proxy Setup*/
 	                IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
 	                    ToPath(proxyReplyQueue),
 	                    GetLoanReplyFormatter()
 	                    );
-
-                    IMessageReceiver<Message> loanBrokerRequestQueue = new MessageReceiverGateway(ToPath(requestQueueName), GetLoanRequestFormatter());
-	                IMessageSender<Message> serviceRequestSender = new MessageSenderGateway(ToPath(proxyRequestQueue));
-	                IMessageReceiver<Message> serviceReplyReceiver = proxyReplyReceiver;
+                    IMessageSender<Message> proxyRequestSender = new MessageSenderGateway(ToPath(proxyRequestQueue));
+                    IMessageReceiver<Message> loanRequestReceiver = new MessageReceiverGateway(ToPath(requestQueueName), GetLoanRequestFormatter());
 	                IMessageSender<Message> controlBus = new MessageSenderGateway(ToPath(controlBusQueue));
 
 
 	                ISmartProxyRequestSmartProxyConsumer<MessageQueue, Message, ProxyJournal> requestSmartProxyConsumer =
 	                    new LoanBrokerProxySmartProxyRequestConsumer(
-	                        loanBrokerRequestQueue,
-	                        serviceRequestSender,
-	                        serviceReplyReceiver.AsReturnAddress(),
+	                        loanRequestReceiver,
+	                        proxyRequestSender,
+                            proxyReplyReceiver.AsReturnAddress(),
 	                        LoanBrokerProxy<MessageQueue, Message>.SQueueStats
 	                        );
 
 	                ISmartProxyReplySmartProxyConsumer<MessageQueue, Message, ProxyJournal> replySmartProxyConsumer =
 	                    new LoanBrokerProxySmartProxyReplyConsumer(
-                            serviceReplyReceiver,
+                            proxyReplyReceiver,
                             LoanBrokerProxy<MessageQueue, Message>.SQueueStats,
                             LoanBrokerProxy<MessageQueue, Message>.S_PerformanceStats,
 	                        controlBus
@@ -104,7 +104,7 @@ namespace LoanBroker {
                         requestSmartProxyConsumer,
                         replySmartProxyConsumer,
 	                    3);
-                    //
+                    /*************/
                     
                     /*Bank Gateway Setup*/
 	                IMessageReceiver<MessageQueue, Message> bankReplyQueue = new MessageReceiverGateway(
