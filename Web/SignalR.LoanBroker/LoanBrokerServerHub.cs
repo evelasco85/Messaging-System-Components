@@ -18,7 +18,7 @@ namespace Web.SignalR.LoanBroker
     {
         readonly LoanBrokerClients _clients;
         MessageReceiverGateway _replyQueue;
-        IMessageSender<MessageQueue, Message> _requestQueue;
+        IMessageSender<Message> _requestQueue;
         readonly static ConnectionMapper _connectionMap = new ConnectionMapper();
 
 
@@ -38,8 +38,8 @@ namespace Web.SignalR.LoanBroker
         {
             _requestQueue = new MessageSenderGateway(ToPath("loanRequestQueue"));
             _replyQueue = new MessageReceiverGateway(ToPath("loanReplySignalR_Queue"), GetFormatter());
-            _replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
 
+            _replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
             _replyQueue.StartReceivingMessages();
         }
 
