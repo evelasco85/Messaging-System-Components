@@ -122,6 +122,7 @@
     <Compile Include="BankService.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ClientInstance.cs" />
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>

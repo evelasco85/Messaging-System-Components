@@ -1,7 +1,6 @@
 using System;
 using Bank.Models;
 using MessageGateway;
-using Messaging.Base.Construction;
 using MsmqGateway;
 
 namespace Bank
@@ -15,7 +14,7 @@ namespace Bank
             String ratePremium = string.Empty;
             String maxLoanTerm = string.Empty;
 
-            IRequestReply_Synchronous queueService = null;
+            ClientInstance instance = new ClientInstance();
 
             MQOrchestration.GetInstance().CreateClient(
                 args[0],
@@ -39,13 +38,14 @@ namespace Bank
                     () =>
                     {
                         //Client parameter setup completed
-                        Bank bank = new Bank(bankName, System.Convert.ToDouble(ratePremium),
-                            System.Convert.ToInt32(maxLoanTerm));
-                        queueService = new MQRequestReplyService_Synchronous(
-                            ToPath(requestQueue),
-                            new SyncProcessMessageDelegate(bank.ProcessRequestMessage),
-                            null,
-                            new GetRequestBodyTypeDelegate(() => { return typeof(BankQuoteRequest); }));
+                        instance.SetupBank(bankName, ratePremium, maxLoanTerm);
+                        instance.SetupQueueService(
+                            new MQRequestReplyService_Synchronous(
+                                ToPath(requestQueue),
+                                new SyncProcessMessageDelegate(instance.Bank1.ProcessRequestMessage),
+                                null,
+                                new GetRequestBodyTypeDelegate(() => { return typeof(BankQuoteRequest); }))
+                            );
 
                         Console.WriteLine("Configurations ok!");
                     },
@@ -57,20 +57,12 @@ namespace Bank
                     () =>
                     {
                         //Start
-                        if (queueService != null)
-                        {
-                            queueService.Run();
-                            Console.WriteLine("Starting Application!");
-                        }
+                        instance.Run();
                     },
                     () =>
                     {
                         //Stop
-                        if (queueService != null)
-                        {
-                            queueService.StopRunning();
-                            Console.WriteLine("Stopping Application!");
-                        }
+                        instance.Stop();
                     })
                 .StartService();
 

@@ -1,10 +1,7 @@
-﻿using MessageGateway;
-using Messaging.Base;
+﻿using Messaging.Base;
 using Messaging.Base.Constructions;
 using System;
-using System.Collections.Generic;
 using System.Messaging;
-using System.Text;
 
 namespace MessageGateway
 {
@@ -57,6 +54,12 @@ namespace MessageGateway
             this(syncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
             QueueService = new MQService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
+        }
+
+        public SyncProcessMessageDelegate SyncProcessMessageInvocator
+        {
+            get { return _syncProcessMessageInvocator; }
+            set { _syncProcessMessageInvocator = value; }
         }
 
         public override void OnMessageReceived(Message receivedMessage)
