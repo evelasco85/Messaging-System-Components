@@ -12,13 +12,27 @@ namespace CreditBureauFailOver
 
         public FailOverControlReceiver(
             IMessageReceiver<TMessage> inputQueue,
-            FailOverRouter<TMessage> failOverRouter,
             Func<TMessage, FailOverRouteEnum> getRouteFunc
             )
             : base(inputQueue)
         {
-            _failOverRouter = failOverRouter;
             _getRouteFunc = getRouteFunc;
+        }
+
+        public FailOverControlReceiver(
+            IMessageReceiver<TMessage> inputQueue,
+            FailOverRouter<TMessage> failOverRouter,
+            Func<TMessage, FailOverRouteEnum> getRouteFunc
+            )
+            : this(inputQueue, getRouteFunc)
+        {
+            _failOverRouter = failOverRouter;
+        }
+
+        public FailOverRouter<TMessage> FailOverRouter
+        {
+            get { return _failOverRouter; }
+            set { _failOverRouter = value; }
         }
 
         public override void ProcessMessage(TMessage message)

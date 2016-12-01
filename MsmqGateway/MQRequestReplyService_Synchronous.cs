@@ -56,12 +56,6 @@ namespace MessageGateway
             QueueService = new MQService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
         }
 
-        public SyncProcessMessageDelegate SyncProcessMessageInvocator
-        {
-            get { return _syncProcessMessageInvocator; }
-            set { _syncProcessMessageInvocator = value; }
-        }
-
         public override void OnMessageReceived(Message receivedMessage)
         {
             receivedMessage.Formatter = _getFormatterInvocator();

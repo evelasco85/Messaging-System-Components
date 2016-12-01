@@ -2,22 +2,20 @@
 using MessageGateway;
 using System;
 using System.Messaging;
-using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 
 namespace CreditBureauFailOver
 {
     class Program
     {
-        static FailOverRouter<Message> _failOverRouter;
-        static FailOverControlReceiver<Message> _failOverControlReceiver;
-
         static void Main(string[] args)
         {
             string routerControlQueueName = string.Empty;
             string creditQueueName = string.Empty;
             string primaryCreditQueueName = string.Empty;
             string secondaryCreditQueueName = string.Empty;
+
+            ClientInstance<Message> instance = new ClientInstance<Message>();
 
             IMessageFormatter creditBureauRequestFormatter =
                 new XmlMessageFormatter(new Type[] {typeof(CreditBureauRequest)});
@@ -48,19 +46,19 @@ namespace CreditBureauFailOver
                     },
                     () =>
                     {
-                        //Client parameter setup completed
-                        _failOverRouter = new FailOverRouter<Message>(
-                            new MessageReceiverGateway(ToPath(creditQueueName), creditBureauRequestFormatter),
-                            new MessageSenderGateway(ToPath(primaryCreditQueueName)),
-                            new MessageSenderGateway(ToPath(secondaryCreditQueueName))
-                            );
-                        _failOverControlReceiver = new FailOverControlReceiver<Message>(
-                            new MessageReceiverGateway(
-                                ToPath(routerControlQueueName),
-                                failOverRouteEnumFormatter
+                        instance.SetupFailOver(
+                            new FailOverRouter<Message>(
+                                new MessageReceiverGateway(ToPath(creditQueueName), creditBureauRequestFormatter),
+                                new MessageSenderGateway(ToPath(primaryCreditQueueName)),
+                                new MessageSenderGateway(ToPath(secondaryCreditQueueName))
                                 ),
-                            _failOverRouter,
-                            (message => (FailOverRouteEnum) message.Body)
+                            new FailOverControlReceiver<Message>(
+                                new MessageReceiverGateway(
+                                    ToPath(routerControlQueueName),
+                                    failOverRouteEnumFormatter
+                                    ),
+                                (message => (FailOverRouteEnum) message.Body)
+                                )
                             );
 
                         Console.WriteLine("Configurations ok!");
@@ -73,20 +71,12 @@ namespace CreditBureauFailOver
                     () =>
                     {
                         //Start
-                        if (_failOverControlReceiver != null)
-                        {
-                            _failOverControlReceiver.StartProcessing();
-                            Console.WriteLine("Starting Application!");
-                        }
+                        instance.Start();
                     },
                     () =>
                     {
                         //Stop
-                        if (_failOverControlReceiver != null)
-                        {
-                            _failOverControlReceiver.StopProcessing();
-                            Console.WriteLine("Stopping Application!");
-                        }
+                        instance.Stop();
                     })
                 .StartService();
 
