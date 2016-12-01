@@ -75,12 +75,9 @@ namespace ManagementConsole
             _constructCreditBureauRequestMessageFunc = constructCreditBureauRequestMessageFunc;
             _extractMessageCorrelationIdFunc = extractMessageCorrelationIdFunc;
             _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
-            
-
-            StartMonitoring();
         }
 
-        void StartMonitoring()
+        public void StartMonitoring()
         {
             _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
 
@@ -96,6 +93,8 @@ namespace ManagementConsole
             SendTestMessage();
 
             _lastStatus = status.Status;
+
+            Process();
         }
 
         void SendTestMessage()

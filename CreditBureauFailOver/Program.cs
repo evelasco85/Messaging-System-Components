@@ -19,6 +19,9 @@ namespace CreditBureauFailOver
             string primaryCreditQueueName = string.Empty;
             string secondaryCreditQueueName = string.Empty;
 
+            IMessageFormatter creditBureauRequestFormatter = new XmlMessageFormatter(new Type[] {typeof(CreditBureauRequest)});
+            IMessageFormatter failOverRouteEnumFormatter = new XmlMessageFormatter(new Type[] {typeof(FailOverRouteEnum)});
+
             IClientService client = MQOrchestration.GetInstance().CreateClient(
                 args[0],
                 "MSMQ",
@@ -45,13 +48,13 @@ namespace CreditBureauFailOver
                         ToPath(primaryCreditQueueName), ToPath(secondaryCreditQueueName),
                         new MessageReceiverGateway(
                             ToPath(creditQueueName),
-                            new XmlMessageFormatter(new Type[] {typeof(CreditBureauRequest)})
+                            creditBureauRequestFormatter
                             )
                         );
                     _failOverControlReceiver = new FailOverControlReceiver(
                         new MessageReceiverGateway(
                             ToPath(routerControlQueueName),
-                            new XmlMessageFormatter(new Type[] {typeof(FailOverRouteEnum)})
+                            failOverRouteEnumFormatter
                             ),
                         _failOverRouter
                         );

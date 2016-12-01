@@ -23,6 +23,7 @@ namespace ManagementConsole
         private MonitorCreditBureau<Message> _monitor;
         IServerService<Message> _server;
         IList<Tuple<string, string, string>> _clients = new List<Tuple<string, string, string>>();
+        private IMessageFormatter _creditBureauReply = new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
 
         public ManagementConsole(String[] args)
         {
@@ -65,7 +66,7 @@ namespace ManagementConsole
             _monitor = new MonitorCreditBureau<Message>(
                 new MessageSenderGateway(controlBusQueue),
                 new MessageSenderGateway(serviceQueue),
-                new MessageReceiverGateway(monitoringReplyQueue, new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) })),
+                new MessageReceiverGateway(monitoringReplyQueue, _creditBureauReply),
                 new MessageSenderGateway(routerControlQueue),
                 secondsInterval, //Verify status every n-th second(s)
                 timeoutSecondsInterval, //Set n-th second timeout,
@@ -84,7 +85,7 @@ namespace ManagementConsole
                 }),
                 (message =>
                 {
-                    message.Formatter = new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
+                    message.Formatter = _creditBureauReply;
                     string messageBody = string.Empty;
                     string correlationId = message.CorrelationId;
                     bool isCreditBureauReply = message.Body is CreditBureauReply;
@@ -105,7 +106,7 @@ namespace ManagementConsole
                 );
 
             _controlBus.Process();
-            _monitor.Process();
+            _monitor.StartMonitoring();
         }
 
         void RegisterServer(ref IServerService<Message> server)
@@ -306,5 +307,7 @@ namespace ManagementConsole
         {
             StopClients();
         }
+
+        
     }
 }

@@ -1,13 +1,5 @@
-/* Loan Broker Example with MSMQ
- * from Enterprise Integration Patterns (Addison-Wesley, ISBN 0321200683)
- * 
- * Copyright (c) 2003 Gregor Hohpe 
- *
- * This code is supplied as is. No warranties. 
- */
-
 using System;
-using CreditBureau.Models;
+using CommonObjects;
 using MessageGateway;
 using Messaging.Base.Construction;
 using Messaging.Orchestration.Shared.Services;

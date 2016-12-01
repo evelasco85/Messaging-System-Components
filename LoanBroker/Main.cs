@@ -1,11 +1,3 @@
-/* Loan Broker Example with MSMQ
- * from Enterprise Integration Patterns (Addison-Wesley, ISBN 0321200683)
- * 
- * Copyright (c) 2003 Gregor Hohpe 
- *
- * This code is supplied as is. No warranties. 
- */
-
 using System;
 using System.Messaging;
 using Bank;
@@ -35,6 +27,12 @@ namespace LoanBroker {
 	        string proxyRequestQueue = string.Empty;
 	        string proxyReplyQueue = string.Empty;
 	        string controlBusQueue = string.Empty;
+
+
+	        IMessageFormatter loanRequestFormatter = new XmlMessageFormatter(new Type[] {typeof(LoanQuoteRequest)});
+            IMessageFormatter loanReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
+            IMessageFormatter creditBureauReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) });
+            IMessageFormatter bankQuoteReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(BankQuoteReply) });
 
 	        LoanBrokerProxy<MessageQueue, Message> loanBrokerProxy = null;
             IRequestReply_Asynchronous<Message> queueService = null;
@@ -76,10 +74,10 @@ namespace LoanBroker {
                     /*Proxy Setup*/
 	                IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
 	                    ToPath(proxyReplyQueue),
-	                    GetLoanReplyFormatter()
+                        loanReplyFormatter
 	                    );
                     IMessageSender<Message> proxyRequestSender = new MessageSenderGateway(ToPath(proxyRequestQueue));
-                    IMessageReceiver<Message> loanRequestReceiver = new MessageReceiverGateway(ToPath(requestQueueName), GetLoanRequestFormatter());
+                    IMessageReceiver<Message> loanRequestReceiver = new MessageReceiverGateway(ToPath(requestQueueName), loanRequestFormatter);
 	                IMessageSender<Message> controlBus = new MessageSenderGateway(ToPath(controlBusQueue));
 
 
@@ -109,7 +107,7 @@ namespace LoanBroker {
                     /*Bank Gateway Setup*/
 	                IMessageReceiver<MessageQueue, Message> bankReplyQueue = new MessageReceiverGateway(
                         ToPath(bankReplyQueueName),
-	                    GetBankQuoteReplyFormatter()
+                        bankQuoteReplyFormatter
 	                    );
                     BankGateway<Message> bankInterface = new BankGateway<Message>(
                         bankReplyQueue,
@@ -123,7 +121,7 @@ namespace LoanBroker {
                         }),
                         (message =>
                         {
-                            message.Formatter = GetBankQuoteReplyFormatter();
+                            message.Formatter = bankQuoteReplyFormatter;
 
                             return new Tuple<int, bool, BankQuoteReply>(
                                 message.AppSpecific,
@@ -140,7 +138,7 @@ namespace LoanBroker {
 	                IMessageReceiver<Message> creditBureauReceiver =
 	                    new MessageReceiverGateway(
                             ToPath(creditReplyQueueName),
-                            GetCreditBureauReplyFormatter()
+                            creditBureauReplyFormatter
 	                        );
                     ICreditBureauGateway creditBureauInterface = new CreditBureauGatewayImp<Message>(
                         creditBureauSender,
@@ -154,7 +152,7 @@ namespace LoanBroker {
                         }),
                         (message =>
                         {
-                            message.Formatter = GetCreditBureauReplyFormatter();
+                            message.Formatter = creditBureauReplyFormatter;
 
                             return new Tuple<int, bool, CreditBureauReply>(
                                 message.AppSpecific,
@@ -215,26 +213,6 @@ namespace LoanBroker {
 	        Console.WriteLine("Press Enter to exit...");
 	        Console.ReadLine();
 	    }
-
-	    static IMessageFormatter GetLoanRequestFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteRequest) });
-        }
-
-        static IMessageFormatter GetLoanReplyFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
-        }
-
-        static IMessageFormatter GetCreditBureauReplyFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
-        }
-
-        static IMessageFormatter GetBankQuoteReplyFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { typeof(BankQuoteReply) });
-        }
 
         private static String ToPath(String arg){
 			return ".\\private$\\" + arg;

@@ -8,7 +8,7 @@
 
 using System;
 using System.Threading;
-using CreditBureau.Models;
+using CommonObjects;
 
 namespace CreditBureau
 {

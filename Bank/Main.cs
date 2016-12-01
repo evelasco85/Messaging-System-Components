@@ -1,11 +1,3 @@
-/* Loan Broker Example with MSMQ
- * from Enterprise Integration Patterns (Addison-Wesley, ISBN 0321200683)
- * 
- * Copyright (c) 2003 Gregor Hohpe 
- *
- * This code is supplied as is. No warranties. 
- */
-
 using System;
 using Bank.Models;
 using MessageGateway;
@@ -79,14 +71,11 @@ namespace Bank
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");
             Console.ReadLine();
-
         }
 		
         private	static String ToPath(String	arg)
         {
             return ".\\private$\\" + arg;
         }
-
     }
-
 }
