@@ -52,14 +52,20 @@ namespace CreditBureau
                 () =>
                 {
                     //Start
-                    queueService.Run();
-                    Console.WriteLine("Starting Application!");
+                    if (queueService != null)
+                    {
+                        queueService.Run();
+                        Console.WriteLine("Starting Application!");
+                    }
                 },
                 () =>
                 {
                     //Stop
-                    queueService.StopRunning();
-                    Console.WriteLine("Stopping Application!");
+                    if (queueService != null)
+                    {
+                        queueService.StopRunning();
+                        Console.WriteLine("Stopping Application!");
+                    }
                 });
 
             client.Process();

@@ -69,14 +69,20 @@ namespace CreditBureauFailOver
                 () =>
                 {
                     //Start
-                    _failOverControlReceiver.StartProcessing();
-                    Console.WriteLine("Starting Application!");
+                    if (_failOverControlReceiver != null)
+                    {
+                        _failOverControlReceiver.StartProcessing();
+                        Console.WriteLine("Starting Application!");
+                    }
                 },
                 () =>
                 {
                     //Stop
-                    _failOverControlReceiver.StopProcessing();
-                    Console.WriteLine("Stopping Application!");
+                    if (_failOverControlReceiver != null)
+                    {
+                        _failOverControlReceiver.StopProcessing();
+                        Console.WriteLine("Stopping Application!");
+                    }
                 });
 
                 client.Process();

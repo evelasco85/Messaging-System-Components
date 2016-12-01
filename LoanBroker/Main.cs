@@ -192,18 +192,24 @@ namespace LoanBroker {
 	            () =>
 	            {
 	                //Start
-	                loanBrokerProxy.Process();
-                    queueService.Run();
+                    if ((queueService != null) && (loanBrokerProxy != null))
+	                {
+	                    loanBrokerProxy.Process();
+	                    queueService.Run();
 
-	                Console.WriteLine("Starting Application!");
+	                    Console.WriteLine("Starting Application!");
+	                }
 	            },
 	            () =>
 	            {
 	                //Stop
-	                loanBrokerProxy.StopProcessing();
-                    queueService.StopRunning();
+                    if ((queueService != null) && (loanBrokerProxy != null))
+	                {
+	                    loanBrokerProxy.StopProcessing();
+	                    queueService.StopRunning();
 
-	                Console.WriteLine("Stopping Application!");
+                        Console.WriteLine("Stopping Application!");
+	                }
 	            });
 
 	        client.Process();

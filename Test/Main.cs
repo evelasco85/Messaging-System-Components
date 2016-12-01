@@ -60,14 +60,20 @@ namespace Test
                 () =>
                 {
                     //Start
-                    test.Process();
-                    Console.WriteLine("Starting Application!");
+                    if (test != null)
+                    {
+                        test.Process();
+                        Console.WriteLine("Starting Application!");
+                    }
                 },
                 () =>
                 {
                     //Stop
-                    test.StopProcessing();
-                    Console.WriteLine("Stopping Application!");
+                    if (test != null)
+                    {
+                        test.StopProcessing();
+                        Console.WriteLine("Stopping Application!");
+                    }
                 });
 
             client.Process();
