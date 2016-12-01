@@ -9,8 +9,8 @@ namespace CreditBureauFailOver
 {
     class Program
     {
-        static FailOverRouter _failOverRouter;
-        static FailOverControlReceiver _failOverControlReceiver;
+        static FailOverRouter<Message> _failOverRouter;
+        static FailOverControlReceiver<Message> _failOverControlReceiver;
 
         static void Main(string[] args)
         {
@@ -44,19 +44,18 @@ namespace CreditBureauFailOver
                 () =>
                 {
                     //Client parameter setup completed
-                    _failOverRouter = new FailOverRouter(
-                        ToPath(primaryCreditQueueName), ToPath(secondaryCreditQueueName),
-                        new MessageReceiverGateway(
-                            ToPath(creditQueueName),
-                            creditBureauRequestFormatter
-                            )
+                    _failOverRouter = new FailOverRouter<Message>(
+                        new MessageReceiverGateway(ToPath(creditQueueName),creditBureauRequestFormatter),
+                        new MessageSenderGateway(ToPath(primaryCreditQueueName)),
+                        new MessageSenderGateway(ToPath(secondaryCreditQueueName))
                         );
-                    _failOverControlReceiver = new FailOverControlReceiver(
+                    _failOverControlReceiver = new FailOverControlReceiver<Message>(
                         new MessageReceiverGateway(
                             ToPath(routerControlQueueName),
                             failOverRouteEnumFormatter
                             ),
-                        _failOverRouter
+                        _failOverRouter,
+                        (message => (FailOverRouteEnum)message.Body)
                         );
 
                     Console.WriteLine("Configurations ok!");

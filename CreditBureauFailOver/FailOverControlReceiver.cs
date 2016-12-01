@@ -2,22 +2,28 @@
 using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
 using System;
-using System.Messaging;
 
 namespace CreditBureauFailOver
 {
-    public class FailOverControlReceiver : MessageConsumer<Message>
+    public class FailOverControlReceiver<TMessage> : MessageConsumer<TMessage>
     {
-        FailOverRouter _failOverRouter;
-        public FailOverControlReceiver(IMessageReceiver<Message> inputQueue, FailOverRouter failOverRouter)
+        FailOverRouter<TMessage> _failOverRouter;
+        private Func<TMessage, FailOverRouteEnum> _getRouteFunc;
+
+        public FailOverControlReceiver(
+            IMessageReceiver<TMessage> inputQueue,
+            FailOverRouter<TMessage> failOverRouter,
+            Func<TMessage, FailOverRouteEnum> getRouteFunc
+            )
             : base(inputQueue)
         {
             _failOverRouter = failOverRouter;
+            _getRouteFunc = getRouteFunc;
         }
 
-        public override void ProcessMessage(Message message)
+        public override void ProcessMessage(TMessage message)
         {
-            FailOverRouteEnum route = (FailOverRouteEnum)message.Body;
+            FailOverRouteEnum route = _getRouteFunc(message);
 
             if (_failOverRouter == null)
                 return;

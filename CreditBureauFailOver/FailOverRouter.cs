@@ -1,31 +1,31 @@
 ﻿using CommonObjects;
-using MessageGateway;
 using Messaging.Base;
 using Messaging.Base.Routing;
-using System.Messaging;
 
 namespace CreditBureauFailOver
 {
-    public class FailOverRouter : ContextBasedRouter<Message, FailOverRouteEnum>
+    public class FailOverRouter<TMessage> : ContextBasedRouter<TMessage, FailOverRouteEnum>
     {
-        public FailOverRouter(string primaryOutputQueue, string backupOutputQueue,
-            IMessageReceiver<Message> inputQueue)
+        public FailOverRouter(
+            IMessageReceiver<TMessage> inputQueue,
+            params IMessageSender<TMessage>[] outputQueues
+            )
             : base(inputQueue)
         {
-            SetRoute(primaryOutputQueue, backupOutputQueue);
+            SetRoute(outputQueues);
         }
 
-        void SetRoute(string primaryOutputQueue, string backupOutputQueue)
+        void SetRoute(params IMessageSender<TMessage>[] outputQueues)
         {
             this.AddSender(
                 (control) => { return control == FailOverRouteEnum.Primary; },      //Invocation condition
-                new MessageSenderGateway(primaryOutputQueue)
+                outputQueues[0]
                 );
 
             //Fail-over sender
             this.AddSender(
                 (control) => { return control == FailOverRouteEnum.Backup; },              //Invocation condition
-                new MessageSenderGateway(backupOutputQueue)
+                outputQueues[1]
                 );
         }
     }
