@@ -28,53 +28,55 @@ namespace Test
             string mode = string.Empty;
 
             MQOrchestration.GetInstance().CreateClient(
-               args[0],
-               "MSMQ",
-               ToPath(args[1]),
-               ToPath(args[2])
-               )
-               .Register(registration =>
-            {
-                //Server parameter requests
-                registration.RegisterRequiredServerParameters("mode", (value) => mode = (string)value);
-                registration.RegisterRequiredServerParameters("requestQueue", (value) => requestQueue = (string)value);
-                registration.RegisterRequiredServerParameters("replyQueue", (value) => replyQueue = (string)value);
-                registration.RegisterRequiredServerParameters("numMessages", (value) => numMessages = System.Convert.ToInt32(value));
-            },
-                errorMessage =>
+                args[0],
+                "MSMQ",
+                ToPath(args[1]),
+                ToPath(args[2])
+                )
+                .Register(registration =>
                 {
-                    //Invalid registration
+                    //Server parameter requests
+                    registration.RegisterRequiredServerParameters("mode", (value) => mode = (string) value);
+                    registration.RegisterRequiredServerParameters("requestQueue",
+                        (value) => requestQueue = (string) value);
+                    registration.RegisterRequiredServerParameters("replyQueue", (value) => replyQueue = (string) value);
+                    registration.RegisterRequiredServerParameters("numMessages",
+                        (value) => numMessages = System.Convert.ToInt32(value));
                 },
-                () =>
-                {
-                    //Client parameter setup completed
-                    test = new TestLoanBroker(ToPath(requestQueue), ToPath(replyQueue), numMessages);
-                    Console.WriteLine("Configurations ok!");
-                },
-                () =>
-                {
-                    //Stand-by
-                    Console.WriteLine("Stand-by Application!");
-                },
-                () =>
-                {
-                    //Start
-                    if (test != null)
+                    errorMessage =>
                     {
-                        test.Process();
-                        Console.WriteLine("Starting Application!");
-                    }
-                },
-                () =>
-                {
-                    //Stop
-                    if (test != null)
+                        //Invalid registration
+                    },
+                    () =>
                     {
-                        test.StopProcessing();
-                        Console.WriteLine("Stopping Application!");
-                    }
-                })
-                .Process();
+                        //Client parameter setup completed
+                        test = new TestLoanBroker(ToPath(requestQueue), ToPath(replyQueue), numMessages);
+                        Console.WriteLine("Configurations ok!");
+                    },
+                    () =>
+                    {
+                        //Stand-by
+                        Console.WriteLine("Stand-by Application!");
+                    },
+                    () =>
+                    {
+                        //Start
+                        if (test != null)
+                        {
+                            test.Process();
+                            Console.WriteLine("Starting Application!");
+                        }
+                    },
+                    () =>
+                    {
+                        //Stop
+                        if (test != null)
+                        {
+                            test.StopProcessing();
+                            Console.WriteLine("Stopping Application!");
+                        }
+                    })
+                .StartService();
             Console.ReadLine();
         }
 

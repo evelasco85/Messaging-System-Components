@@ -32,8 +32,8 @@ namespace Messaging.Orchestration.Shared.Services
 
     public interface IClientService
     {
-        void Process();
+        void StartService();
         
-        void StopReceivingMessages();
+        void StopService();
     }
 }

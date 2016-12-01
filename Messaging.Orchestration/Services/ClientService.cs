@@ -39,12 +39,12 @@ namespace Messaging.Orchestration.Shared.Services
             _serverResponseConverter = serverResponseConverter;
         }
 
-        public void Process()
+        public void StartService()
         {
             _serverReplyReceiver.StartReceivingMessages();
         }
 
-        public void StopReceivingMessages()
+        public void StopService()
         {
             _serverReplyReceiver.StopReceivingMessages();
         }

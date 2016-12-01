@@ -87,7 +87,7 @@ namespace Messaging.Orchestration.Tests
                 {
                     //Stop
                     //Force stopping this process
-                    _client.StopReceivingMessages();
+                    _client.StopService();
                     _server.StopProcessing();
 
                     //Thread.CurrentThread.Join();
@@ -155,7 +155,7 @@ namespace Messaging.Orchestration.Tests
                 });
 
             _server.StartProcessing();
-            _client.Process();            
+            _client.StartService();            
         }
     }
 }

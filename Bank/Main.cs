@@ -2,7 +2,6 @@ using System;
 using Bank.Models;
 using MessageGateway;
 using Messaging.Base.Construction;
-using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 
 namespace Bank
@@ -73,7 +72,7 @@ namespace Bank
                             Console.WriteLine("Stopping Application!");
                         }
                     })
-                .Process();
+                .StartService();
 
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");
