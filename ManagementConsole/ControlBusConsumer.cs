@@ -1,6 +1,4 @@
-﻿using System.Messaging;
-using MessageGateway;
-using Messaging.Base;
+﻿using Messaging.Base;
 using Messaging.Base.System_Management.SmartProxy;
 
 namespace ManagementConsole

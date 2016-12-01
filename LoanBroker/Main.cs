@@ -5,9 +5,6 @@ using CommonObjects;
 using MessageGateway;
 using Messaging.Base;
 using LoanBroker.Bank;
-using LoanBroker.LoanBroker;
-using Messaging.Base.Construction;
-using Messaging.Base.System_Management.SmartProxy;
 using MsmqGateway;
 
 namespace LoanBroker {
@@ -27,13 +24,6 @@ namespace LoanBroker {
 
 	        ClientInstance<MessageQueue, Message> instance = new ClientInstance<MessageQueue, Message>();
 
-	        IMessageFormatter loanRequestFormatter = new XmlMessageFormatter(new Type[] {typeof(LoanQuoteRequest)});
-            IMessageFormatter loanReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
-            IMessageFormatter creditBureauReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) });
-            IMessageFormatter bankQuoteReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(BankQuoteReply) });
-
-	        
-            
 	        MQOrchestration.GetInstance().CreateClient(
 	            args[0],
 	            "MSMQ",
@@ -66,7 +56,10 @@ namespace LoanBroker {
 	                () =>
 	                {
 	                    //Client parameter setup completed
-	                    //
+                        IMessageFormatter loanRequestFormatter = new XmlMessageFormatter(new Type[] { typeof(LoanQuoteRequest) });
+                        IMessageFormatter loanReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
+                        IMessageFormatter creditBureauReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) });
+                        IMessageFormatter bankQuoteReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(BankQuoteReply) });
 
 	                    /*Proxy Setup*/
 	                    IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
