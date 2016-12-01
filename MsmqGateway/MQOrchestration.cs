@@ -4,18 +4,18 @@ using Messaging.Orchestration.Shared.Services;
 using Messaging.Orchestration.Shared.Services.Interfaces;
 using System;
 using System.Messaging;
+using Messaging.Base;
+using Orchestration;
 
 namespace MsmqGateway
 {
-    public interface IMQOrchestration
+    public interface IMQOrchestration : IBaseOrchestrationRequestResponse<Message>
     {
         IClientService CreateClient(string clientId, string groupId, string serverRequestQueue, string serverReplyQueue);
         IServerService<Message> CreateServer(string serverRequestQueue, string serverReplyQueue);
-        ServerRequestConverterDelegate<Message> CreateServerRequestConverter();
-        SendResponseDelegate<Message> CreateServerSendResponse();
     }
 
-    public class MQOrchestration : IMQOrchestration
+    public class MQOrchestration : BaseOrchestration<Message>, IMQOrchestration
     {
         static IMQOrchestration s_instance = new MQOrchestration();
 
@@ -28,70 +28,56 @@ namespace MsmqGateway
             return s_instance;
         }
 
-        public IClientService CreateClient(string clientId, string groupId, string serverRequestQueue, string serverReplyQueue)
+        public IClientService CreateClient(string clientId, string groupId, string serverRequestQueue,
+            string serverReplyQueue)
         {
-            IClientService client = new ClientService<Message>(
+            return CreateClient(
                 clientId,
                 groupId,
                 new MessageSenderGateway(serverRequestQueue),
                 new MQSelectiveConsumer(
                     serverReplyQueue,
-                    new XmlMessageFormatter(new Type[] { typeof(ServerMessage) }),
-                    clientId),
-                message => //Concrete receiver implementation
-                {
-                    ServerMessage response = null;
-
-                    if (message.Body is ServerMessage)
-                        response = (ServerMessage)message.Body;
-
-                    return response;
-                });
-
-            return client;
+                    new XmlMessageFormatter(new Type[] {typeof(ServerMessage)}),
+                    clientId)
+                );
         }
 
-        
+        public override ServerMessage ConstructServerMessage(Message message)
+        {
+            ServerMessage response = null;
+
+            if (message.Body is ServerMessage)
+                response = (ServerMessage) message.Body;
+
+            return response;
+        }
 
         public IServerService<Message> CreateServer(string serverRequestQueue, string serverReplyQueue)
         {
-            IServerService<Message> server = new ServerService<Message>
-                (
+            return CreateServer(
                 new MessageReceiverGateway(
                     serverRequestQueue,
-                    new XmlMessageFormatter(new Type[] { typeof(ServerRequest) })),
+                    new XmlMessageFormatter(new Type[] {typeof(ServerRequest)})),
                 new MessageSenderGateway(serverReplyQueue));
-
-            return server;
         }
 
-        public ServerRequestConverterDelegate<Message> CreateServerRequestConverter()
+        public override ServerRequest ConstrucServerRequest(Message message)
         {
-            ServerRequestConverterDelegate<Message> converter = (message) =>
-            {
-                ServerRequest request = null;
+            ServerRequest request = null;
 
-                if (message.Body is ServerRequest)
-                    request = (ServerRequest)message.Body;
+            if (message.Body is ServerRequest)
+                request = (ServerRequest) message.Body;
 
-                return request;
-            };
-
-            return converter;
+            return request;
         }
 
-        public SendResponseDelegate<Message> CreateServerSendResponse()
+        public override void ConstructResponseSender(IMessageSender<Message> sender, ServerMessage response)
         {
-            SendResponseDelegate<Message> sendResponse = (sender, response) =>
-            {
-                Message message = new Message(response);
+            Message message = new Message(response);
 
-                message.CorrelationId = response.ClientId;
+            message.CorrelationId = response.ClientId;
 
-                sender.Send(message);
-            };
-
-            return sendResponse;
+            sender.Send(message);
         }
     }
 }

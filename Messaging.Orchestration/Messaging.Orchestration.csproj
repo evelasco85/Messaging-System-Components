@@ -43,6 +43,7 @@
     <Compile Include="Models\ObjectInformation.cs" />
     <Compile Include="Models\QueueTypeEnum.cs" />
     <Compile Include="Models\ServerObjects.cs" />
+    <Compile Include="BaseOrchestration.cs" />
     <Compile Include="Services\ClientService.cs" />
     <Compile Include="Services\Interfaces\IClientService.cs" />
     <Compile Include="Services\Interfaces\IObjectManipulationService.cs" />
