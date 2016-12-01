@@ -77,24 +77,27 @@ namespace ManagementConsole
             _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
         }
 
-        public void StartMonitoring()
+        public override bool StartProcessing()
         {
-            _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
-
-            MonitorStatus status = new MonitorStatus
+            if (!ProcessStarted)
             {
-                Status = MonitorStatus.STATUS_ANNOUNCE,
-                Description = "Monitor On-line",
-                MonitorID = _monitorId
-            };
+                _sendTimer = new Timer(new TimerCallback(this.OnSendTimerEvent), null, _millisecondsInterval, Timeout.Infinite);
 
-            SwitchRoute(FailOverRouteEnum.Standby);
-            SendStatus(status);
-            SendTestMessage();
+                MonitorStatus status = new MonitorStatus
+                {
+                    Status = MonitorStatus.STATUS_ANNOUNCE,
+                    Description = "Monitor On-line",
+                    MonitorID = _monitorId
+                };
 
-            _lastStatus = status.Status;
+                SwitchRoute(FailOverRouteEnum.Standby);
+                SendStatus(status);
+                SendTestMessage();
 
-            Process();
+                _lastStatus = status.Status;
+            }
+
+            return base.StartProcessing();
         }
 
         void SendTestMessage()

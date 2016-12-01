@@ -49,7 +49,7 @@ namespace ManagementConsole
                serverReplyQueue
                );
             RegisterServer(ref _server);
-            _server.Process();
+            _server.StartProcessing();
         }
 
         void RunControlBus(
@@ -104,9 +104,6 @@ namespace ManagementConsole
                         );
                 })
                 );
-
-            _controlBus.Process();
-            _monitor.StartMonitoring();
         }
 
         void RegisterServer(ref IServerService<Message> server)
@@ -300,6 +297,8 @@ namespace ManagementConsole
 
         private void btnActivateAll_Click(object sender, EventArgs e)
         {
+            _controlBus.StartProcessing();
+            _monitor.StartProcessing();
             ActivateClients();
         }
 
@@ -307,7 +306,5 @@ namespace ManagementConsole
         {
             StopClients();
         }
-
-        
     }
 }

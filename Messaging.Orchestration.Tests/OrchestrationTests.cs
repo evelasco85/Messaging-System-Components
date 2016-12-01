@@ -156,7 +156,7 @@ namespace Messaging.Orchestration.Tests
                     return response;
                 });
 
-            _server.Process();
+            _server.StartProcessing();
             _client.Process();            
         }
     }

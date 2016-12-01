@@ -18,7 +18,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             _receiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(ProcessMessage);
         }
 
-        public bool Process()
+        public bool StartProcessing()
         {
             if ((_receiver != null) && (!_processStarted))
             {

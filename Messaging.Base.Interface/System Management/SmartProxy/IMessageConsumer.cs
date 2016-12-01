@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Messaging.Base.System_Management.SmartProxy
+﻿namespace Messaging.Base.System_Management.SmartProxy
 {
     public interface IMessageConsumer
     {
         bool ProcessStarted { get; }
-        bool Process();
+        bool StartProcessing();
         void StopProcessing();
     }
 

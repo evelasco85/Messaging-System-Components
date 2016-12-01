@@ -25,8 +25,8 @@ namespace Messaging.Base.System_Management.SmartProxy
         //Start listening incoming messages
         public virtual void Process()
         {
-            _requestSmartProxyConsumer.Process();     
-            _replySmartProxyConsumer.Process();
+            _requestSmartProxyConsumer.StartProcessing();     
+            _replySmartProxyConsumer.StartProcessing();
         }
 
         public virtual void StopProcessing()

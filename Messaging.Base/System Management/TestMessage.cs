@@ -42,5 +42,15 @@ namespace Messaging.Base.System_Management
         }
 
         public abstract void ReceiveTestMessageResponse(TMessage message);
+
+        public virtual bool StartProcessing()
+        {
+            return base.StartProcessing();
+        }
+
+        public virtual void StopProcessing()
+        {
+            base.StopProcessing();
+        }
     }
 }

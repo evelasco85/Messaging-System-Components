@@ -27,7 +27,7 @@ namespace CreditBureauFailOver
                 SetRoute(route);
 
                 if (!_failOverRouter.ProcessStarted)
-                    _failOverRouter.Process();
+                    _failOverRouter.StartProcessing();
             }
             else
                 Console.WriteLine("Routing credit request on-standby");

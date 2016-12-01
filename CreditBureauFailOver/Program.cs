@@ -69,7 +69,7 @@ namespace CreditBureauFailOver
                 () =>
                 {
                     //Start
-                    _failOverControlReceiver.Process();
+                    _failOverControlReceiver.StartProcessing();
                     Console.WriteLine("Starting Application!");
                 },
                 () =>
