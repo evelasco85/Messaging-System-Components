@@ -1,7 +1,5 @@
 using System;
-using CommonObjects;
-using MessageGateway;
-using MsmqGateway;
+using Messaging.Orchestration.Shared.Services;
 
 namespace CreditBureau
 {
@@ -9,53 +7,10 @@ namespace CreditBureau
     {
         public static void Main(String[] args)
         {
-            String requestQueueName = string.Empty;
             ClientInstance instance = new ClientInstance();
+            IClientService service = MSMQClient.GetClientService(instance, args);
 
-            MQOrchestration.GetInstance().CreateClient(
-                args[0],
-                "MSMQ",
-                ToPath(args[1]),
-                ToPath(args[2])
-                )
-                .Register(registration =>
-                {
-                    //Server parameter requests
-                    registration.RegisterRequiredServerParameters("requestQueueName",
-                        (value) => requestQueueName = (string) value);
-                },
-                    errorMessage =>
-                    {
-                        //Invalid registration
-                    },
-                    () =>
-                    {
-                        //Client parameter setup completed
-                        instance.SetupQueueService(
-                            new MQRequestReplyService_Synchronous(
-                                ToPath(requestQueueName),
-                                new SyncProcessMessageDelegate(instance.Proc.ProcessRequestMessage),
-                                null,
-                                new GetRequestBodyTypeDelegate(() => { return typeof(CreditBureauRequest); })));
-
-                        Console.WriteLine("Configurations ok!");
-                    },
-                    () =>
-                    {
-                        //Stand-by
-                        Console.WriteLine("Stand-by Application!");
-                    },
-                    () =>
-                    {
-                        //Start
-                       instance.Run();
-                    },
-                    () =>
-                    {
-                        //Stop
-                        instance.Stop();
-                    })
-                .StartService();
+            service.StartService();
 
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");

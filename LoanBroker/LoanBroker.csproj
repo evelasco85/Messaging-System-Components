@@ -152,6 +152,7 @@
     <Compile Include="CreditBureauGateway_Mock.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MSMQClient.cs" />
     <Compile Include="Proxy\LoanBrokerProxy.cs" />
     <Compile Include="Proxy\LoanBrokerProxyReplyConsumer.cs" />
     <Compile Include="Proxy\LoanBrokerProxyRequestConsumer.cs" />
