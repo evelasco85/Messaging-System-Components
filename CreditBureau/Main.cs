@@ -15,14 +15,13 @@ namespace CreditBureau
             String requestQueueName = string.Empty;
 
             IRequestReply_Synchronous queueService = null;
-            IClientService client = MQOrchestration.GetInstance().CreateClient(
+            
+            MQOrchestration.GetInstance().CreateClient(
                 args[0],
                 "MSMQ",
                 ToPath(args[1]),
                 ToPath(args[2])
-                );
-
-            client.Register(registration =>
+                ).Register(registration =>
             {
                 //Server parameter requests
                 registration.RegisterRequiredServerParameters("requestQueueName", (value) => requestQueueName = (string)value);
@@ -66,9 +65,8 @@ namespace CreditBureau
                         queueService.StopRunning();
                         Console.WriteLine("Stopping Application!");
                     }
-                });
-
-            client.Process();
+                })
+            .Process();
 
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");

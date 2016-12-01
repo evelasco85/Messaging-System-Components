@@ -27,14 +27,13 @@ namespace Test
             string replyQueue = string.Empty;
             string mode = string.Empty;
 
-            IClientService client = MQOrchestration.GetInstance().CreateClient(
+            MQOrchestration.GetInstance().CreateClient(
                args[0],
                "MSMQ",
                ToPath(args[1]),
                ToPath(args[2])
-               );
-
-            client.Register(registration =>
+               )
+               .Register(registration =>
             {
                 //Server parameter requests
                 registration.RegisterRequiredServerParameters("mode", (value) => mode = (string)value);
@@ -74,9 +73,8 @@ namespace Test
                         test.StopProcessing();
                         Console.WriteLine("Stopping Application!");
                     }
-                });
-
-            client.Process();
+                })
+                .Process();
             Console.ReadLine();
         }
 

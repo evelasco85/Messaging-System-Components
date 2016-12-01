@@ -47,10 +47,8 @@ namespace Messaging.Orchestration.Tests
                         response = (ServerMessage) message.Body;
 
                     return response;
-                });
-
-
-            _client.Register(registration =>
+                })
+                .Register(registration =>
             {
                 //Server parameter requests
                 registration.RegisterRequiredServerParameters("name", (value) => nameValue = (string)value);

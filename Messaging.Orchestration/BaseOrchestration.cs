@@ -13,7 +13,7 @@ namespace Orchestration
 
     public interface IBaseOrchestration<TMessage> : IBaseOrchestrationRequestResponse<TMessage>
     {
-        IClientService CreateClient(
+        IClientServiceSetup CreateClient(
             string clientId, string groupId,
             IMessageSender<TMessage> serverRequestQueue,
             IMessageReceiver<TMessage> serverReplyQueue
@@ -26,13 +26,13 @@ namespace Orchestration
 
     public abstract class BaseOrchestration<TMessage> : IBaseOrchestration<TMessage>
     {
-        public IClientService CreateClient(
+        public IClientServiceSetup CreateClient(
             string clientId, string groupId,
             IMessageSender<TMessage> serverRequestQueue,
             IMessageReceiver<TMessage> serverReplyQueue
             )
         {
-            IClientService client = new ClientService<TMessage>(
+            IClientServiceSetup client = new ClientService<TMessage>(
                 clientId,
                 groupId,
                 serverRequestQueue,

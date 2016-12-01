@@ -36,14 +36,13 @@ namespace LoanBroker {
 
 	        LoanBrokerProxy<MessageQueue, Message> loanBrokerProxy = null;
             IRequestReply_Asynchronous<Message> queueService = null;
-	        IClientService client = MQOrchestration.GetInstance().CreateClient(
+	        MQOrchestration.GetInstance().CreateClient(
 	            args[0],
                 "MSMQ",
 	            ToPath(args[1]),
 	            ToPath(args[2])
-	            );
-
-	        client.Register(registration =>
+	            )
+                .Register(registration =>
 	        {
 	            //Server parameter requests
 	            registration.RegisterRequiredServerParameters("requestQueueName",
@@ -210,9 +209,8 @@ namespace LoanBroker {
 
                         Console.WriteLine("Stopping Application!");
 	                }
-	            });
-
-	        client.Process();
+	            })
+                .Process();
 
 
 	        Console.WriteLine();

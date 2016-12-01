@@ -5,7 +5,7 @@ using Messaging.Orchestration.Shared.Models;
 
 namespace Messaging.Orchestration.Shared.Services
 {
-    public class ClientService<TMessage> : IClientService
+    public class ClientService<TMessage> : IClientService, IClientServiceSetup, IClientService_ParameterRegistration
     {
         private ClientCommandStatus _lastClientStatus = ClientCommandStatus.Inactive;
         string _clientId;
@@ -60,7 +60,7 @@ namespace Messaging.Orchestration.Shared.Services
                 ReceiveServerCommand(response);
         }
 
-        public void Register(
+        public IClientService Register(
             RegisterRequiredServerParametersDelegate registerRequiredServerParametersSequence,
             InvalidRegistrationDelegate invalidRegistrationSequence,
             ClientParameterSetupCompleteDelegate clientParameterSetupCompleteSequence,
@@ -79,6 +79,8 @@ namespace Messaging.Orchestration.Shared.Services
                 registerRequiredServerParametersSequence(this);
                 PerformClientRegistration(_serverParameterRequests);
             }
+
+            return this;
         }
 
         

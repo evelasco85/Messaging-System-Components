@@ -1,10 +1,5 @@
 ﻿using Messaging.Base;
 using Messaging.Orchestration.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messaging.Orchestration.Shared.Services
 {
@@ -23,11 +18,9 @@ namespace Messaging.Orchestration.Shared.Services
         void RegisterRequiredServerParameters(string name, SetParameterDelegate setValueOperator);
     }
 
-    public interface IClientService : IClientService_ParameterRegistration
+    public interface IClientServiceSetup
     {
-        void Process();
-
-        void Register(
+        IClientService Register(
             RegisterRequiredServerParametersDelegate registerRequiredServerParametersSequence,
             InvalidRegistrationDelegate invalidRegistrationSequence,
             ClientParameterSetupCompleteDelegate clientParameterSetupCompleteSequence,
@@ -35,6 +28,12 @@ namespace Messaging.Orchestration.Shared.Services
             StartDelegate startSequence,
             StopDelegate stopSequence
             );
+    }
+
+    public interface IClientService
+    {
+        void Process();
+        
         void StopReceivingMessages();
     }
 }

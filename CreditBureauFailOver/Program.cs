@@ -22,14 +22,13 @@ namespace CreditBureauFailOver
             IMessageFormatter creditBureauRequestFormatter = new XmlMessageFormatter(new Type[] {typeof(CreditBureauRequest)});
             IMessageFormatter failOverRouteEnumFormatter = new XmlMessageFormatter(new Type[] {typeof(FailOverRouteEnum)});
 
-            IClientService client = MQOrchestration.GetInstance().CreateClient(
+            MQOrchestration.GetInstance().CreateClient(
                 args[0],
                 "MSMQ",
                 ToPath(args[1]),
                 ToPath(args[2])
-                );
-
-            client.Register(registration =>
+                )
+                .Register(registration =>
             {
                 //Server parameter requests
                 registration.RegisterRequiredServerParameters("routerControlQueueName", (value) => routerControlQueueName = (string)value);
@@ -82,9 +81,8 @@ namespace CreditBureauFailOver
                         _failOverControlReceiver.StopProcessing();
                         Console.WriteLine("Stopping Application!");
                     }
-                });
-
-                client.Process();
+                })
+                .Process();
 
             Console.WriteLine();
             Console.WriteLine("Press Enter to exit...");
