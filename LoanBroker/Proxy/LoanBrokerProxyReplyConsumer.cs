@@ -6,7 +6,7 @@ using Messaging.Base.System_Management.SmartProxy;
 
 namespace LoanBroker
 {
-    public class LoanBrokerProxySmartProxyReplyConsumer : SmartProxySmartProxyReplyConsumer<MessageQueue, Message, ProxyJournal>
+    public class LoanBrokerProxyReplyConsumer : SmartProxyReplyConsumer<MessageQueue, Message, ProxyJournal>
     {
         public class LoanBrokerProxyInfo
         {
@@ -18,7 +18,7 @@ namespace LoanBroker
         private ArrayList _performanceStats;
         private IMessageSender<Message> _controlBus;
 
-        public LoanBrokerProxySmartProxyReplyConsumer
+        public LoanBrokerProxyReplyConsumer
             (
             IMessageReceiver<Message> serviceReplyReceiver,
             ArrayList queueStats,

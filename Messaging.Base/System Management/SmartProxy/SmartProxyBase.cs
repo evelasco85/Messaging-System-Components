@@ -4,35 +4,35 @@ namespace Messaging.Base.System_Management.SmartProxy
 {
     public class SmartProxyBase<TMessageQueue, TMessage, TJournal> : ISmartProxyBase
     {
-        ISmartProxyRequestSmartProxyConsumer<TMessageQueue, TMessage, TJournal> _requestSmartProxyConsumer;
-        ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, TJournal> _replySmartProxyConsumer;
+        ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> _requestConsumer;
+        ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> _replyConsumer;
         
         protected IList<IMessageReferenceData<TMessageQueue, TJournal>> _referenceData;
 
         public SmartProxyBase(
-            ISmartProxyRequestSmartProxyConsumer<TMessageQueue, TMessage, TJournal> requestSmartProxyConsumer,
-            ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, TJournal> replySmartProxyConsumer)
+            ISmartProxyRequestConsumer<TMessageQueue, TMessage, TJournal> requestConsumer,
+            ISmartProxyReplyConsumer<TMessageQueue, TMessage, TJournal> replyConsumer)
         {
             _referenceData = new List<IMessageReferenceData<TMessageQueue, TJournal>>();
 
-            _requestSmartProxyConsumer = requestSmartProxyConsumer;
-            _replySmartProxyConsumer = replySmartProxyConsumer;
+            _requestConsumer = requestConsumer;
+            _replyConsumer = replyConsumer;
 
-            _requestSmartProxyConsumer.ReferenceData = _referenceData;
-            _replySmartProxyConsumer.ReferenceData = _referenceData;
+            _requestConsumer.ReferenceData = _referenceData;
+            _replyConsumer.ReferenceData = _referenceData;
         }
 
         //Start listening incoming messages
         public virtual void Process()
         {
-            _requestSmartProxyConsumer.StartProcessing();     
-            _replySmartProxyConsumer.StartProcessing();
+            _requestConsumer.StartProcessing();     
+            _replyConsumer.StartProcessing();
         }
 
         public virtual void StopProcessing()
         {
-            _requestSmartProxyConsumer.StopProcessing();
-            _replySmartProxyConsumer.StopProcessing();
+            _requestConsumer.StopProcessing();
+            _replyConsumer.StopProcessing();
         }
     }
 }

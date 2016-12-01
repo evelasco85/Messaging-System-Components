@@ -130,6 +130,7 @@
     <Compile Include="BankGateway.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ClientInstance.cs" />
     <Compile Include="CreditBureau\CreditRequestProcess.cs" />
     <Compile Include="LoanBroker\Process.cs" />
     <Compile Include="LoanBroker\ProcessManager.cs" />

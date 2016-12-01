@@ -9,7 +9,7 @@ namespace Messaging.Base.System_Management.SmartProxy
         public TMessageQueue OriginalReturnAddress { get; set; }
     }
 
-    public abstract class SmartProxySmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessage> , ISmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal>
+    public abstract class SmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal> : MessageConsumer<TMessage> , ISmartProxyMessageConsumer<TMessageQueue, TMessage, TJournal>
     {
         IList<IMessageReferenceData<TMessageQueue, TJournal>> _references;
 
@@ -19,7 +19,7 @@ namespace Messaging.Base.System_Management.SmartProxy
             set { _references = value; }
         }
 
-        public SmartProxySmartProxyMessageConsumer(IMessageReceiver<TMessage> receiver) : base(receiver)
+        public SmartProxyMessageConsumer(IMessageReceiver<TMessage> receiver) : base(receiver)
         {
         }
     }

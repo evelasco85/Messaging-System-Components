@@ -53,13 +53,14 @@ namespace LoanBroker.LoanBroker
             newProcess.StartProcess();
         }
 
-        public void AddSetup(
-            IRequestReply_Asynchronous<TMessage> queueService,
-            Func<TMessage, string> extractProcessIdFunc
-            )
+        public void HookProcessIdExtractor(Func<TMessage, string> extractProcessIdFunc)
+        {
+            _extractProcessIdFunc = extractProcessIdFunc;
+        }
+
+        public void HookQueueService(IRequestReply_Asynchronous<TMessage> queueService)
         {
             _queueService = queueService;
-            _extractProcessIdFunc = extractProcessIdFunc;
         }
 
         public void SendReply(Object responseObject, TMessage originalRequestMessage)

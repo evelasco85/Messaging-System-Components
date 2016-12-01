@@ -6,11 +6,11 @@ using Messaging.Base.System_Management.SmartProxy;
 
 namespace LoanBroker
 {
-    public class LoanBrokerProxySmartProxyRequestConsumer : SmartProxySmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal>
+    public class LoanBrokerProxyRequestConsumer : SmartProxyRequestConsumer<MessageQueue, Message, ProxyJournal>
     {
         ArrayList _queueStats;
 
-        public LoanBrokerProxySmartProxyRequestConsumer(
+        public LoanBrokerProxyRequestConsumer(
             IMessageReceiver<Message> requestReceiver,
             IMessageSender<Message> serviceRequestSender,
             IReturnAddress<Message> serviceReplyReturnAddress,

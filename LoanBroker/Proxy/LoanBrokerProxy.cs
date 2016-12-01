@@ -55,12 +55,12 @@ namespace LoanBroker
 
         public LoanBrokerProxy(
             IMessageSender<TMessage> controlBus,
-            ISmartProxyRequestSmartProxyConsumer<TMessageQueue, TMessage, ProxyJournal> requestSmartProxyConsumer,
-            ISmartProxyReplySmartProxyConsumer<TMessageQueue, TMessage, ProxyJournal> replySmartProxyConsumer,
+            ISmartProxyRequestConsumer<TMessageQueue, TMessage, ProxyJournal> requestConsumer,
+            ISmartProxyReplyConsumer<TMessageQueue, TMessage, ProxyJournal> replyConsumer,
             int interval) :
                 base(
-                requestSmartProxyConsumer,
-                replySmartProxyConsumer
+                requestConsumer,
+                replyConsumer
                 )
         {
             _controlBus = controlBus;

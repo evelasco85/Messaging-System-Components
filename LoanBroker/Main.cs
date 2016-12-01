@@ -25,14 +25,15 @@ namespace LoanBroker {
 	        string proxyReplyQueue = string.Empty;
 	        string controlBusQueue = string.Empty;
 
+	        ClientInstance<MessageQueue, Message> instance = new ClientInstance<MessageQueue, Message>();
 
 	        IMessageFormatter loanRequestFormatter = new XmlMessageFormatter(new Type[] {typeof(LoanQuoteRequest)});
             IMessageFormatter loanReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
             IMessageFormatter creditBureauReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) });
             IMessageFormatter bankQuoteReplyFormatter = new XmlMessageFormatter(new Type[] { typeof(BankQuoteReply) });
 
-	        LoanBrokerProxy<MessageQueue, Message> loanBrokerProxy = null;
-            IRequestReply_Asynchronous<Message> queueService = null;
+	        
+            
 	        MQOrchestration.GetInstance().CreateClient(
 	            args[0],
 	            "MSMQ",
@@ -77,38 +78,28 @@ namespace LoanBroker {
 	                        ToPath(requestQueueName), loanRequestFormatter);
 	                    IMessageSender<Message> controlBus = new MessageSenderGateway(ToPath(controlBusQueue));
 
-
-	                    ISmartProxyRequestSmartProxyConsumer<MessageQueue, Message, ProxyJournal> requestSmartProxyConsumer
-	                        =
-	                        new LoanBrokerProxySmartProxyRequestConsumer(
+	                    instance.SetupLoanBrokerProxy(
+	                        controlBus,
+	                        new LoanBrokerProxyRequestConsumer(
 	                            loanRequestReceiver,
 	                            proxyRequestSender,
 	                            proxyReplyReceiver.AsReturnAddress(),
 	                            LoanBrokerProxy<MessageQueue, Message>.SQueueStats
-	                            );
-
-	                    ISmartProxyReplySmartProxyConsumer<MessageQueue, Message, ProxyJournal> replySmartProxyConsumer =
-	                        new LoanBrokerProxySmartProxyReplyConsumer(
+	                            ),
+	                        new LoanBrokerProxyReplyConsumer(
 	                            proxyReplyReceiver,
 	                            LoanBrokerProxy<MessageQueue, Message>.SQueueStats,
 	                            LoanBrokerProxy<MessageQueue, Message>.S_PerformanceStats,
 	                            controlBus
-	                            );
-
-	                    loanBrokerProxy = new LoanBrokerProxy<MessageQueue, Message>(
-	                        controlBus,
-	                        requestSmartProxyConsumer,
-	                        replySmartProxyConsumer,
-	                        3);
+	                            ));
 	                    /*************/
 
 	                    /*Bank Gateway Setup*/
-	                    IMessageReceiver<MessageQueue, Message> bankReplyQueue = new MessageReceiverGateway(
-	                        ToPath(bankReplyQueueName),
-	                        bankQuoteReplyFormatter
-	                        );
-	                    BankGateway<Message> bankInterface = new BankGateway<Message>(
-	                        bankReplyQueue,
+	                    instance.SetupBankGateway(
+	                        new MessageReceiverGateway(
+	                            ToPath(bankReplyQueueName),
+	                            bankQuoteReplyFormatter
+	                            ),
 	                        new ConnectionsManager<Message>(),
 	                        ((aggregationCorrelationID, request) =>
 	                        {
@@ -126,21 +117,13 @@ namespace LoanBroker {
 	                                message.Body is BankQuoteReply,
 	                                (BankQuoteReply) message.Body
 	                                );
-	                        })
-	                        );
+	                        }));
 	                    /********************/
 
 	                    /*Credit Bureau Setup*/
-	                    IMessageSender<Message> creditBureauSender =
-	                        new MessageSenderGateway(ToPath(creditRequestQueueName));
-	                    IMessageReceiver<Message> creditBureauReceiver =
-	                        new MessageReceiverGateway(
-	                            ToPath(creditReplyQueueName),
-	                            creditBureauReplyFormatter
-	                            );
-	                    ICreditBureauGateway creditBureauInterface = new CreditBureauGatewayImp<Message>(
-	                        creditBureauSender,
-	                        creditBureauReceiver,
+	                    instance.SetupCreditBureauInterface(
+	                        new MessageSenderGateway(ToPath(creditRequestQueueName)),
+	                        new MessageReceiverGateway(ToPath(creditReplyQueueName), creditBureauReplyFormatter),
 	                        ((appSpecific, request) =>
 	                        {
 	                            return new Message(request)
@@ -157,28 +140,20 @@ namespace LoanBroker {
 	                                message.Body is CreditBureauReply,
 	                                (CreditBureauReply) message.Body
 	                                );
-	                        })
-	                        );
+	                        }));
 	                    /*********************/
 
-	                    ProcessManager<Message> processManager = new ProcessManager<Message>(
-	                        bankInterface,
-	                        creditBureauInterface
+                        instance.SetupProcessManager();
+	                    instance.SetupQueueService(
+	                        new MQRequestReplyService_Asynchronous(
+	                            ToPath(proxyRequestQueue),
+	                            new AsyncProcessMessageDelegate(instance.ProcessManager.ProcessRequestMessage),
+	                            null,
+	                            new GetRequestBodyTypeDelegate(instance.ProcessManager.GetRequestBodyType)
+	                            )
 	                        );
-
-	                    queueService = new MQRequestReplyService_Asynchronous(
-	                        ToPath(proxyRequestQueue),
-	                        new AsyncProcessMessageDelegate(processManager.ProcessRequestMessage),
-	                        null,
-	                        new GetRequestBodyTypeDelegate(processManager.GetRequestBodyType)
-	                        );
-
-	                    processManager.AddSetup(
-	                        queueService,
-	                        (message => { return message.Id; })
-	                        );
-	                    processManager.CreditBureauInterface.Listen();
-	                    processManager.BankInterface.Listen();
+	                    instance.HookMessageIdExtractor(message => { return message.Id; });
+	                    instance.StartProcessingManagerListening();
 
 	                    Console.WriteLine("Configurations ok!");
 	                },
@@ -190,24 +165,14 @@ namespace LoanBroker {
 	                () =>
 	                {
 	                    //Start
-	                    if ((queueService != null) && (loanBrokerProxy != null))
-	                    {
-	                        loanBrokerProxy.Process();
-	                        queueService.Run();
-
-	                        Console.WriteLine("Starting Application!");
-	                    }
+                        instance.Start();
+	                    Console.WriteLine("Starting Application!");
 	                },
 	                () =>
 	                {
 	                    //Stop
-	                    if ((queueService != null) && (loanBrokerProxy != null))
-	                    {
-	                        loanBrokerProxy.StopProcessing();
-	                        queueService.StopRunning();
-
-	                        Console.WriteLine("Stopping Application!");
-	                    }
+	                    instance.Stop();
+                        Console.WriteLine("Stopping Application!");
 	                })
 	            .StartService();
 
