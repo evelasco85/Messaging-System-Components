@@ -84,7 +84,11 @@ namespace ManagementConsole
                 }),
                 (message =>
                 {
+                    message.Formatter = new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
                     string messageBody = string.Empty;
+                    string correlationId = message.CorrelationId;
+                    bool isCreditBureauReply = message.Body is CreditBureauReply;
+                    CreditBureauReply reply = (CreditBureauReply) message.Body;
 
                     using (StreamReader reader = new StreamReader(message.BodyStream))
                     {
@@ -92,10 +96,10 @@ namespace ManagementConsole
                     }
 
                     return new Tuple<string, bool, string, CreditBureauReply>(
-                        message.CorrelationId,
-                        message.Body is CreditBureauReply,
+                        correlationId,
+                        isCreditBureauReply,
                         messageBody,
-                        (CreditBureauReply)message.Body
+                        reply
                         );
                 })
                 );
