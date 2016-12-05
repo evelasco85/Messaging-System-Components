@@ -1,17 +1,9 @@
-/* Loan Broker Example with MSMQ
- * from Enterprise Integration Patterns (Addison-Wesley, ISBN 0321200683)
- * 
- * Copyright (c) 2003 Gregor Hohpe 
- *
- * This code is supplied as is. No warranties. 
- */
-
 using System;
 using Messaging.Base;
 using Messaging.Base.Routing;
 using System.Linq;
 using System.Collections.Generic;
-using MessageGateway;
+using MsmqGateway.Core;
 
 namespace LoanBroker.Bank
 {

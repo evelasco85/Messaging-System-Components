@@ -1,12 +1,10 @@
-﻿using MessageGateway;
-using Messaging.Base;
+﻿using Messaging.Base;
 using Messaging.Base.Constructions;
 using System;
-using System.Collections.Generic;
 using System.Messaging;
-using System.Text;
+using MsmqGateway.Core;
 
-namespace MessageGateway
+namespace MsmqGateway
 {
     public delegate void AsyncProcessMessageDelegate(Object receivedMessageObject, Message msg);
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using Bank.Models;
-using MessageGateway;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 

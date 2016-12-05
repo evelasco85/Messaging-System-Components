@@ -104,13 +104,13 @@
     </Compile>
     <Compile Include="MQOrchestration.cs" />
     <Compile Include="MQRequestReplyService_Asynchronous.cs" />
-    <Compile Include="MessageQueueGateway.cs">
+    <Compile Include="Core\MessageQueueGateway.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MessageReceiverGateway.cs">
+    <Compile Include="Core\MessageReceiverGateway.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MessageSenderGateway.cs">
+    <Compile Include="Core\MessageSenderGateway.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MockQueue.cs" />
@@ -119,7 +119,7 @@
     </Compile>
     <Compile Include="MQReturnAddress.cs" />
     <Compile Include="MQSelectiveConsumer.cs" />
-    <Compile Include="MQService.cs">
+    <Compile Include="Core\MQService.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MQRequestReplyService_Synchronous.cs" />

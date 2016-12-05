@@ -1,9 +1,9 @@
-﻿using MessageGateway;
-using Messaging.Orchestration.Shared.Models;
+﻿using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services;
 using Messaging.Orchestration.Shared.Services.Interfaces;
 using System;
 using System.Messaging;
+using MsmqGateway.Core;
 using Messaging.Base;
 using Orchestration;
 

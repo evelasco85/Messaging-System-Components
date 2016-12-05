@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
-using MessageGateway;
+using MsmqGateway.Core;
 using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

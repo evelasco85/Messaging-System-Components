@@ -2,7 +2,6 @@ using MsmqGateway;
 using System;
 using System.Messaging;
 using CommonObjects;
-using MessageGateway;
 using Messaging.Orchestration.Shared.Services;
 
 namespace Test

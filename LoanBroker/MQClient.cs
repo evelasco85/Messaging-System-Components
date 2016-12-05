@@ -3,7 +3,7 @@ using System.Messaging;
 using Bank;
 using CommonObjects;
 using LoanBroker.Bank;
-using MessageGateway;
+using MsmqGateway.Core;
 using Messaging.Base;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;

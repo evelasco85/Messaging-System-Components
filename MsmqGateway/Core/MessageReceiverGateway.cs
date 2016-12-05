@@ -1,10 +1,3 @@
-/* Loan Broker Example with MSMQ
- * from Enterprise Integration Patterns (Addison-Wesley, ISBN 0321200683)
- * 
- * Copyright (c) 2003 Gregor Hohpe 
- *
- * This code is supplied as is. No warranties. 
- */
 
 using System.Messaging;
 using System;
@@ -12,7 +5,8 @@ using Messaging.Base;
 using Messaging.Base.Constructions;
 using MsmqGateway;
 
-namespace MessageGateway{
+namespace MsmqGateway.Core
+{
     public class MessageReceiverGateway :
         ReceiverGateway<MessageQueue, Message>
     {

@@ -6,9 +6,8 @@ using System.Linq;
 using System.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using CommonObjects;
-using MessageGateway;
+using MsmqGateway.Core;
 using Messaging.Base;
 
 namespace Web.SignalR.LoanBroker

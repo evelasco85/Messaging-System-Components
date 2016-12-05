@@ -2,8 +2,9 @@
 using Messaging.Base.Constructions;
 using System;
 using System.Messaging;
+using MsmqGateway.Core;
 
-namespace MessageGateway
+namespace MsmqGateway
 {
     public delegate object SyncProcessMessageDelegate(object receivedMessageObject);
     public delegate IMessageFormatter GetFormatterDelegate();

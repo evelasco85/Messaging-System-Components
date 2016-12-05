@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Messaging;
 using CommonObjects;
-using MessageGateway;
+using MsmqGateway.Core;
 using Messaging.Orchestration.Shared.Services;
 using MsmqGateway;
 
