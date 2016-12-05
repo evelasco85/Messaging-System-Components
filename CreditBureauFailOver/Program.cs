@@ -9,7 +9,7 @@ namespace CreditBureauFailOver
         static void Main(string[] args)
         {
             ClientInstance<Message> instance = new ClientInstance<Message>();
-            IClientService service = MSMQClient.GetClientService(instance, args);
+            IClientService service = MQClient.GetClientService(instance, args);
 
             service.StartService();
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Messaging.Base.Constructions;
+﻿using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
@@ -14,6 +11,11 @@ namespace Messaging.Base
     {
         IQueueGateway<TMessageQueue> _queueGateway;
         private bool _started = false;
+
+        public string QueueName
+        {
+            get { return _queueGateway.QueueName; }
+        }
 
         public bool Started
         {

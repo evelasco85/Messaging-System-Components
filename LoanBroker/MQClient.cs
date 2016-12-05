@@ -10,7 +10,7 @@ using MsmqGateway;
 
 namespace LoanBroker
 {
-    class MSMQClient
+    class MQClient
     {
         public static IClientService GetClientService(ClientInstance<MessageQueue, Message> instance, String[] args)
         {

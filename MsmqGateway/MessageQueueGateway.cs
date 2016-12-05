@@ -15,6 +15,11 @@ namespace MessageGateway{
     {
         MessageQueue msgQueue;
 
+        public override string QueueName
+        {
+            get { return msgQueue.QueueName; }
+        }
+
         public void Dispose()
         {
             if (msgQueue != null)

@@ -1,8 +1,5 @@
 using System;
-using Bank.Models;
-using MessageGateway;
 using Messaging.Orchestration.Shared.Services;
-using MsmqGateway;
 
 namespace Bank
 {
@@ -11,7 +8,7 @@ namespace Bank
         public static void Main(String[] args)
         {
             ClientInstance instance = new ClientInstance();
-            IClientService service = MSMQClient.GetClientService(instance, args);
+            IClientService service = MQClient.GetClientService(instance, args);
 
             service.StartService();
 

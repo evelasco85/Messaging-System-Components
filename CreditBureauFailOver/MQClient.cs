@@ -7,7 +7,7 @@ using MsmqGateway;
 
 namespace CreditBureauFailOver
 {
-    class MSMQClient
+    class MQClient
     {
         public static IClientService GetClientService(ClientInstance<Message> instance, String[] args)
         {

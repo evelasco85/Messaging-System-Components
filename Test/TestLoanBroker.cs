@@ -1,27 +1,16 @@
-/* Loan Broker Example with MSMQ
- * from Enterprise Integration Patterns (Addison-Wesley, ISBN 0321200683)
- * 
- * Copyright (c) 2003 Gregor Hohpe 
- *
- * This code is supplied as is. No warranties. 
- */
-
 using System;
-using System.Messaging;
 using System.Collections;
 using System.Threading;
 using CommonObjects;
-using MessageGateway;
 using Messaging.Base;
 using Messaging.Base.Constructions;
 
 namespace Test
 {
-
-    public class TestLoanBroker
+    public class TestLoanBroker<TMessage>
     {
-        protected IMessageSender<MessageQueue, Message> requestQueue;
-        protected MessageReceiverGateway replyQueue;
+        protected IMessageSender<TMessage> _requestQueue;
+        protected IMessageReceiver<TMessage> _replyQueue;
 
         protected int numMessages;
 
@@ -31,37 +20,49 @@ namespace Test
         protected Random random = new Random();
         protected DateTime startTime;
 
-        IReturnAddress<Message> _loanBroakerReturnAddress;
+        IReturnAddress<TMessage> _loanBroakerReturnAddress;
+        private Func<TMessage, Tuple<string, bool, LoanQuoteReply>> _extractLoanQuoteReplyFunc;
+        private Func<int, LoanQuoteRequest, TMessage> _createLoanRequestMessageFunc;
+        private Func<object, Tuple<bool, LoanQuoteRequest>> _extractLoanQueueRequestFunc;
+        private Func<TMessage, string> _extractMessageIdFunc;
 
-        protected IMessageFormatter GetFormatter()
+
+        public TestLoanBroker(
+            IMessageSender<TMessage> requestQueue,
+            IMessageReceiver<TMessage> replyQueue,
+            int numMessages,
+            Func <TMessage, string> extractMessageIdFunc,
+            Func<int, LoanQuoteRequest, TMessage> createLoanRequestMessageFunc,
+            Func<object, Tuple<bool, LoanQuoteRequest>> extractLoanQueueRequestFunc,
+            Func<TMessage, Tuple<string, bool, LoanQuoteReply>> extractLoanQuoteReplyFunc
+            )
         {
-            return new XmlMessageFormatter(new Type[] {typeof(LoanQuoteReply)});
-        }
+            _requestQueue = requestQueue;
+            _replyQueue = replyQueue;
+            _loanBroakerReturnAddress = _replyQueue.AsReturnAddress();
 
-        public TestLoanBroker(String requestQueueName, String replyQueueName, int numMessages)
-        {
-            requestQueue = new MessageSenderGateway(requestQueueName);
-            replyQueue = new MessageReceiverGateway(replyQueueName, GetFormatter());
-            replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
+            _extractMessageIdFunc = extractMessageIdFunc;
+            _createLoanRequestMessageFunc = createLoanRequestMessageFunc;
+            _extractLoanQueueRequestFunc = extractLoanQueueRequestFunc;
+            _extractLoanQuoteReplyFunc = extractLoanQuoteReplyFunc;
 
-            _loanBroakerReturnAddress = replyQueue.AsReturnAddress();
-
+            _replyQueue.ReceiveMessageProcessor += new MessageDelegate<TMessage>(OnMessage);
             
             this.numMessages = numMessages;
             messageBuffer = new Hashtable();
             sentTimeBuffer = new Hashtable();
 
-            Console.WriteLine("Sending {0} messages to {1}. Expecting replies on {2}", numMessages, requestQueueName, replyQueueName);
+            Console.WriteLine("Sending {0} messages to {1}. Expecting replies on {2}", numMessages, requestQueue.QueueName, replyQueue.QueueName);
         }
 
         public void StopProcessing()
         {
-            replyQueue.StopReceivingMessages();
+            _replyQueue.StopReceivingMessages();
         }
 
         public void Process()
         {
-            replyQueue.StartReceivingMessages();
+            _replyQueue.StartReceivingMessages();
             startTime = DateTime.Now;
 
             Func<int, bool> loopCondition = (currentCount) =>
@@ -76,15 +77,16 @@ namespace Test
                 req.LoanAmount = random.Next(20) * 5000 + 25000;
                 req.LoanTerm = random.Next(72) + 12;
 
-                Message msg = new Message(req);
-                msg.AppSpecific = count;
+                TMessage msg = _createLoanRequestMessageFunc(count, req);
 
                 _loanBroakerReturnAddress.SetMessageReturnAddress(ref msg);
+                _requestQueue.Send(msg);
 
-                requestQueue.Send(msg);
-                Console.WriteLine("Sent Request {0} {1:c} MsgID = {2}", req.SSN, req.LoanAmount, msg.Id);
-                messageBuffer.Add(msg.Id, msg);
-                sentTimeBuffer.Add(msg.Id, DateTime.Now);
+                string messageId = _extractMessageIdFunc(msg);
+
+                Console.WriteLine("Sent Request {0} {1:c} MsgID = {2}", req.SSN, req.LoanAmount, messageId);
+                messageBuffer.Add(messageId, msg);
+                sentTimeBuffer.Add(messageId, DateTime.Now);
 
                 Thread.Sleep(100);
             }
@@ -109,11 +111,14 @@ namespace Test
                     while (e.MoveNext())
                     {
                         Console.WriteLine("{0}", e.Key);
-                        Message msg = (Message)e.Value;
-                        if (msg.Body is LoanQuoteRequest)
+
+                        Tuple<bool, LoanQuoteRequest> requestInfo = _extractLoanQueueRequestFunc(e.Value);
+                        bool isLoanRequest = requestInfo.Item1;
+                        LoanQuoteRequest request = requestInfo.Item2;
+
+                        if (isLoanRequest)
                         {
-                            LoanQuoteRequest req = (LoanQuoteRequest)msg.Body;
-                            Console.WriteLine("   {0} {1:c} {2}", req.SSN, req.LoanAmount, req.LoanTerm);
+                            Console.WriteLine("   {0} {1:c} {2}", request.SSN, request.LoanAmount, request.LoanTerm);
                         }
                     }
                 }
@@ -121,23 +126,27 @@ namespace Test
  
         }
 
-        private void OnMessage(Message msg)
+        private void OnMessage(TMessage msg)
         {
-            msg.Formatter = GetFormatter();
+            Tuple<string, bool, LoanQuoteReply> replyInfo = _extractLoanQuoteReplyFunc(msg);
+
+            bool isLoanQuoteReply = replyInfo.Item2;
+            LoanQuoteReply reply = replyInfo.Item3;
+            string correlationId = replyInfo.Item1;
+
             try
             {
-                if (msg.Body is LoanQuoteReply)
+                if (isLoanQuoteReply)
                 {
-                    LoanQuoteReply reply = (LoanQuoteReply)msg.Body;
                     Console.WriteLine("Received response: {0} {1:c} {2} {3}", reply.SSN, reply.LoanAmount, reply.InterestRate, reply.QuoteID);
-                    if (messageBuffer.Contains(msg.CorrelationId))
+                    if (messageBuffer.Contains(correlationId))
                     {
-                        Message requestMsg = (Message)(messageBuffer[msg.CorrelationId]);
-                        DateTime sentTime = (DateTime)(sentTimeBuffer[msg.CorrelationId]);
+                        TMessage requestMsg = (TMessage)(messageBuffer[correlationId]);
+                        DateTime sentTime = (DateTime)(sentTimeBuffer[correlationId]);
                         TimeSpan duration = DateTime.Now - sentTime;
                         AggregateResponseTime += duration.TotalSeconds;
                         Console.WriteLine("  Matched to request - {0:f} seconds", duration.TotalSeconds);
-                        messageBuffer.Remove(msg.CorrelationId);
+                        messageBuffer.Remove(correlationId);
 
                         if (messageBuffer.Count == 0)
                         {
@@ -146,7 +155,7 @@ namespace Test
                         }
                     }
                     else
-                        Console.WriteLine("  UNMATCHED response: {0}", msg.CorrelationId);
+                        Console.WriteLine("  UNMATCHED response: {0}", correlationId);
                 }
                 else
                 {

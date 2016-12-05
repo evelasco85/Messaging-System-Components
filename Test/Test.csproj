@@ -126,12 +126,14 @@
     <Compile Include="BankStub.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ClientInstance.cs" />
     <Compile Include="creditBureauStub.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MQClient.cs" />
     <Compile Include="TestBank.cs">
       <SubType>Code</SubType>
     </Compile>

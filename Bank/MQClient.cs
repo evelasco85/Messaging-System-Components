@@ -6,7 +6,7 @@ using MsmqGateway;
 
 namespace Bank
 {
-    class MSMQClient
+    class MQClient
     {
         public static IClientService GetClientService(ClientInstance instance, String[] args)
         {

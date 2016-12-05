@@ -9,7 +9,7 @@ namespace LoanBroker {
 	    public static void Main(String[] args)
 	    {
             ClientInstance<MessageQueue, Message> instance = new ClientInstance<MessageQueue, Message>();
-            IClientService service = MSMQClient.GetClientService(instance, args);
+            IClientService service = MQClient.GetClientService(instance, args);
             
             service.StartService();
 

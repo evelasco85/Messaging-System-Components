@@ -6,7 +6,7 @@ using MsmqGateway;
 
 namespace CreditBureau
 {
-    class MSMQClient
+    class MQClient
     {
         public static IClientService GetClientService(ClientInstance instance, String[] args)
         {

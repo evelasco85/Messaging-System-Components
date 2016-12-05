@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
     public interface IMessageSender
     {
+        string QueueName { get; }
         void SetupSender();
         void Send<TEntity>(TEntity message);
     }

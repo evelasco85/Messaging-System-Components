@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Messaging.Base
+﻿namespace Messaging.Base
 {
     public interface IMessageCore<TMessageQueue>
     {
+        string QueueName { get; }
         TMessageQueue GetQueue();
     }
 }

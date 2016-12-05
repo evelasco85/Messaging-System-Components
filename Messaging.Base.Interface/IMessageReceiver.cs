@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Messaging.Base.Constructions;
+﻿using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
     public interface IMessageReceiver
     {
+        string QueueName { get; }
         bool Started { get; }
         void StartReceivingMessages();
         void StopReceivingMessages();

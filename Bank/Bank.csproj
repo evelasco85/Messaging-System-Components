@@ -128,7 +128,7 @@
     </Compile>
     <Compile Include="Models\Reply.cs" />
     <Compile Include="Models\Request.cs" />
-    <Compile Include="MSMQClient.cs" />
+    <Compile Include="MQClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

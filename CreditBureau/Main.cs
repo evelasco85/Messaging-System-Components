@@ -8,7 +8,7 @@ namespace CreditBureau
         public static void Main(String[] args)
         {
             ClientInstance instance = new ClientInstance();
-            IClientService service = MSMQClient.GetClientService(instance, args);
+            IClientService service = MQClient.GetClientService(instance, args);
 
             service.StartService();
 

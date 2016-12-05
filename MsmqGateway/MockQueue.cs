@@ -12,13 +12,16 @@ namespace Gateway.Mock
 {
 
     using System.Messaging;
-    using MessageGateway;
     using Messaging.Base;
 
     public class MockQueue: IMessageSender<MessageQueue, Message> , IMessageReceiver<MessageQueue, Message>
     {
         private MessageDelegate<Message> onMsg = new MessageDelegate<Message>(DoNothing);
-	
+
+        public string QueueName
+        {
+            get { return string.Empty; }
+        }
         public void Send(Message msg)
         {
             onMsg(msg);
