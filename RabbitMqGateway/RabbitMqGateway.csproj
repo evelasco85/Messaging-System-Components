@@ -43,7 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Core\MessageQueueGateway.cs" />
+    <Compile Include="Core\MessageReceiverGateway.cs" />
+    <Compile Include="Core\MessageSenderGateway.cs" />
+    <Compile Include="Core\MQService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

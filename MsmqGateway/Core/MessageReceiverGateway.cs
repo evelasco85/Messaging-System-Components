@@ -3,7 +3,6 @@ using System.Messaging;
 using System;
 using Messaging.Base;
 using Messaging.Base.Constructions;
-using MsmqGateway;
 
 namespace MsmqGateway.Core
 {
