@@ -57,6 +57,7 @@
     <Compile Include="System Management\SmartProxy\SmartProxyReplyConsumer.cs" />
     <Compile Include="System Management\SmartProxy\SmartProxyRequestConsumer.cs" />
     <Compile Include="System Management\TestMessage.cs" />
+    <Compile Include="Transformation\CanonicalDataModel.cs" />
     <Compile Include="Transformation\Translator.cs" />
   </ItemGroup>
   <ItemGroup>

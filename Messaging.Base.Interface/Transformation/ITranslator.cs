@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Messaging.Base.Transformation
+﻿namespace Messaging.Base.Transformation
 {
     public delegate TEntityTo TranslationDelegate<TEntityTo, TInput>(TInput entity);
 

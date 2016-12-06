@@ -102,6 +102,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Core\CanonicalDataModel.cs" />
     <Compile Include="MQOrchestration.cs" />
     <Compile Include="MQRequestReplyService_Asynchronous.cs" />
     <Compile Include="Core\MessageQueueGateway.cs">
