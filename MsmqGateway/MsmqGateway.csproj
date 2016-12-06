@@ -119,7 +119,7 @@
     </Compile>
     <Compile Include="MQReturnAddress.cs" />
     <Compile Include="MQSelectiveConsumer.cs" />
-    <Compile Include="Core\MQService.cs">
+    <Compile Include="Core\MessageQueueService.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MQRequestReplyService_Synchronous.cs" />

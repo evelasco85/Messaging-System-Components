@@ -4,13 +4,13 @@ using System.Messaging;
 
 namespace MsmqGateway.Core
 {
-    public class MQService : QueueService<MessageQueue, Message>
+    public class MessageQueueService : QueueService<MessageQueue, Message>
     {
         static protected readonly String InvalidMessageQueueName = ".\\private$\\invalidMessageQueue";
 
         protected Type requestBodyType;
 
-        public MQService(IMessageReceiver<MessageQueue, Message> receiver)
+        public MessageQueueService(IMessageReceiver<MessageQueue, Message> receiver)
             : base(receiver,  new MessageSenderGateway(InvalidMessageQueueName))
         {}
 	

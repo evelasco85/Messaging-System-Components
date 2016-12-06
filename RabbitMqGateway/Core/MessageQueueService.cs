@@ -1,6 +1,6 @@
 ﻿namespace RabbitMqGateway.Core
 {
-    public class MQService
+    public class MessageQueueService
     {
     }
 }

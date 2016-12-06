@@ -43,7 +43,7 @@ namespace MsmqGateway
             ) :
             this(syncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
-            QueueService = new MQService(receiver);
+            QueueService = new MessageQueueService(receiver);
         }
 
         public MQRequestReplyService_Synchronous(
@@ -54,7 +54,7 @@ namespace MsmqGateway
             ):
             this(syncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
         {
-            QueueService = new MQService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
+            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
         }
 
         public override void OnMessageReceived(Message receivedMessage)

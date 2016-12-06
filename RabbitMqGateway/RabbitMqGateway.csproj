@@ -46,11 +46,21 @@
     <Compile Include="Core\MessageQueueGateway.cs" />
     <Compile Include="Core\MessageReceiverGateway.cs" />
     <Compile Include="Core\MessageSenderGateway.cs" />
-    <Compile Include="Core\MQService.cs" />
+    <Compile Include="Core\MessageQueueService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Messaging.Base.Interface\Messaging.Base.Interface.csproj">
+      <Project>{04c09384-803c-46e9-8578-7afbc269a9b0}</Project>
+      <Name>Messaging.Base.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Messaging.Base\Messaging.Base.csproj">
+      <Project>{62819694-7de4-49ed-86d5-3bb599ecb41a}</Project>
+      <Name>Messaging.Base</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
