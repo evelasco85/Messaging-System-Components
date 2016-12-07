@@ -36,11 +36,6 @@ namespace LoanBroker.LoanBroker
             get { return _creditBureauInterface; }
         }
 
-        public Type GetRequestBodyType()
-        {
-            return typeof(LoanQuoteRequest);
-        }
-
         public void ProcessRequestMessage(Object o, TMessage incomingMessage)
         {
             LoanQuoteRequest quoteRequest = (LoanQuoteRequest)o;

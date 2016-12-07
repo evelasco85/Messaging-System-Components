@@ -27,5 +27,10 @@ namespace MsmqGateway.Core
 
             return entity;
         }
+
+        public Type GetRequestBodyType()
+        {
+            return typeof(TEntity);
+        }
     }
 }

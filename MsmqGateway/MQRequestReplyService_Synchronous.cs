@@ -7,70 +7,36 @@ using MsmqGateway.Core;
 namespace MsmqGateway
 {
     public delegate object SyncProcessMessageDelegate(object receivedMessageObject);
-    public delegate IMessageFormatter GetFormatterDelegate();
-    public delegate Type GetRequestBodyTypeDelegate();
 
     public class MQRequestReplyService_Synchronous<TEntity> : RequestReply_Synchronous<MessageQueue, Message>
     {
         private SyncProcessMessageDelegate _syncProcessMessageInvocator;
-        private GetRequestBodyTypeDelegate _getRequestBodyTypeInvocator;
         private CanonicalDataModel<TEntity> _cdm;
 
         MQRequestReplyService_Synchronous(
             CanonicalDataModel<TEntity> cdm,
-            SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            SyncProcessMessageDelegate syncProcessMessageInvocator
             )
         {
             _syncProcessMessageInvocator = syncProcessMessageInvocator;
-
-            if (getRequestBodyTypeInvocator == null)
-                _getRequestBodyTypeInvocator = new GetRequestBodyTypeDelegate(DefaultGetRequestBodyType);
-            else
-                _getRequestBodyTypeInvocator = getRequestBodyTypeInvocator;
-
             _cdm = cdm;
         }
 
 
         public MQRequestReplyService_Synchronous(
             IMessageReceiver<MessageQueue, Message> receiver,
-            CanonicalDataModel<TEntity> cdm,
-            SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            SyncProcessMessageDelegate syncProcessMessageInvocator
             ) :
-                this(cdm, syncProcessMessageInvocator, getRequestBodyTypeInvocator)
-        {
-            QueueService = new MessageQueueService(receiver);
-        }
-
-        public MQRequestReplyService_Synchronous(
-            IMessageReceiver<MessageQueue, Message> receiver,
-            SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
-            ) :
-            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator, getRequestBodyTypeInvocator)
+                this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(receiver);
         }
 
         public MQRequestReplyService_Synchronous(
             String requestQueueName,
-            CanonicalDataModel<TEntity> cdm,
-            SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            SyncProcessMessageDelegate syncProcessMessageInvocator
             ):
-            this(cdm, syncProcessMessageInvocator, getRequestBodyTypeInvocator)
-        {
-            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _cdm.Formatter));
-        }
-
-        public MQRequestReplyService_Synchronous(
-            String requestQueueName,
-            SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
-            ) :
-            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator, getRequestBodyTypeInvocator)
+            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _cdm.Formatter));
         }
@@ -102,16 +68,11 @@ namespace MsmqGateway
             return result;
         }
 
-        Type DefaultGetRequestBodyType()
-        {
-            return typeof(System.String);
-        }
-
         Object GetTypedMessageBody(Message msg)
         {
             try
             {
-                if (msg.Body.GetType().Equals(_getRequestBodyTypeInvocator()))
+                if (msg.Body.GetType().Equals(_cdm.GetRequestBodyType()))
                 {
                     return msg.Body;
                 }

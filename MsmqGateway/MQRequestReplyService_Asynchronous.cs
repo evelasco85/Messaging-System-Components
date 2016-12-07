@@ -8,56 +8,41 @@ namespace MsmqGateway
 {
     public delegate void AsyncProcessMessageDelegate(Object receivedMessageObject, Message msg);
 
-    public class MQRequestReplyService_Asynchronous : RequestReply_Asynchronous<MessageQueue, Message>
+    public class MQRequestReplyService_Asynchronous<TEntity> : RequestReply_Asynchronous<MessageQueue, Message>
     {
         private AsyncProcessMessageDelegate _asyncProcessMessageInvocator;
-        private GetFormatterDelegate _getFormatterInvocator;
-        private GetRequestBodyTypeDelegate _getRequestBodyTypeInvocator;
+        private CanonicalDataModel<TEntity> _cdm;
 
         MQRequestReplyService_Asynchronous(
-            AsyncProcessMessageDelegate asyncProcessMessageInvocator,
-            GetFormatterDelegate getFormatterInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            CanonicalDataModel<TEntity> cdm,
+            AsyncProcessMessageDelegate asyncProcessMessageInvocator
             )
         {
             _asyncProcessMessageInvocator = asyncProcessMessageInvocator;
-
-            if (getFormatterInvocator == null)
-                _getFormatterInvocator = new GetFormatterDelegate(DefaultGetFormatter);
-            else
-                _getFormatterInvocator = getFormatterInvocator;
-
-            if (getRequestBodyTypeInvocator == null)
-                _getRequestBodyTypeInvocator = new GetRequestBodyTypeDelegate(DefaultGetRequestBodyType);
-            else
-                _getRequestBodyTypeInvocator = getRequestBodyTypeInvocator;
+            _cdm = cdm;
         }
 
         public MQRequestReplyService_Asynchronous(
             IMessageReceiver<MessageQueue, Message> receiver,
-            AsyncProcessMessageDelegate asyncProcessMessageInvocator,
-            GetFormatterDelegate getFormatterInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            AsyncProcessMessageDelegate asyncProcessMessageInvocator
             )
-            : this(asyncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            : this(new CanonicalDataModel<TEntity>(), asyncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(receiver);
         }
 
         public MQRequestReplyService_Asynchronous(
             String requestQueueName,
-            AsyncProcessMessageDelegate asyncProcessMessageInvocator,
-            GetFormatterDelegate getFormatterInvocator,
-            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            AsyncProcessMessageDelegate asyncProcessMessageInvocator
             )
-            : this(asyncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            : this(new CanonicalDataModel<TEntity>(), asyncProcessMessageInvocator)
         {
-            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
+            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _cdm.Formatter));
         }
 
         public override void OnMessageReceived(Message receivedMessage)
         {
-            receivedMessage.Formatter = _getFormatterInvocator();
+            receivedMessage.Formatter = _cdm.Formatter;
             Object inBody = GetTypedMessageBody(receivedMessage);
 
             if (inBody != null)
@@ -72,11 +57,6 @@ namespace MsmqGateway
                 _asyncProcessMessageInvocator(receivedMessageObject, msg);
         }
 
-        IMessageFormatter DefaultGetFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { _getRequestBodyTypeInvocator() });
-        }
-
         Type DefaultGetRequestBodyType()
         {
             return typeof(System.String);
@@ -86,7 +66,7 @@ namespace MsmqGateway
         {
             try
             {
-                if (msg.Body.GetType().Equals(_getRequestBodyTypeInvocator()))
+                if (msg.Body.GetType().Equals(_cdm.GetRequestBodyType()))
                 {
                     return msg.Body;
                 }

@@ -40,8 +40,8 @@ namespace Bank
                         instance.SetupQueueService(
                             new MQRequestReplyService_Synchronous<BankQuoteRequest>(
                                 ToPath(requestQueue),
-                                new SyncProcessMessageDelegate(instance.Bank1.ProcessRequestMessage),
-                                new GetRequestBodyTypeDelegate(() => { return typeof(BankQuoteRequest); }))
+                                new SyncProcessMessageDelegate(instance.Bank1.ProcessRequestMessage)
+                                )
                             );
 
                         Console.WriteLine("Configurations ok!");
