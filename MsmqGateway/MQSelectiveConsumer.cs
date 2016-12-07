@@ -7,19 +7,23 @@ using Messaging.Base.Constructions;
 
 namespace MsmqGateway
 {
-    public class MQSelectiveConsumer : ReceiverGateway<MessageQueue, Message>
+    public class MQSelectiveConsumer<TEntity> : ReceiverGateway<MessageQueue, Message>
     {
         private IReturnAddress<Message> _returnAddress;
         private MessageDelegate<Message> _receivedMessageProcessor;
         private string _correlationId;
         bool _continueReceivingMessages = true;
+        private CanonicalDataModel<TEntity> _cdm;
 
-        public MQSelectiveConsumer(MessageQueueGateway messageQueueGateway, 
-            string correlationId
+        public MQSelectiveConsumer(
+            MessageQueueGateway messageQueueGateway, 
+            string correlationId,
+            CanonicalDataModel<TEntity> cdm
             ) : base(messageQueueGateway)
         {
             _returnAddress = new MQReturnAddress(messageQueueGateway);
             _correlationId = correlationId;
+            _cdm = cdm;
         }
 
         public override void SetupReceiver()
@@ -34,22 +38,24 @@ namespace MsmqGateway
             GetQueue().MessageReadPropertyFilter.SentTime = true;
         }
 
-        public MQSelectiveConsumer(String q,
+        public MQSelectiveConsumer(
+            String q,
             string correlationId)
-            : this(new MessageQueueGateway(q), correlationId)
+            : this(new MessageQueueGateway(q), correlationId, new CanonicalDataModel<TEntity>())
         {
+            GetQueue().Formatter = _cdm.Formatter;
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 
-        public MQSelectiveConsumer(String path, MessageDelegate<Message> receiveMessageDelegate,
+        public MQSelectiveConsumer(String q, MessageDelegate<Message> receiveMessageDelegate,
             string correlationId)
-            : this(path, correlationId)
+            : this(q, correlationId)
         {
-            this._receivedMessageProcessor = receiveMessageDelegate;
+            this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
         public MQSelectiveConsumer(MessageQueue q, string correlationId)
-            : this(new MessageQueueGateway(q), correlationId)
+            : this(new MessageQueueGateway(q), correlationId, new CanonicalDataModel<TEntity>())
         {
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
@@ -61,27 +67,15 @@ namespace MsmqGateway
             this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
-        public MQSelectiveConsumer(String q, IMessageFormatter formatter,
-            string correlationId)
-            : this(q, correlationId)
-        {
-            GetQueue().Formatter = formatter;
-
-            this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
-        }
-
-        public MQSelectiveConsumer(String q, IMessageFormatter formatter,
-            MessageDelegate<Message> receiveMessageDelegate,
-            string correlationId)
-            : this(q, formatter, correlationId)
-        {
-            this._receivedMessageProcessor += receiveMessageDelegate;
-        }
-
         public override MessageDelegate<Message> ReceiveMessageProcessor
         {
             get { return _receivedMessageProcessor; }
             set { _receivedMessageProcessor = value; }
+        }
+
+        public CanonicalDataModel<TEntity> CanonicalDataModel
+        {
+            get { return _cdm; }
         }
 
         private void NullImpl(Message msg)
@@ -90,9 +84,8 @@ namespace MsmqGateway
 
         public override void StartReceivingMessages()
         {
-            if (GetQueue().Formatter == null)
-                GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
-
+            //if (GetQueue().Formatter == null)
+            //    GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
             _continueReceivingMessages = true;
 
             while (_continueReceivingMessages)

@@ -35,9 +35,8 @@ namespace Messaging.Orchestration.Tests
                 clientId,
                 groupId,
                 new MessageSenderGateway(ToPath(requestQueue)),
-                new MQSelectiveConsumer(
+                new MQSelectiveConsumer<ServerMessage>(
                     ToPath(replyQueue),
-                    new XmlMessageFormatter(new Type[] {typeof(ServerMessage)}),
                     clientId),
                 message => //Concrete receiver implementation
                 {

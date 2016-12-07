@@ -35,9 +35,8 @@ namespace MsmqGateway
                 clientId,
                 groupId,
                 new MessageSenderGateway(serverRequestQueue),
-                new MQSelectiveConsumer(
+                new MQSelectiveConsumer<ServerMessage>(
                     serverReplyQueue,
-                    new XmlMessageFormatter(new Type[] {typeof(ServerMessage)}),
                     clientId)
                 );
         }
