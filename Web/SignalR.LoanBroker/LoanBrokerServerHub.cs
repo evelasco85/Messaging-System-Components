@@ -16,7 +16,7 @@ namespace Web.SignalR.LoanBroker
     public class LoanBrokerServerHub : Hub
     {
         readonly LoanBrokerClients _clients;
-        MessageReceiverGateway _replyQueue;
+        MessageReceiverGateway<LoanQuoteReply> _replyQueue;
         IMessageSender<Message> _requestQueue;
         readonly static ConnectionMapper _connectionMap = new ConnectionMapper();
 
@@ -36,15 +36,10 @@ namespace Web.SignalR.LoanBroker
         void SetupMessagingQueue()
         {
             _requestQueue = new MessageSenderGateway(ToPath("loanRequestQueue"));
-            _replyQueue = new MessageReceiverGateway(ToPath("loanReplySignalR_Queue"), GetFormatter());
+            _replyQueue = new MessageReceiverGateway<LoanQuoteReply>(ToPath("loanReplySignalR_Queue"));
 
             _replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
             _replyQueue.StartReceivingMessages();
-        }
-
-        IMessageFormatter GetFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
         }
 
         public string SendRequest(int ssn, double loanAmount, int loanTerm)
@@ -73,7 +68,6 @@ namespace Web.SignalR.LoanBroker
 
         void OnMessage(Message msg)
         {
-            msg.Formatter = GetFormatter();
             try
             {
                 if (msg.Body is LoanQuoteReply)

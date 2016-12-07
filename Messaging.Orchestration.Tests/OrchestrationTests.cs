@@ -94,9 +94,7 @@ namespace Messaging.Orchestration.Tests
 
             _server = new ServerService<Message>
                 (
-                new MessageReceiverGateway(
-                    ToPath(requestQueue),
-                    new XmlMessageFormatter(new Type[] { typeof(ServerRequest) })),
+                new MessageReceiverGateway<ServerRequest>(ToPath(requestQueue)),
                 new MessageSenderGateway(ToPath(replyQueue)));
 
             _server.Register(

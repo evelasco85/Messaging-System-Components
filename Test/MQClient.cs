@@ -15,7 +15,6 @@ namespace Test
             string requestQueue = string.Empty;
             string replyQueue = string.Empty;
             string mode = string.Empty;
-            IMessageFormatter formatter = new XmlMessageFormatter(new Type[] {typeof(LoanQuoteReply)});
 
             return MQOrchestration.GetInstance().CreateClient(
                 args[0],
@@ -40,14 +39,13 @@ namespace Test
                     () =>
                     {
                         //Client parameter setup completed
+                        MessageReceiverGateway<LoanQuoteReply> loanQuoteReplyReceiver = new MessageReceiverGateway<LoanQuoteReply>(ToPath(replyQueue));
+
                         instance.SetupTestLoanBroker(
                             new MessageSenderGateway(ToPath(requestQueue)),
-                            new MessageReceiverGateway(ToPath(replyQueue), formatter),
+                            loanQuoteReplyReceiver,
                             numMessages,
-                            (message =>
-                            {
-                                return message.Id;
-                            }),
+                            loanQuoteReplyReceiver.CanonicalDataModel.GetMessageId,
                             ((appSpecificId, request) =>
                             {
                                 return new Message(request)
@@ -66,8 +64,6 @@ namespace Test
                             }),
                             (message =>
                             {
-                                message.Formatter = formatter;
-
                                 return new Tuple<string, bool, LoanQuoteReply>
                                     (
                                     message.CorrelationId,

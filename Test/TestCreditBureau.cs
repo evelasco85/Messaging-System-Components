@@ -12,7 +12,7 @@ namespace Test
     {
 
         protected IMessageSender<MessageQueue, Message>  requestQueue;
-        protected MessageReceiverGateway replyQueue;
+        protected MessageReceiverGateway<CreditBureauReply> replyQueue;
         protected int numMessages;
         protected Random random = new Random();
 
@@ -27,10 +27,8 @@ namespace Test
         public TestCreditBureau(String requestQueueName, String replyQueueName, int numMessages)
         {
             requestQueue = new MessageSenderGateway(requestQueueName);
+            replyQueue = new MessageReceiverGateway<CreditBureauReply>(replyQueueName);
 
-            MessageReceiverGateway q = new MessageReceiverGateway(replyQueueName, GetFormatter());
-
-            replyQueue = q;
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
             _creditReturnAddress = replyQueue.AsReturnAddress();
 

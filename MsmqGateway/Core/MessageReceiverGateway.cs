@@ -6,14 +6,22 @@ using Messaging.Base.Constructions;
 
 namespace MsmqGateway.Core
 {
-    public class MessageReceiverGateway :
+    public class MessageReceiverGateway<TEntity> :
         ReceiverGateway<MessageQueue, Message>
     {
         private IReturnAddress<Message> _returnAddress;
         private MessageDelegate<Message> _receivedMessageProcessor;
+        private CanonicalDataModel<TEntity> _cdm;
 
-        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
+        public CanonicalDataModel<TEntity> CanonicalDataModel
         {
+            get { return _cdm; }
+        }
+
+        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway, CanonicalDataModel<TEntity> cdm)
+            : base(messageQueueGateway)
+        {
+            _cdm = cdm;
             _returnAddress = new MQReturnAddress(messageQueueGateway);
         }
 
@@ -29,17 +37,17 @@ namespace MsmqGateway.Core
             GetQueue().MessageReadPropertyFilter.SentTime = true;
         }
 
-        public MessageReceiverGateway(String q) : this(new MessageQueueGateway(q))
+        public MessageReceiverGateway(String q, CanonicalDataModel<TEntity> cdm) : this(new MessageQueueGateway(q), cdm)
         {
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 
-        public MessageReceiverGateway(String path, MessageDelegate<Message> receiveMessageDelegate) : this(path)
+        public MessageReceiverGateway(String q, MessageDelegate<Message> receiveMessageDelegate) : this(q, new CanonicalDataModel<TEntity>())
         {
-            this._receivedMessageProcessor = receiveMessageDelegate;
+            this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
-        public MessageReceiverGateway(MessageQueue q) : this(new MessageQueueGateway(q))
+        public MessageReceiverGateway(MessageQueue q) : this(new MessageQueueGateway(q), new CanonicalDataModel<TEntity>())
         {
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
@@ -49,18 +57,11 @@ namespace MsmqGateway.Core
             this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
-        public MessageReceiverGateway(String q, IMessageFormatter formatter) : this(q)
+        public MessageReceiverGateway(String q) : this(q, new CanonicalDataModel<TEntity>())
         {
-            GetQueue().Formatter = formatter;
+            GetQueue().Formatter = _cdm.Formatter;
 
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
-        }
-
-        public MessageReceiverGateway(String q, IMessageFormatter formatter,
-            MessageDelegate<Message> receiveMessageDelegate)
-            : this(q, formatter)
-        {
-            this._receivedMessageProcessor += receiveMessageDelegate;
         }
 
         public override MessageDelegate<Message> ReceiveMessageProcessor
@@ -78,9 +79,10 @@ namespace MsmqGateway.Core
             if(Started)
                 return;
 
-            if (GetQueue().Formatter == null)
-                GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
+            //if (GetQueue().Formatter == null)
+            //    GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
 
+            GetQueue().Formatter = _cdm.Formatter;
             GetQueue().ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
 
             GetQueue().BeginReceive();
@@ -103,6 +105,8 @@ namespace MsmqGateway.Core
         {
             MessageQueue mq = (MessageQueue) source;
             Message m = mq.EndReceive(asyncResult.AsyncResult);
+
+            m.Formatter = _cdm.Formatter;
 
             if (_receivedMessageProcessor != null)
                 _receivedMessageProcessor.Invoke(m);

@@ -54,9 +54,7 @@ namespace MsmqGateway
         public IServerService<Message> CreateServer(string serverRequestQueue, string serverReplyQueue)
         {
             return CreateServer(
-                new MessageReceiverGateway(
-                    serverRequestQueue,
-                    new XmlMessageFormatter(new Type[] {typeof(ServerRequest)})),
+                new MessageReceiverGateway<ServerRequest>(serverRequestQueue),
                 new MessageSenderGateway(serverReplyQueue));
         }
 

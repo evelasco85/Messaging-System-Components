@@ -55,23 +55,10 @@ namespace LoanBroker
                     () =>
                     {
                         //Client parameter setup completed
-                        IMessageFormatter loanRequestFormatter =
-                            new XmlMessageFormatter(new Type[] {typeof(LoanQuoteRequest)});
-                        IMessageFormatter loanReplyFormatter =
-                            new XmlMessageFormatter(new Type[] {typeof(LoanQuoteReply)});
-                        IMessageFormatter creditBureauReplyFormatter =
-                            new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
-                        IMessageFormatter bankQuoteReplyFormatter =
-                            new XmlMessageFormatter(new Type[] {typeof(BankQuoteReply)});
-
                         /*Proxy Setup*/
-                        IMessageReceiver<MessageQueue, Message> proxyReplyReceiver = new MessageReceiverGateway(
-                            ToPath(proxyReplyQueue),
-                            loanReplyFormatter
-                            );
+                        MessageReceiverGateway<LoanQuoteReply> proxyReplyReceiver = new MessageReceiverGateway<LoanQuoteReply>(ToPath(proxyReplyQueue));
                         IMessageSender<Message> proxyRequestSender = new MessageSenderGateway(ToPath(proxyRequestQueue));
-                        IMessageReceiver<Message> loanRequestReceiver = new MessageReceiverGateway(
-                            ToPath(requestQueueName), loanRequestFormatter);
+                        MessageReceiverGateway<LoanQuoteRequest> loanRequestReceiver = new MessageReceiverGateway<LoanQuoteRequest>(ToPath(requestQueueName));
                         IMessageSender<Message> controlBus = new MessageSenderGateway(ToPath(controlBusQueue));
 
                         instance.SetupLoanBrokerProxy(
@@ -91,11 +78,10 @@ namespace LoanBroker
                         /*************/
 
                         /*Bank Gateway Setup*/
+                        MessageReceiverGateway<BankQuoteReply> bankReplyReceiver = new MessageReceiverGateway<BankQuoteReply>(ToPath(bankReplyQueueName));
+
                         instance.SetupBankGateway(
-                            new MessageReceiverGateway(
-                                ToPath(bankReplyQueueName),
-                                bankQuoteReplyFormatter
-                                ),
+                            bankReplyReceiver,
                             new ConnectionsManager<Message>(),
                             ((aggregationCorrelationID, request) =>
                             {
@@ -106,8 +92,6 @@ namespace LoanBroker
                             }),
                             (message =>
                             {
-                                message.Formatter = bankQuoteReplyFormatter;
-
                                 return new Tuple<int, bool, BankQuoteReply>(
                                     message.AppSpecific,
                                     message.Body is BankQuoteReply,
@@ -117,9 +101,11 @@ namespace LoanBroker
                         /********************/
 
                         /*Credit Bureau Setup*/
+                        MessageReceiverGateway<CreditBureauReply> creditBureauReplyReceiver = new MessageReceiverGateway<CreditBureauReply>(ToPath(creditReplyQueueName));
+
                         instance.SetupCreditBureauInterface(
                             new MessageSenderGateway(ToPath(creditRequestQueueName)),
-                            new MessageReceiverGateway(ToPath(creditReplyQueueName), creditBureauReplyFormatter),
+                            creditBureauReplyReceiver,
                             ((appSpecific, request) =>
                             {
                                 return new Message(request)
@@ -129,8 +115,6 @@ namespace LoanBroker
                             }),
                             (message =>
                             {
-                                message.Formatter = creditBureauReplyFormatter;
-
                                 return new Tuple<int, bool, CreditBureauReply>(
                                     message.AppSpecific,
                                     message.Body is CreditBureauReply,

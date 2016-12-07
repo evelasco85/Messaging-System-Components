@@ -19,7 +19,7 @@ namespace MsmqGateway
 		}
 		
 		public Processor(String inputQueueName, String outputQueueName){
-            MessageReceiverGateway q = new MessageReceiverGateway(inputQueueName, _cdm.Formatter);
+            MessageReceiverGateway<string> q = new MessageReceiverGateway<string>(inputQueueName);
             Register(q);
             this.inputQueue = q;
 

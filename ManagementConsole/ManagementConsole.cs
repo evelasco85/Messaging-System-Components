@@ -23,7 +23,6 @@ namespace ManagementConsole
         private MonitorCreditBureau<Message> _monitor;
         IServerService<Message> _server;
         IList<Tuple<string, string, string>> _clients = new List<Tuple<string, string, string>>();
-        private IMessageFormatter _creditBureauReply = new XmlMessageFormatter(new Type[] {typeof(CreditBureauReply)});
 
         public ManagementConsole(String[] args)
         {
@@ -59,14 +58,15 @@ namespace ManagementConsole
             )
         {
             _controlBus = new ControlBusConsumer<Message>(
-                new MessageReceiverGateway(controlBusQueue),
+                new MessageReceiverGateway<string>(controlBusQueue),
                 this.ProcessMessage
                 );
 
+            MessageReceiverGateway<CreditBureauReply> monitoringReplyReceiver = new MessageReceiverGateway<CreditBureauReply>(monitoringReplyQueue);
             _monitor = new MonitorCreditBureau<Message>(
                 new MessageSenderGateway(controlBusQueue),
                 new MessageSenderGateway(serviceQueue),
-                new MessageReceiverGateway(monitoringReplyQueue, _creditBureauReply),
+                monitoringReplyReceiver,
                 new MessageSenderGateway(routerControlQueue),
                 secondsInterval, //Verify status every n-th second(s)
                 timeoutSecondsInterval, //Set n-th second timeout,
@@ -79,13 +79,9 @@ namespace ManagementConsole
 
                     return requestMessage;
                 }),
+                monitoringReplyReceiver.CanonicalDataModel.GetMessageId,
                 (message =>
                 {
-                    return message.Id;
-                }),
-                (message =>
-                {
-                    message.Formatter = _creditBureauReply;
                     string messageBody = string.Empty;
                     string correlationId = message.CorrelationId;
                     bool isCreditBureauReply = message.Body is CreditBureauReply;

@@ -11,7 +11,7 @@ namespace Test
     {
 
         protected IMessageSender<MessageQueue, Message>  requestQueue;
-        protected MessageReceiverGateway replyQueue;
+        protected MessageReceiverGateway<BankQuoteReply> replyQueue;
         protected int numMessages;
 
         private Random random = new Random();
@@ -27,10 +27,7 @@ namespace Test
         public TestBank(String requestQueueName, String replyQueueName, int numMessages)
         {
             requestQueue = new MessageSenderGateway(requestQueueName);
-
-            MessageReceiverGateway q = new MessageReceiverGateway(replyQueueName, GetFormatter());
-
-            replyQueue = q;
+            replyQueue = new MessageReceiverGateway<BankQuoteReply>(replyQueueName);
             replyQueue.ReceiveMessageProcessor += new MessageDelegate<Message>(OnMessage);
             _bankReturnAddress = replyQueue.AsReturnAddress();
 

@@ -37,7 +37,7 @@ namespace MsmqGateway
             )
             : this(new CanonicalDataModel<TEntity>(), asyncProcessMessageInvocator)
         {
-            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _cdm.Formatter));
+            QueueService = new MessageQueueService(new MessageReceiverGateway<TEntity>(requestQueueName));
         }
 
         public CanonicalDataModel<TEntity> CanonicalDataModel

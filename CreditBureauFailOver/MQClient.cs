@@ -40,23 +40,17 @@ namespace CreditBureauFailOver
                     },
                     () =>
                     {
-                        IMessageFormatter creditBureauRequestFormatter =
-                            new XmlMessageFormatter(new Type[] {typeof(CreditBureauRequest)});
-                        IMessageFormatter failOverRouteEnumFormatter =
-                            new XmlMessageFormatter(new Type[] {typeof(FailOverRouteEnum)});
+                        MessageReceiverGateway<FailOverRouteEnum> failOverRouteReceiver =
+                            new MessageReceiverGateway<FailOverRouteEnum>(ToPath(routerControlQueueName));
 
                         instance.SetupFailOver(
                             new FailOverRouter<Message>(
-                                new MessageReceiverGateway(ToPath(creditQueueName), creditBureauRequestFormatter),
+                                new MessageReceiverGateway<CreditBureauRequest>(ToPath(creditQueueName)),
                                 new MessageSenderGateway(ToPath(primaryCreditQueueName)),
                                 new MessageSenderGateway(ToPath(secondaryCreditQueueName))
                                 ),
-                            new FailOverControlReceiver<Message>(
-                                new MessageReceiverGateway(
-                                    ToPath(routerControlQueueName),
-                                    failOverRouteEnumFormatter
-                                    ),
-                                (message => (FailOverRouteEnum) message.Body)
+                            new FailOverControlReceiver<Message>(failOverRouteReceiver,
+                                failOverRouteReceiver.CanonicalDataModel.TranslateToEntity
                                 )
                             );
 
