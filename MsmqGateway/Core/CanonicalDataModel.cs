@@ -32,5 +32,10 @@ namespace MsmqGateway.Core
         {
             return typeof(TEntity);
         }
+
+        public string GetMessageId(Message message)
+        {
+            return message.Id;
+        }
     }
 }

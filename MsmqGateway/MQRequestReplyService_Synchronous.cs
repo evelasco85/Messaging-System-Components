@@ -41,6 +41,11 @@ namespace MsmqGateway
             QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _cdm.Formatter));
         }
 
+        public CanonicalDataModel<TEntity> CanonicalDataModel
+        {
+            get { return _cdm; }
+        }
+
         public override void OnMessageReceived(Message receivedMessage)
         {
             receivedMessage.Formatter = _cdm.Formatter;

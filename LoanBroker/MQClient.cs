@@ -140,13 +140,15 @@ namespace LoanBroker
                         /*********************/
 
                         instance.SetupProcessManager();
-                        instance.SetupQueueService(
-                            new MQRequestReplyService_Asynchronous<LoanQuoteRequest>(
-                                ToPath(proxyRequestQueue),
-                                new AsyncProcessMessageDelegate(instance.ProcessManager.ProcessRequestMessage)
-                                )
+
+                        MQRequestReplyService_Asynchronous<LoanQuoteRequest> requestReplyService = new MQRequestReplyService_Asynchronous
+                            <LoanQuoteRequest>(
+                            ToPath(proxyRequestQueue),
+                            new AsyncProcessMessageDelegate(instance.ProcessManager.ProcessRequestMessage)
                             );
-                        instance.HookMessageIdExtractor(message => { return message.Id; });
+
+                        instance.SetupQueueService(requestReplyService);
+                        instance.HookMessageIdExtractor(requestReplyService.CanonicalDataModel.GetMessageId);
                         instance.StartProcessingManagerListening();
 
                         Console.WriteLine("Configurations ok!");
