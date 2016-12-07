@@ -38,10 +38,9 @@ namespace Bank
                         //Client parameter setup completed
                         instance.SetupBank(bankName, ratePremium, maxLoanTerm);
                         instance.SetupQueueService(
-                            new MQRequestReplyService_Synchronous(
+                            new MQRequestReplyService_Synchronous<BankQuoteRequest>(
                                 ToPath(requestQueue),
                                 new SyncProcessMessageDelegate(instance.Bank1.ProcessRequestMessage),
-                                null,
                                 new GetRequestBodyTypeDelegate(() => { return typeof(BankQuoteRequest); }))
                             );
 

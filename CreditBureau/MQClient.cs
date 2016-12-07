@@ -31,10 +31,9 @@ namespace CreditBureau
                     {
                         //Client parameter setup completed
                         instance.SetupQueueService(
-                            new MQRequestReplyService_Synchronous(
+                            new MQRequestReplyService_Synchronous<CreditBureauRequest>(
                                 ToPath(requestQueueName),
                                 new SyncProcessMessageDelegate(instance.Proc.ProcessRequestMessage),
-                                null,
                                 new GetRequestBodyTypeDelegate(() => { return typeof(CreditBureauRequest); })));
 
                         Console.WriteLine("Configurations ok!");

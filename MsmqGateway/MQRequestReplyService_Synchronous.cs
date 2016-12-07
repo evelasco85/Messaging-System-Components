@@ -10,56 +10,74 @@ namespace MsmqGateway
     public delegate IMessageFormatter GetFormatterDelegate();
     public delegate Type GetRequestBodyTypeDelegate();
 
-    public class MQRequestReplyService_Synchronous : RequestReply_Synchronous<MessageQueue, Message>
+    public class MQRequestReplyService_Synchronous<TEntity> : RequestReply_Synchronous<MessageQueue, Message>
     {
         private SyncProcessMessageDelegate _syncProcessMessageInvocator;
-        private GetFormatterDelegate _getFormatterInvocator;
         private GetRequestBodyTypeDelegate _getRequestBodyTypeInvocator;
+        private CanonicalDataModel<TEntity> _cdm;
 
         MQRequestReplyService_Synchronous(
+            CanonicalDataModel<TEntity> cdm,
             SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetFormatterDelegate getFormatterInvocator,
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             )
         {
             _syncProcessMessageInvocator = syncProcessMessageInvocator;
 
-            if (getFormatterInvocator == null)
-                _getFormatterInvocator = new GetFormatterDelegate(DefaultGetFormatter);
-            else
-                _getFormatterInvocator = getFormatterInvocator;
-
             if (getRequestBodyTypeInvocator == null)
                 _getRequestBodyTypeInvocator = new GetRequestBodyTypeDelegate(DefaultGetRequestBodyType);
             else
                 _getRequestBodyTypeInvocator = getRequestBodyTypeInvocator;
+
+            _cdm = cdm;
+        }
+
+
+        public MQRequestReplyService_Synchronous(
+            IMessageReceiver<MessageQueue, Message> receiver,
+            CanonicalDataModel<TEntity> cdm,
+            SyncProcessMessageDelegate syncProcessMessageInvocator,
+            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            ) :
+                this(cdm, syncProcessMessageInvocator, getRequestBodyTypeInvocator)
+        {
+            QueueService = new MessageQueueService(receiver);
         }
 
         public MQRequestReplyService_Synchronous(
             IMessageReceiver<MessageQueue, Message> receiver,
             SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetFormatterDelegate getFormatterInvocator,
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             ) :
-            this(syncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator, getRequestBodyTypeInvocator)
         {
             QueueService = new MessageQueueService(receiver);
         }
 
         public MQRequestReplyService_Synchronous(
             String requestQueueName,
+            CanonicalDataModel<TEntity> cdm,
             SyncProcessMessageDelegate syncProcessMessageInvocator,
-            GetFormatterDelegate getFormatterInvocator, 
             GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
             ):
-            this(syncProcessMessageInvocator, getFormatterInvocator, getRequestBodyTypeInvocator)
+            this(cdm, syncProcessMessageInvocator, getRequestBodyTypeInvocator)
         {
-            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _getFormatterInvocator()));
+            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _cdm.Formatter));
+        }
+
+        public MQRequestReplyService_Synchronous(
+            String requestQueueName,
+            SyncProcessMessageDelegate syncProcessMessageInvocator,
+            GetRequestBodyTypeDelegate getRequestBodyTypeInvocator
+            ) :
+            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator, getRequestBodyTypeInvocator)
+        {
+            QueueService = new MessageQueueService(new MessageReceiverGateway(requestQueueName, _cdm.Formatter));
         }
 
         public override void OnMessageReceived(Message receivedMessage)
         {
-            receivedMessage.Formatter = _getFormatterInvocator();
+            receivedMessage.Formatter = _cdm.Formatter;
             Object inBody = GetTypedMessageBody(receivedMessage);
 
             if (inBody != null)
@@ -82,11 +100,6 @@ namespace MsmqGateway
                 result = _syncProcessMessageInvocator(receivedMessageObject);
 
             return result;
-        }
-
-        IMessageFormatter DefaultGetFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] { _getRequestBodyTypeInvocator() });
         }
 
         Type DefaultGetRequestBodyType()
