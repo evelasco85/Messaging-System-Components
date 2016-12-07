@@ -78,10 +78,10 @@ namespace LoanBroker
                         /*************/
 
                         /*Bank Gateway Setup*/
-                        MessageReceiverGateway<BankQuoteReply> bankReplyReceiver = new MessageReceiverGateway<BankQuoteReply>(ToPath(bankReplyQueueName));
+                        MessageReceiverGateway<BankQuoteReply> bankQuoteReplyReceiver = new MessageReceiverGateway<BankQuoteReply>(ToPath(bankReplyQueueName));
 
                         instance.SetupBankGateway(
-                            bankReplyReceiver,
+                            bankQuoteReplyReceiver,
                             new ConnectionsManager<Message>(),
                             ((aggregationCorrelationID, request) =>
                             {
@@ -93,9 +93,9 @@ namespace LoanBroker
                             (message =>
                             {
                                 return new Tuple<int, bool, BankQuoteReply>(
-                                    message.AppSpecific,
-                                    message.Body is BankQuoteReply,
-                                    (BankQuoteReply) message.Body
+                                    bankQuoteReplyReceiver.CanonicalDataModel.GetMessageAppSpecific(message),
+                                    bankQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
+                                    bankQuoteReplyReceiver.CanonicalDataModel.TranslateToEntity(message)
                                     );
                             }));
                         /********************/
@@ -116,9 +116,9 @@ namespace LoanBroker
                             (message =>
                             {
                                 return new Tuple<int, bool, CreditBureauReply>(
-                                    message.AppSpecific,
-                                    message.Body is CreditBureauReply,
-                                    (CreditBureauReply) message.Body
+                                    creditBureauReplyReceiver.CanonicalDataModel.GetMessageAppSpecific(message),
+                                    creditBureauReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
+                                    creditBureauReplyReceiver.CanonicalDataModel.TranslateToEntity(message)
                                     );
                             }));
                         /*********************/

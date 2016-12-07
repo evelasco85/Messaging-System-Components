@@ -37,5 +37,20 @@ namespace MsmqGateway.Core
         {
             return message.Id;
         }
+
+        public int GetMessageAppSpecific(Message message)
+        {
+            return message.AppSpecific;
+        }
+
+        public string GetMessageCorrelationId(Message message)
+        {
+            return message.CorrelationId;
+        }
+
+        public bool MatchedDataModel(Message message)
+        {
+            return message.Body is TEntity;
+        }
     }
 }

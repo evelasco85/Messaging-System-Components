@@ -66,9 +66,9 @@ namespace Test
                             {
                                 return new Tuple<string, bool, LoanQuoteReply>
                                     (
-                                    message.CorrelationId,
-                                    message.Body is LoanQuoteReply,
-                                    (LoanQuoteReply) message.Body
+                                    loanQuoteReplyReceiver.CanonicalDataModel.GetMessageCorrelationId(message),
+                                    loanQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
+                                    loanQuoteReplyReceiver.CanonicalDataModel.TranslateToEntity(message)
                                     );
                             })
                             );
