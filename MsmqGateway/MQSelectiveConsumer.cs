@@ -84,8 +84,6 @@ namespace MsmqGateway
 
         public override void StartReceivingMessages()
         {
-            //if (GetQueue().Formatter == null)
-            //    GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
             _continueReceivingMessages = true;
 
             while (_continueReceivingMessages)

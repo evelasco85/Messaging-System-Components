@@ -9,6 +9,7 @@ namespace MsmqGateway
 	{
 		protected IMessageReceiver<MessageQueue, Message> inputQueue;
 		protected IMessageSender<MessageQueue, Message>  outputQueue;
+	    private CanonicalDataModel<string> _cdm = new CanonicalDataModel<string>();
 		
 		public Processor(IMessageReceiver<MessageQueue, Message> receiver, IMessageSender<MessageQueue, Message>  sender)
 		{
@@ -18,7 +19,7 @@ namespace MsmqGateway
 		}
 		
 		public Processor(String inputQueueName, String outputQueueName){
-            MessageReceiverGateway q = new MessageReceiverGateway(inputQueueName, GetFormatter());
+            MessageReceiverGateway q = new MessageReceiverGateway(inputQueueName, _cdm.Formatter);
             Register(q);
             this.inputQueue = q;
 
@@ -26,11 +27,6 @@ namespace MsmqGateway
             Console.WriteLine("Processing messages from " + inputQueueName + " to " + outputQueueName);
         }
 				
-        protected virtual IMessageFormatter GetFormatter()
-        {
-            return new XmlMessageFormatter(new Type[] {typeof(System.String)});
-        }
-
 		public void Register(IMessageReceiver<MessageQueue, Message> rec){
 			MessageDelegate<Message> ev = new MessageDelegate<Message>(OnMessage);
 			rec.ReceiveMessageProcessor += ev;
@@ -47,7 +43,7 @@ namespace MsmqGateway
 
         private void OnMessage(Message inMsg)
         {
-            inMsg.Formatter =  GetFormatter();
+            inMsg.Formatter =  _cdm.Formatter;
             Message outMsg = ProcessMessage(inMsg);
             if (outMsg != null) 
             {
