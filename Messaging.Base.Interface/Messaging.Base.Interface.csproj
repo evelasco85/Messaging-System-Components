@@ -59,6 +59,7 @@
     <Compile Include="System Management\SmartProxy\IMessageConsumer.cs" />
     <Compile Include="System Management\SmartProxy\ISmartProxyBase.cs" />
     <Compile Include="System Management\SmartProxy\ISmartProxyReplyConsumer.cs" />
+    <Compile Include="Transformation\ICanonicalDataModel.cs" />
     <Compile Include="Transformation\ITranslator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

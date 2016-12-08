@@ -30,11 +30,11 @@ namespace MsmqGateway.Core
             GetQueue().Send(msg);
         }
 
-        public override void Send<TEntity>(TEntity message)
+        public override void Send<TEntity>(TEntity entity)
         {
             CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
 
-            Send(_cdm.TranslateToMessage(message));
+            Send(_cdm.GetMessage(entity));
         }
 
 	    public override void SetupSender()
