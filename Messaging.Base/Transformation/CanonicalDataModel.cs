@@ -16,19 +16,36 @@
         public CanonicalDataModel()
         {
             _entityTranslator.RegisterTranslator(
-                new TranslationDelegate<TEntity, TMessage>(TranslateToEntity)
-                );
+                new TranslationDelegate<TEntity, TMessage>(
+                    (inputMessage) =>
+                    {
+                        TEntity output;
+
+                        TranslateToEntity(inputMessage, out output);
+
+                        return output;
+                    })
+                    );
 
             _messageTranslator.RegisterTranslator(
-                new TranslationDelegate<TMessage, TEntity>(TranslateToMessage)
-                );
+                new TranslationDelegate<TMessage, TEntity>(
+                    (inputEntity) =>
+                    {
+                        TMessage output;
+
+                        TranslateToMessage(inputEntity, out output);
+
+                        return output;
+                    })
+                    );
         }
 
-        public abstract TMessage TranslateToMessage(TEntity entity);
-        public abstract TEntity TranslateToEntity(TMessage message);
+        public abstract void TranslateToMessage(TEntity entity, out TMessage expectedMessage);
+        public abstract void TranslateToEntity(TMessage message, out TEntity expectedEntity);
 
         public TMessage GetMessage(TEntity entity)
         {
+
             return _messageTranslator.Translate(entity);
         }
 

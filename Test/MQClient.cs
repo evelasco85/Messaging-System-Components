@@ -68,7 +68,7 @@ namespace Test
                                     (
                                     loanQuoteReplyReceiver.CanonicalDataModel.GetMessageCorrelationId(message),
                                     loanQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
-                                    loanQuoteReplyReceiver.CanonicalDataModel.TranslateToEntity(message)
+                                    loanQuoteReplyReceiver.CanonicalDataModel.GetEntity(message)
                                     );
                             })
                             );

@@ -14,18 +14,16 @@ namespace MsmqGateway.Core
         }
 
 
-        public override Message TranslateToMessage(TEntity entity)
+        public override void TranslateToMessage(TEntity entity, out Message output)
         {
-            return new Message(entity);
+            output = new Message(entity);
         }
 
-        public override TEntity TranslateToEntity(Message message)
+        public override void TranslateToEntity(Message message, out TEntity output)
         {
             message.Formatter = _formatter;
 
-            TEntity entity = (TEntity) message.Body;
-
-            return entity;
+            output = (TEntity) message.Body;
         }
 
         public Type GetRequestBodyType()

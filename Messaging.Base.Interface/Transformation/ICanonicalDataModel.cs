@@ -2,8 +2,8 @@
 {
     public interface ICanonicalDataModel<TMessage, TEntity>
     {
-        TMessage TranslateToMessage(TEntity entity);
-        TEntity TranslateToEntity(TMessage message);
+        void TranslateToMessage(TEntity entity, out TMessage expectedMessage);
+        void TranslateToEntity(TMessage message, out TEntity expectedEntity);
         TMessage GetMessage(TEntity entity);
         TEntity GetEntity(TMessage message);
     }

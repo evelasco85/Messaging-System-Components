@@ -95,7 +95,7 @@ namespace LoanBroker
                                 return new Tuple<int, bool, BankQuoteReply>(
                                     bankQuoteReplyReceiver.CanonicalDataModel.GetMessageAppSpecific(message),
                                     bankQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
-                                    bankQuoteReplyReceiver.CanonicalDataModel.TranslateToEntity(message)
+                                    bankQuoteReplyReceiver.CanonicalDataModel.GetEntity(message)
                                     );
                             }));
                         /********************/
@@ -118,7 +118,7 @@ namespace LoanBroker
                                 return new Tuple<int, bool, CreditBureauReply>(
                                     creditBureauReplyReceiver.CanonicalDataModel.GetMessageAppSpecific(message),
                                     creditBureauReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
-                                    creditBureauReplyReceiver.CanonicalDataModel.TranslateToEntity(message)
+                                    creditBureauReplyReceiver.CanonicalDataModel.GetEntity(message)
                                     );
                             }));
                         /*********************/

@@ -50,7 +50,7 @@ namespace CreditBureauFailOver
                                 new MessageSenderGateway(ToPath(secondaryCreditQueueName))
                                 ),
                             new FailOverControlReceiver<Message>(failOverRouteReceiver,
-                                failOverRouteReceiver.CanonicalDataModel.TranslateToEntity
+                                failOverRouteReceiver.CanonicalDataModel.GetEntity
                                 )
                             );
 
