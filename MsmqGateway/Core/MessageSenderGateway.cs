@@ -10,6 +10,8 @@ namespace MsmqGateway.Core
 	public class MessageSenderGateway: SenderGateway<MessageQueue, Message>
 	{
         private IReturnAddress<Message> _returnAddress;
+	    private IList<PropertyMap> _propertyMaps;
+
         
 	    public MessageSenderGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
 	    {
@@ -24,6 +26,21 @@ namespace MsmqGateway.Core
             : this(new MessageQueueGateway(queue))
         { }
 
+        public MessageSenderGateway(MessageQueueGateway messageQueueGateway, IList<PropertyMap> propertyMap)
+            : base(messageQueueGateway)
+        {
+            _propertyMaps = propertyMap;
+            _returnAddress = new MQReturnAddress(messageQueueGateway);
+        }
+
+        public MessageSenderGateway(String q, IList<PropertyMap> propertyMap)
+            : this(new MessageQueueGateway(q), propertyMap)
+        { }
+
+        public MessageSenderGateway(MessageQueue queue, IList<PropertyMap> propertyMap)
+            : this(new MessageQueueGateway(queue), propertyMap)
+        { }
+
 	    public override IReturnAddress<Message> AsReturnAddress()
 	    {
 	        return _returnAddress;
@@ -31,9 +48,7 @@ namespace MsmqGateway.Core
 
         public override Message Send(Message msg)
         {
-            GetQueue().Send(msg);
-
-            return msg;
+            return SendMessage(msg);
         }
 
         public override Message Send<TEntity>(TEntity entity)
@@ -81,6 +96,7 @@ namespace MsmqGateway.Core
 
             return message;
 	    }
+
 	    void ApplyProperties(ref Message message, IList<SenderProperty> propertiesToSet)
 	    {
 	        if (propertiesToSet == null)
