@@ -41,7 +41,7 @@ namespace MsmqGateway.Core
             CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
             Message message = _cdm.GetMessage(entity);
 
-            return Send(message);
+            return SendMessage(message);
         }
 
         public override Message Send<TEntity>(TEntity entity, IList<SenderProperty> propertiesToSet)
@@ -50,7 +50,8 @@ namespace MsmqGateway.Core
             Message message = _cdm.GetMessage(entity);
 
             ApplyProperties(ref message, propertiesToSet);
-            return Send(message);
+
+            return SendMessage(message);
         }
 
 	    public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress)
@@ -59,7 +60,8 @@ namespace MsmqGateway.Core
             Message message = _cdm.GetMessage(entity);
 
             returnAddress.SetMessageReturnAddress(ref message);
-            return Send(message);
+
+            return SendMessage(message);
 	    }
 
 	    public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress, IList<SenderProperty> propertiesToSet)
@@ -69,9 +71,16 @@ namespace MsmqGateway.Core
 
             ApplyProperties(ref message, propertiesToSet);
             returnAddress.SetMessageReturnAddress(ref message);
-            return Send(message);
+
+            return SendMessage(message);
         }
 
+        Message SendMessage(Message message)
+	    {
+            GetQueue().Send(message);
+
+            return message;
+	    }
 	    void ApplyProperties(ref Message message, IList<SenderProperty> propertiesToSet)
 	    {
 	        if (propertiesToSet == null)

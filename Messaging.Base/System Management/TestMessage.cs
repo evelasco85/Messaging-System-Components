@@ -21,11 +21,6 @@ namespace Messaging.Base.System_Management
             _serviceQueue = serviceQueue;
         }
 
-        public void SendControlBusStatus(TMessage statusMessage)
-        {
-            _controlBusQueue.Send(statusMessage);
-        }
-
         public void SendControlBusStatus<TEntity>(TEntity statusMessage)
         {
             _controlBusQueue.Send(statusMessage);
