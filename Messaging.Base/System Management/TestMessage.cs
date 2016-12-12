@@ -1,4 +1,5 @@
-﻿using Messaging.Base.Constructions;
+﻿using System.Collections.Generic;
+using Messaging.Base.Constructions;
 using Messaging.Base.System_Management.SmartProxy;
 
 namespace Messaging.Base.System_Management
@@ -30,10 +31,9 @@ namespace Messaging.Base.System_Management
             _controlBusQueue.Send(statusMessage);
         }
 
-        public void SendTestMessage(TMessage message)
+        public TMessage SendTestMessage<TEntity>(TEntity entity, IList<SenderProperty> properties)
         {
-            _monitorQueueReturnAddress.SetMessageReturnAddress(ref message);
-            _serviceQueue.Send(message);
+            return _serviceQueue.Send(entity, _monitorQueueReturnAddress, properties);
         }
 
         public override void ProcessMessage(TMessage message)

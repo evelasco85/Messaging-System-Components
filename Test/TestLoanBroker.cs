@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using CommonObjects;
 using Messaging.Base;
@@ -22,7 +23,6 @@ namespace Test
 
         IReturnAddress<TMessage> _loanBroakerReturnAddress;
         private Func<TMessage, Tuple<string, bool, LoanQuoteReply>> _extractLoanQuoteReplyFunc;
-        private Func<int, LoanQuoteRequest, TMessage> _createLoanRequestMessageFunc;
         private Func<object, Tuple<bool, LoanQuoteRequest>> _extractLoanQueueRequestFunc;
         private Func<TMessage, string> _extractMessageIdFunc;
 
@@ -32,7 +32,6 @@ namespace Test
             IMessageReceiver<TMessage> replyQueue,
             int numMessages,
             Func <TMessage, string> extractMessageIdFunc,
-            Func<int, LoanQuoteRequest, TMessage> createLoanRequestMessageFunc,
             Func<object, Tuple<bool, LoanQuoteRequest>> extractLoanQueueRequestFunc,
             Func<TMessage, Tuple<string, bool, LoanQuoteReply>> extractLoanQuoteReplyFunc
             )
@@ -42,7 +41,6 @@ namespace Test
             _loanBroakerReturnAddress = _replyQueue.AsReturnAddress();
 
             _extractMessageIdFunc = extractMessageIdFunc;
-            _createLoanRequestMessageFunc = createLoanRequestMessageFunc;
             _extractLoanQueueRequestFunc = extractLoanQueueRequestFunc;
             _extractLoanQuoteReplyFunc = extractLoanQuoteReplyFunc;
 
@@ -77,10 +75,11 @@ namespace Test
                 req.LoanAmount = random.Next(20) * 5000 + 25000;
                 req.LoanTerm = random.Next(72) + 12;
 
-                TMessage msg = _createLoanRequestMessageFunc(count, req);
-
-                _loanBroakerReturnAddress.SetMessageReturnAddress(ref msg);
-                _requestQueue.Send(msg);
+                TMessage msg = _requestQueue.Send(req, _loanBroakerReturnAddress,
+                    new List<SenderProperty>()
+                    {
+                        new SenderProperty(){Name = "AppSpecific", Value = count}
+                    });
 
                 string messageId = _extractMessageIdFunc(msg);
 
@@ -90,6 +89,7 @@ namespace Test
 
                 Thread.Sleep(100);
             }
+
             Console.WriteLine();
             Console.WriteLine("Press 'n' to show number of outstanding messages.");
             Console.WriteLine("Press 'l' to list all outstanding messages.");

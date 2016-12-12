@@ -1,5 +1,6 @@
 using Messaging.Base;
 using System;
+using System.Collections.Generic;
 using System.Messaging;
 
 namespace MsmqGateway.Core
@@ -16,18 +17,21 @@ namespace MsmqGateway.Core
 	
         public override void SendReply(Object responseObject, Message originalRequestMessage)
         {
-            Message responseMessage = new Message(responseObject);
-            responseMessage.CorrelationId = originalRequestMessage.Id;
-            responseMessage.AppSpecific = originalRequestMessage.AppSpecific;
+            List<SenderProperty> properties = new List<SenderProperty>
+            {
+                new SenderProperty() {Name = "CorrelationId", Value = originalRequestMessage.Id},
+                new SenderProperty() {Name = "AppSpecific", Value = originalRequestMessage.AppSpecific}
+            };
 
             if (originalRequestMessage.ResponseQueue != null) 
             {
                 IMessageSender<MessageQueue, Message>  replyQueue = new MessageSenderGateway(originalRequestMessage.ResponseQueue);
-                replyQueue.Send(responseMessage);
+
+                replyQueue.Send(responseObject, properties);
             }
             else
             {
-                this.InvalidQueue.Send(responseMessage);
+                this.InvalidQueue.Send(responseObject, properties);
             }
         }
     }

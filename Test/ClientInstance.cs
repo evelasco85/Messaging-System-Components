@@ -6,17 +6,13 @@ namespace Test
 {
     class ClientInstance<TMessage>
     {
-        
         TestLoanBroker<TMessage> test = null;
-        private IMessageSender<TMessage> _sender;
-        private IMessageReceiver<TMessage> _receiver;
 
         public void SetupTestLoanBroker(
             IMessageSender<TMessage> sender,
             IMessageReceiver<TMessage> receiver,
             int numMessages,
             Func<TMessage, string> extractMessageIdFunc,
-            Func<int, LoanQuoteRequest, TMessage> createLoanRequestMessageFunc,
             Func<object, Tuple<bool, LoanQuoteRequest>> extractLoanQueueRequestFunc,
             Func<TMessage, Tuple<string, bool, LoanQuoteReply>> extractLoanQuoteReplyFunc
             )
@@ -26,7 +22,6 @@ namespace Test
                 receiver,
                 numMessages,
                 extractMessageIdFunc,
-                createLoanRequestMessageFunc,
                 extractLoanQueueRequestFunc,
                 extractLoanQuoteReplyFunc
                 );

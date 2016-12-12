@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Messaging;
 using System.Threading;
 using CreditBureau;
@@ -42,18 +43,20 @@ namespace Test
         {
             replyQueue.StartReceivingMessages();
 
-            for (int count = 1; count <= numMessages; count++) 
+            for (int count = 1; count <= numMessages; count++)
             {
-                CreditBureauRequest req = new CreditBureauRequest();
-                req.SSN = count;
+                CreditBureauRequest req = new CreditBureauRequest()
+                {
+                    SSN = count
+                };
+                Message msg = requestQueue.Send(req, _creditReturnAddress,
+                    new List<SenderProperty>()
+                    {
+                        new SenderProperty(){Name = "AppSpecific", Value = random.Next()}
+                    });
 
-                Message msg = new Message(req);
-                msg.AppSpecific = random.Next();
-                
-                _creditReturnAddress.SetMessageReturnAddress(ref msg);
-
-                requestQueue.Send(msg);
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);
+
                 _correlationManager.AddEntity(msg.AppSpecific, msg);
 
                 Thread.Sleep(200);

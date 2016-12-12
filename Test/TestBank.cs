@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Messaging;
 using Bank;
 using MsmqGateway.Core;
@@ -47,12 +48,12 @@ namespace Test
                 req.LoanAmount =  random.Next(100)*10000 + 50000;
                 req.LoanTerm = random.Next(36)+12;
 
-                Message msg = new Message(req);
-                msg.AppSpecific = count;
+                Message msg = requestQueue.Send(req, _bankReturnAddress, 
+                    new List<SenderProperty>()
+                    {
+                        new SenderProperty(){ Name = "AppSpecific", Value = count}
+                    });
 
-                _bankReturnAddress.SetMessageReturnAddress(ref msg);
-
-                requestQueue.Send(msg);
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);
                 _correlationManager.AddEntity(msg.Id, msg);
             }

@@ -6,6 +6,7 @@
  * This code is supplied as is. No warranties. 
  */
 
+using System.Collections.Generic;
 using Messaging.Base.Constructions;
 
 namespace Gateway.Mock
@@ -22,9 +23,11 @@ namespace Gateway.Mock
         {
             get { return string.Empty; }
         }
-        public void Send(Message msg)
+        public Message Send(Message msg)
         {
             onMsg(msg);
+
+            return null;
         }
 	
         private static void DoNothing(Message msg)
@@ -68,9 +71,25 @@ namespace Gateway.Mock
 
         public bool Started { get { return false;} }
 
-        public void Send<TEntity>(TEntity message)
+        public Message Send<TEntity>(TEntity message)
         {
-            
+            return null;
+        }
+
+        public Message Send<TEntity>(TEntity entity, IList<SenderProperty> propertiesToSet)
+        {
+            return null;
+        }
+
+        public Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress,
+            IList<SenderProperty> propertiesToSet)
+        {
+            return null;
+        }
+
+        public Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress)
+        {
+            return null;
         }
     }
 }

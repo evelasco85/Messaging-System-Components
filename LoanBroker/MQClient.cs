@@ -106,13 +106,6 @@ namespace LoanBroker
                         instance.SetupCreditBureauInterface(
                             new MessageSenderGateway(ToPath(creditRequestQueueName)),
                             creditBureauReplyReceiver,
-                            ((appSpecific, request) =>
-                            {
-                                return new Message(request)
-                                {
-                                    AppSpecific = appSpecific
-                                };
-                            }),
                             (message =>
                             {
                                 return new Tuple<int, bool, CreditBureauReply>(

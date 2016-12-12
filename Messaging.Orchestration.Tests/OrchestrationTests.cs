@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
+using Messaging.Base;
 using MsmqGateway.Core;
 using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services;
@@ -109,11 +110,11 @@ namespace Messaging.Orchestration.Tests
                 },
                 (sender, response) =>
                 {
-                    Message message = new Message(response);
-
-                    message.CorrelationId = response.ClientId;
-
-                    sender.Send(message);
+                    sender.Send(response,
+                        new List<SenderProperty>
+                        {
+                            new SenderProperty {Name = "CorrelationId", Value = response.ClientId}
+                        });
                 },
                 request =>
                 {

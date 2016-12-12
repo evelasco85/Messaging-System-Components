@@ -70,15 +70,7 @@ namespace ManagementConsole
                 new MessageSenderGateway(routerControlQueue),
                 secondsInterval, //Verify status every n-th second(s)
                 timeoutSecondsInterval, //Set n-th second timeout,
-                ((request) =>
-                {
-                    Message requestMessage = new Message(request)
-                    {
-                        Priority = MessagePriority.AboveNormal
-                    };
-
-                    return requestMessage;
-                }),
+                MessagePriority.AboveNormal,
                 monitoringReplyReceiver.CanonicalDataModel.GetMessageId,
                 (message =>
                 {

@@ -13,7 +13,6 @@ namespace MsmqGateway.Core
             get { return _formatter; }
         }
 
-
         public override void TranslateToMessage(TEntity entity, out Message output)
         {
             output = new Message(entity);

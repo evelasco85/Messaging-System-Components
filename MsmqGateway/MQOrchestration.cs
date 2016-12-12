@@ -1,7 +1,7 @@
-﻿using Messaging.Orchestration.Shared.Models;
+﻿using System.Collections.Generic;
+using Messaging.Orchestration.Shared.Models;
 using Messaging.Orchestration.Shared.Services;
 using Messaging.Orchestration.Shared.Services.Interfaces;
-using System;
 using System.Messaging;
 using MsmqGateway.Core;
 using Messaging.Base;
@@ -70,11 +70,11 @@ namespace MsmqGateway
 
         public override void ConstructResponseSender(IMessageSender<Message> sender, ServerMessage response)
         {
-            Message message = new Message(response);
-
-            message.CorrelationId = response.ClientId;
-
-            sender.Send(message);
+            sender.Send(response,
+                new List<SenderProperty>
+                {
+                    new SenderProperty{ Name = "CorrelationId", Value = response.ClientId}
+                });
         }
     }
 }

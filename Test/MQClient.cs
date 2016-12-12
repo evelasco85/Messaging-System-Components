@@ -46,13 +46,6 @@ namespace Test
                             loanQuoteReplyReceiver,
                             numMessages,
                             loanQuoteReplyReceiver.CanonicalDataModel.GetMessageId,
-                            ((appSpecificId, request) =>
-                            {
-                                return new Message(request)
-                                {
-                                    AppSpecific = appSpecificId
-                                };
-                            }),
                             (requestObject =>
                             {
                                 Message message = (Message) requestObject;

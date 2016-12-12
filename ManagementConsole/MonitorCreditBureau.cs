@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using CommonObjects;
 using Messaging.Base;
@@ -50,7 +51,7 @@ namespace ManagementConsole
         }
 
         private Func<TMessage, Tuple<string, bool, string, CreditBureauReply>> _extractCreditBureauReplyFunc;
-        private Func<CreditBureauRequest, TMessage> _constructCreditBureauRequestMessageFunc;
+        private object _priority;
         private Func<TMessage, string> _extractMessageCorrelationIdFunc;
 
         public MonitorCreditBureau(
@@ -59,7 +60,7 @@ namespace ManagementConsole
             IMessageReceiver<TMessage> monitorReplyQueue,
             IMessageSender<TMessage> routerControlQueue,
             int secondsInterval, int timeoutSecondsInterval,
-            Func<CreditBureauRequest, TMessage> constructCreditBureauRequestMessageFunc,
+            object priority,
             Func<TMessage, string> extractMessageCorrelationIdFunc,
             Func<TMessage, Tuple<string, bool, string, CreditBureauReply>> extractCreditBureauReplyFunc
             )
@@ -72,7 +73,7 @@ namespace ManagementConsole
             _routerControlQueue = routerControlQueue;
             _millisecondsInterval = secondsInterval*1000;
             _timeoutMillisecondsInterval = timeoutSecondsInterval*1000;
-            _constructCreditBureauRequestMessageFunc = constructCreditBureauRequestMessageFunc;
+            _priority = priority;
             _extractMessageCorrelationIdFunc = extractMessageCorrelationIdFunc;
             _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
         }
@@ -107,9 +108,11 @@ namespace ManagementConsole
                 SSN = _ssn
             };
 
-            TMessage requestMessage = _constructCreditBureauRequestMessageFunc(request);
-            
-            SendTestMessage(requestMessage);
+            TMessage requestMessage  = SendTestMessage(request,
+                new List<SenderProperty>()
+                {
+                    new SenderProperty(){Name = "Priority", Value = _priority}
+                });
 
             _correlationId = _extractMessageCorrelationIdFunc(requestMessage);
         }

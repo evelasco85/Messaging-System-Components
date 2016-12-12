@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Messaging.Base.System_Management
 {
@@ -10,7 +6,7 @@ namespace Messaging.Base.System_Management
     {
         void SendControlBusStatus<TEntity>(TEntity statusMessage);
         void SendControlBusStatus(TMessage statusMessage);
-        void SendTestMessage(TMessage message);
+        TMessage SendTestMessage<TEntity>(TEntity entity, IList<SenderProperty> properties);
         void ReceiveTestMessageResponse(TMessage message);
     }
 }

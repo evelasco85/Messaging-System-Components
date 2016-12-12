@@ -7,6 +7,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using CommonObjects;
 using Messaging.Base;
 using LoanBroker.CreditBureau;
@@ -29,17 +30,14 @@ namespace LoanBroker
 
         IReturnAddress<TMessage> _creditReturnAddress;
         ICorrelationManager<int, CreditRequestProcess> _correlationManager = new CorrelationManager<int, CreditRequestProcess>();
-        private Func<int, CreditBureauRequest, TMessage> _constructCreditBureauRequestMessageFunc;
         private Func<TMessage, Tuple<int, bool, CreditBureauReply>> _extractCreditBureauReplyFunc;
 
         public CreditBureauGatewayImp(
             IMessageSender<TMessage> creditRequestQueue,
             IMessageReceiver<TMessage> creditReplyQueue,
-            Func<int, CreditBureauRequest, TMessage> constructCreditBureauRequestMessageFunc,
             Func<TMessage, Tuple<int, bool, CreditBureauReply>> extractCreditBureauReplyFunc
             )
         {
-            _constructCreditBureauRequestMessageFunc = constructCreditBureauRequestMessageFunc;
             _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
 
             Initialize(creditRequestQueue, creditReplyQueue, new MessageDelegate<TMessage>(OnCreditResponse));
@@ -63,16 +61,17 @@ namespace LoanBroker
             OnCreditReplyEvent OnCreditResponse)
         {
             int appSpecific = random.Next();
-            TMessage requestMessage = _constructCreditBureauRequestMessageFunc(appSpecific, quoteRequest);
 
-            _creditReturnAddress.SetMessageReturnAddress(ref requestMessage);
             _correlationManager.AddEntity(appSpecific,
                 new CreditRequestProcess
                 {
                     callback = OnCreditResponse,
                 });
-
-            _creditRequestQueue.Send(requestMessage);
+            _creditRequestQueue.Send(quoteRequest, _creditReturnAddress, 
+                new List<SenderProperty>()
+                {
+                    new SenderProperty(){Name = "AppSpecific", Value = appSpecific}
+                });
         }
 
         private void OnCreditResponse(TMessage msg)

@@ -17,8 +17,9 @@ namespace Messaging.Base.Tests
             Value = value;
         }
 
-        public override void Send(Message message)
+        public override Message Send(Message message)
         {
+            throw new NotImplementedException();
         }
 
         public override IReturnAddress<Message> AsReturnAddress()
@@ -31,7 +32,22 @@ namespace Messaging.Base.Tests
             throw new NotImplementedException();
         }
 
-        public override void Send<TEntity>(TEntity message)
+        public override Message Send<TEntity>(TEntity message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Message Send<TEntity>(TEntity entity, IList<SenderProperty> propertiesToSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress, IList<SenderProperty> propertiesToSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress)
         {
             throw new NotImplementedException();
         }

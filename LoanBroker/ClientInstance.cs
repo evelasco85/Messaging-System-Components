@@ -65,7 +65,6 @@ namespace LoanBroker
         public void SetupCreditBureauInterface(
             IMessageSender<TMessage> creditBureauSender,
             IMessageReceiver<TMessage> creditBureauReceiver,
-            Func<int, CreditBureauRequest, TMessage> constructCreditBureauRequestMessageFunc,
             Func<TMessage, Tuple<int, bool, CreditBureauReply>> extractCreditBureauReplyFunc
             )
         {
@@ -73,7 +72,6 @@ namespace LoanBroker
                 (
                 creditBureauSender,
                 creditBureauReceiver,
-                constructCreditBureauRequestMessageFunc,
                 extractCreditBureauReplyFunc
                 );
         }

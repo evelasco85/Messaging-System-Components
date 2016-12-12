@@ -50,11 +50,15 @@ namespace Web.SignalR.LoanBroker
             req.LoanAmount = loanAmount;
             req.LoanTerm = loanTerm;
 
-            Message msg = new Message(req);
-            msg.AppSpecific = req.SSN;
+            //Message msg = new Message(req);
+            //msg.AppSpecific = req.SSN;
 
-            _replyQueue.AsReturnAddress().SetMessageReturnAddress(ref msg);
-            _requestQueue.Send(msg);
+            //_replyQueue.AsReturnAddress().SetMessageReturnAddress(ref msg);
+            Message msg = _requestQueue.Send(req, 
+                new List<SenderProperty>()
+                {
+                    new SenderProperty() {Name = "AppSpecific", Value = req.SSN}
+                });
 
             Thread.Sleep(100);
 
