@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Messaging.Base.Constructions;
 
 namespace Messaging.Base
@@ -31,7 +30,7 @@ namespace Messaging.Base
         }
 
         public abstract IReturnAddress<TMessage> AsReturnAddress();
-        public abstract TMessage Send(TMessage message);
+        public abstract TMessage SendRawMessage(TMessage message);
         public abstract TMessage Send<TEntity>(TEntity message);
         public abstract TMessage Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty);
         public abstract TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress);

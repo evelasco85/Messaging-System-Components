@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Messaging.Base.Routing
 {
@@ -19,19 +15,19 @@ namespace Messaging.Base.Routing
             return s_instance;
         }
 
-        public void SendToRecipent<TMessage>(TMessage message, IList<IMessageSender<TMessage>> recipientList)
+        public void SendToRecipent<TMessage>(TMessage message, IList<IRawMessageSender<TMessage>> recipientList)
         {
             if ((message == null) || (recipientList == null))
                 return;
 
             for (int index = 0; index < recipientList.Count; index++)
             {
-                IMessageSender<TMessage> sendTo = recipientList[index];
+                IRawMessageSender<TMessage> sendTo = recipientList[index];
 
                 if(sendTo == null)
                     continue;
                 
-                sendTo.Send(message);
+                sendTo.SendRawMessage(message);
             }
         }
     }

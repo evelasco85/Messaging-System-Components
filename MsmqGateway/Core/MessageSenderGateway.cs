@@ -30,7 +30,7 @@ namespace MsmqGateway.Core
             return _returnAddress;
         }
 
-        public override Message Send(Message msg)
+        public override Message SendRawMessage(Message msg)
         {
             return SendMessage(msg);
         }

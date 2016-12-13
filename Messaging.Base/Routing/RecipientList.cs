@@ -6,10 +6,10 @@ namespace Messaging.Base.Routing
 {    
     public class RecipientList<TBaseEntity, TMessage> : IRecipientList<TBaseEntity, TMessage>
     {
-        IList<Tuple<TBaseEntity, IMessageSender<TMessage>>> _recipients = new List<Tuple<TBaseEntity, IMessageSender<TMessage>>>();
-        Func<TBaseEntity, IMessageSender<TMessage>> _messageSenderLocator;
+        IList<Tuple<TBaseEntity, IRawMessageSender<TMessage>>> _recipients = new List<Tuple<TBaseEntity, IRawMessageSender<TMessage>>>();
+        Func<TBaseEntity, IRawMessageSender<TMessage>> _messageSenderLocator;
 
-        public RecipientList(Func<TBaseEntity, IMessageSender<TMessage>> messageSenderLocator)
+        public RecipientList(Func<TBaseEntity, IRawMessageSender<TMessage>> messageSenderLocator)
         {
             if(messageSenderLocator == null)
                 throw new ArgumentNullException("'messageSenderLocator' parameter is required");
@@ -17,7 +17,8 @@ namespace Messaging.Base.Routing
             _messageSenderLocator = messageSenderLocator;
         }
 
-        public RecipientList(Func<TBaseEntity, IMessageSender<TMessage>> messageSenderLocator, params TBaseEntity[] recipients) : this(messageSenderLocator)
+        public RecipientList(Func<TBaseEntity, IRawMessageSender<TMessage>> messageSenderLocator, params TBaseEntity[] recipients)
+            : this(messageSenderLocator)
         {
             AddRecipient(recipients);
         }
@@ -32,13 +33,13 @@ namespace Messaging.Base.Routing
 
         public void AddRecipient(TBaseEntity baseEntity)
         {
-            IMessageSender<TMessage> messageSender = _messageSenderLocator(baseEntity);
-            Tuple<TBaseEntity, IMessageSender<TMessage>> recipient = new Tuple<TBaseEntity, IMessageSender<TMessage>>(baseEntity, messageSender);
+            IRawMessageSender<TMessage> messageSender = _messageSenderLocator(baseEntity);
+            Tuple<TBaseEntity, IRawMessageSender<TMessage>> recipient = new Tuple<TBaseEntity, IRawMessageSender<TMessage>>(baseEntity, messageSender);
 
             _recipients.Add(recipient);
         }
 
-        public IList<IMessageSender<TMessage>> GetRecipients(Func<TBaseEntity, bool> recipientCondition)
+        public IList<IRawMessageSender<TMessage>> GetRecipients(Func<TBaseEntity, bool> recipientCondition)
         {
             if (recipientCondition == null)
                 return GetRecipients();
@@ -49,7 +50,7 @@ namespace Messaging.Base.Routing
                 .ToList();
         }
 
-        public IList<IMessageSender<TMessage>> GetRecipients()
+        public IList<IRawMessageSender<TMessage>> GetRecipients()
         {
             return GetRecipients((entity) => true);
         }

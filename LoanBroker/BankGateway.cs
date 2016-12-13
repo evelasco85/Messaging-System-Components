@@ -54,9 +54,9 @@ namespace LoanBroker
             TMessage requestMessage = _constructBankQuoteRequestMessageFunc(_aggregationCorrelationID, quoteRequest);
 
             _bankReturnAddress.SetMessageReturnAddress(ref requestMessage);
-            
 
-            IMessageSender<TMessage>[] eligibleBanks = 
+
+            IRawMessageSender<TMessage>[] eligibleBanks = 
                 _connectionManager.GetEligibleBankQueues(quoteRequest.CreditScore, quoteRequest.HistoryLength, 
                 quoteRequest.LoanAmount);
 

@@ -7,7 +7,7 @@ namespace Messaging.Base.Routing
     {
         void AddRecipient(TBaseEntity baseEntity);
         void AddRecipient(params TBaseEntity[] recipients);
-        IList<IMessageSender<TMessage>> GetRecipients(Func<TBaseEntity, bool> recipientCondition);
-        IList<IMessageSender<TMessage>> GetRecipients();
+        IList<IRawMessageSender<TMessage>> GetRecipients(Func<TBaseEntity, bool> recipientCondition);
+        IList<IRawMessageSender<TMessage>> GetRecipients();
     }
 }

@@ -79,9 +79,6 @@ namespace MsmqGateway.Core
             if(Started)
                 return;
 
-            //if (GetQueue().Formatter == null)
-            //    GetQueue().Formatter = new System.Messaging.XmlMessageFormatter(new String[] { "System.String,mscorlib" });
-
             GetQueue().Formatter = _cdm.Formatter;
             GetQueue().ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
 

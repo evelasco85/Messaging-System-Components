@@ -8,14 +8,14 @@ namespace CreditBureauFailOver
     {
         public FailOverRouter(
             IMessageReceiver<TMessage> inputQueue,
-            params IMessageSender<TMessage>[] outputQueues
+            params IRawMessageSender<TMessage>[] outputQueues
             )
             : base(inputQueue)
         {
             SetRoute(outputQueues);
         }
 
-        void SetRoute(params IMessageSender<TMessage>[] outputQueues)
+        void SetRoute(params IRawMessageSender<TMessage>[] outputQueues)
         {
             this.AddSender(
                 (control) => { return control == FailOverRouteEnum.Primary; },      //Invocation condition

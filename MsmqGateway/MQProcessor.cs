@@ -49,7 +49,7 @@ namespace MsmqGateway
             {
                 outMsg.CorrelationId = inMsg.Id;
                 outMsg.AppSpecific = inMsg.AppSpecific;
-                outputQueue.Send(outMsg);
+                outputQueue.SendRawMessage(outMsg);
             }
         }	
 

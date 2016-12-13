@@ -11,17 +11,21 @@ namespace Messaging.Base
         void SetupSender();
     }
 
+    public interface IRawMessageSender<TMessage>
+    {
+        TMessage SendRawMessage(TMessage message);
+    }
+
     public interface IMessageSender<TMessage> : IMessageSender
     {
         IReturnAddress<TMessage> AsReturnAddress();
-        TMessage Send(TMessage message);
         TMessage Send<TEntity>(TEntity message);
         TMessage Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty);
         TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress);
         TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignSenderPropertyDelegate> AssignProperty);
     }
 
-    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>
+    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>, IRawMessageSender<TMessage>
     {
     }
 }
