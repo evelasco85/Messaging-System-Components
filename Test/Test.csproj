@@ -123,23 +123,11 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BankStub.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ClientInstance.cs" />
-    <Compile Include="creditBureauStub.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MQClient.cs" />
-    <Compile Include="TestBank.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TestCreditBureau.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TestLoanBroker.cs">
       <SubType>Code</SubType>
     </Compile>

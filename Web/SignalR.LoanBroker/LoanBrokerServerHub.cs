@@ -16,7 +16,7 @@ namespace Web.SignalR.LoanBroker
     public class LoanBrokerServerHub : Hub
     {
         readonly LoanBrokerClients _clients;
-        MessageReceiverGateway<LoanQuoteReply> _replyQueue;
+        IMessageReceiver<Message> _replyQueue;
         IMessageSender<Message> _requestQueue;
         readonly static ConnectionMapper _connectionMap = new ConnectionMapper();
 
@@ -50,7 +50,8 @@ namespace Web.SignalR.LoanBroker
             req.LoanAmount = loanAmount;
             req.LoanTerm = loanTerm;
 
-            Message msg = _requestQueue.Send(req, 
+            Message msg = _requestQueue.Send(req,
+                _replyQueue.AsReturnAddress(),
                  assignProperty =>
                         {
                             assignProperty("AppSpecific", req.SSN);
