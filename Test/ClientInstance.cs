@@ -4,6 +4,17 @@ using Messaging.Base;
 
 namespace Test
 {
+    class ClientInstance
+    {
+        static SenderPropertyFields s_senderPropertyFields = new SenderPropertyFields();
+
+        public static SenderPropertyFields PropertyFields
+        {
+            get { return s_senderPropertyFields; }
+            set { s_senderPropertyFields = value; }
+        }
+    }
+
     class ClientInstance<TMessage>
     {
         TestLoanBroker<TMessage> test = null;

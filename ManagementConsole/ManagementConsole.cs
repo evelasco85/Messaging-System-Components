@@ -43,6 +43,7 @@ namespace ManagementConsole
                 secondsInterval, timeoutSecondsInterval
                 );
 
+            ClientInstance.PropertyFields.Priority = "Priority";
             _server = MQOrchestration.GetInstance().CreateServer(
                serverRequestQueue,
                serverReplyQueue

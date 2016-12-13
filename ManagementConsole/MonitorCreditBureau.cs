@@ -111,7 +111,7 @@ namespace ManagementConsole
             TMessage requestMessage  = SendTestMessage(request,
                 assignProperty =>
                     {
-                        assignProperty("Priority", _priority);
+                        assignProperty(ClientInstance.PropertyFields.Priority, _priority);
                     });
 
             _correlationId = _extractMessageCorrelationIdFunc(requestMessage);

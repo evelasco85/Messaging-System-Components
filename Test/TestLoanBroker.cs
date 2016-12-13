@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using CommonObjects;
 using Messaging.Base;
@@ -78,7 +77,7 @@ namespace Test
                 TMessage msg = _requestQueue.Send(req, _loanBroakerReturnAddress,
                     assignProperty =>
                     {
-                        assignProperty("AppSpecific", count);
+                        assignProperty(ClientInstance.PropertyFields.ApplicationSpecific, count);
                     });
 
                 string messageId = _extractMessageIdFunc(msg);

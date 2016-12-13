@@ -71,7 +71,7 @@ namespace LoanBroker
             _creditRequestQueue.Send(quoteRequest, _creditReturnAddress,
                 assignProperty =>
                     {
-                        assignProperty("AppSpecific", appSpecific);
+                        assignProperty(ClientInstance.PropertyFields.ApplicationSpecific, appSpecific);
                     });
         }
 

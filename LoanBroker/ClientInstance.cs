@@ -9,6 +9,17 @@ using Messaging.Base.System_Management.SmartProxy;
 
 namespace LoanBroker
 {
+    class ClientInstance
+    {
+        static SenderPropertyFields s_senderPropertyFields = new SenderPropertyFields();
+
+        public static SenderPropertyFields PropertyFields
+        {
+            get { return s_senderPropertyFields; }
+            set { s_senderPropertyFields = value; }
+        }
+    }
+
     class ClientInstance<TMessageQueue, TMessage> : IDisposable
     {
         LoanBrokerProxy<TMessageQueue, TMessage> _loanBrokerProxy = null;
@@ -16,8 +27,6 @@ namespace LoanBroker
         private ProcessManager<TMessage> _processManager = null;
         private ICreditBureauGateway _creditBureauInterface = null;
         IRequestReply_Asynchronous<TMessage> _queueService = null;
-
-
 
         public ProcessManager<TMessage> ProcessManager
         {

@@ -35,6 +35,8 @@ namespace Web.SignalR.LoanBroker
 
         void SetupMessagingQueue()
         {
+            ClientInstance.PropertyFields.ApplicationSpecific = "AppSpecific";
+
             _requestQueue = new MessageSenderGateway(ToPath("loanRequestQueue"));
             _replyQueue = new MessageReceiverGateway<LoanQuoteReply>(ToPath("loanReplySignalR_Queue"));
 
@@ -54,7 +56,7 @@ namespace Web.SignalR.LoanBroker
                 _replyQueue.AsReturnAddress(),
                  assignProperty =>
                         {
-                            assignProperty("AppSpecific", req.SSN);
+                            assignProperty(ClientInstance.PropertyFields.ApplicationSpecific, req.SSN);
                         });
 
             Thread.Sleep(100);

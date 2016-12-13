@@ -23,6 +23,8 @@ namespace LoanBroker
             string proxyReplyQueue = string.Empty;
             string controlBusQueue = string.Empty;
 
+            ClientInstance.PropertyFields.ApplicationSpecific = "AppSpecific";
+
             return MQOrchestration.GetInstance().CreateClient(
                 args[0],
                 "MSMQ",

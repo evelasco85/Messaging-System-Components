@@ -16,6 +16,8 @@ namespace Test
             string replyQueue = string.Empty;
             string mode = string.Empty;
 
+            ClientInstance.PropertyFields.ApplicationSpecific = "AppSpecific";
+
             return MQOrchestration.GetInstance().CreateClient(
                 args[0],
                 "MSMQ",

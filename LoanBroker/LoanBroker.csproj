@@ -153,6 +153,7 @@
     <Compile Include="Proxy\LoanBrokerProxy.cs" />
     <Compile Include="Proxy\LoanBrokerProxyReplyConsumer.cs" />
     <Compile Include="Proxy\LoanBrokerProxyRequestConsumer.cs" />
+    <Compile Include="SenderPropertyFields.cs" />
     <Content Include="App.ico" />
   </ItemGroup>
   <ItemGroup>
