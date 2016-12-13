@@ -114,7 +114,6 @@
     <Compile Include="Core\MessageSenderGateway.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MockQueue.cs" />
     <Compile Include="MQProcessor.cs">
       <SubType>Code</SubType>
     </Compile>

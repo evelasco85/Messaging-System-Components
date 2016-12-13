@@ -58,7 +58,8 @@ namespace LoanBroker
         }
 
         public void	GetCreditScore(CreditBureauRequest quoteRequest, 
-            OnCreditReplyEvent OnCreditResponse)
+            OnCreditReplyEvent OnCreditResponse
+            )
         {
             int appSpecific = random.Next();
 

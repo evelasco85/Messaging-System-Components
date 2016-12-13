@@ -149,9 +149,6 @@
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CreditBureauGateway_Mock.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="MQClient.cs" />
     <Compile Include="Proxy\LoanBrokerProxy.cs" />
     <Compile Include="Proxy\LoanBrokerProxyReplyConsumer.cs" />

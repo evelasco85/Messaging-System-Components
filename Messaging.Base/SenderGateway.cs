@@ -4,7 +4,6 @@ using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
-
     /// <summary>
     /// Abstract implementation for sending messages
     /// </summary>
@@ -32,7 +31,6 @@ namespace Messaging.Base
         }
 
         public abstract IReturnAddress<TMessage> AsReturnAddress();
-
         public abstract TMessage Send(TMessage message);
         public abstract TMessage Send<TEntity>(TEntity message);
         public abstract TMessage Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty);

@@ -1,6 +1,5 @@
 using Messaging.Base;
 using System;
-using System.Collections.Generic;
 using System.Messaging;
 
 namespace MsmqGateway.Core

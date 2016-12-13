@@ -1,6 +1,5 @@
 using Messaging.Base;
 using System;
-using System.Collections.Generic;
 using System.Messaging;
 using System.Reflection;
 using Messaging.Base.Constructions;
@@ -10,8 +9,6 @@ namespace MsmqGateway.Core
     public class MessageSenderGateway : SenderGateway<MessageQueue, Message>
     {
         private IReturnAddress<Message> _returnAddress;
-        private IList<PropertyMap> _propertyMaps;
-
 
         public MessageSenderGateway(MessageQueueGateway messageQueueGateway) : base(messageQueueGateway)
         {
@@ -28,23 +25,6 @@ namespace MsmqGateway.Core
         {
         }
 
-        public MessageSenderGateway(MessageQueueGateway messageQueueGateway, IList<PropertyMap> propertyMap)
-            : base(messageQueueGateway)
-        {
-            _propertyMaps = propertyMap;
-            _returnAddress = new MQReturnAddress(messageQueueGateway);
-        }
-
-        public MessageSenderGateway(String q, IList<PropertyMap> propertyMap)
-            : this(new MessageQueueGateway(q), propertyMap)
-        {
-        }
-
-        public MessageSenderGateway(MessageQueue queue, IList<PropertyMap> propertyMap)
-            : this(new MessageQueueGateway(queue), propertyMap)
-        {
-        }
-
         public override IReturnAddress<Message> AsReturnAddress()
         {
             return _returnAddress;
@@ -57,16 +37,14 @@ namespace MsmqGateway.Core
 
         public override Message Send<TEntity>(TEntity entity)
         {
-            CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            Message message = _cdm.GetMessage(entity);
+            Message message = GetMessage(entity);
 
             return SendMessage(message);
         }
 
         public override Message Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty)
         {
-            CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            Message message = _cdm.GetMessage(entity);
+            Message message = GetMessage(entity);
 
             AssignProperty((name, value) =>
             {
@@ -78,8 +56,7 @@ namespace MsmqGateway.Core
 
         public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress)
         {
-            CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            Message message = _cdm.GetMessage(entity);
+            Message message = GetMessage(entity);
 
             returnAddress.SetMessageReturnAddress(ref message);
 
@@ -90,8 +67,7 @@ namespace MsmqGateway.Core
             IReturnAddress<Message> returnAddress,
             Action<AssignSenderPropertyDelegate> AssignProperty)
         {
-            CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            Message message = _cdm.GetMessage(entity);
+            Message message = GetMessage(entity);
 
             AssignProperty((name, value) =>
             {
@@ -107,6 +83,13 @@ namespace MsmqGateway.Core
             GetQueue().Send(message);
 
             return message;
+        }
+
+        Message GetMessage<TEntity>(TEntity entity)
+        {
+            CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
+            
+            return _cdm.GetMessage(entity);
         }
 
         void ApplyProperties(ref Message message, string name, object value)

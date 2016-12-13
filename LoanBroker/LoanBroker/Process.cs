@@ -33,7 +33,10 @@ namespace LoanBroker.LoanBroker
         {
             CreditBureauRequest creditRequest = Translator.GetCreditBureauRequest(_loanRequest);
 
-            processor.CreditBureauInterface.GetCreditScore(creditRequest, new OnCreditReplyEvent(OnCreditReply));
+            processor.CreditBureauInterface.GetCreditScore(
+                creditRequest,
+                new OnCreditReplyEvent(OnCreditReply)
+                );
         }
 
         private void OnCreditReply(CreditBureauReply creditReply)
