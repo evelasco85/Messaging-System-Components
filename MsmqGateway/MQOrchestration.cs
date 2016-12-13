@@ -71,10 +71,10 @@ namespace MsmqGateway
         public override void ConstructResponseSender(IMessageSender<Message> sender, ServerMessage response)
         {
             sender.Send(response,
-                 assignProperty =>
-                    {
-                        assignProperty("CorrelationId", response.ClientId);
-                    });
+                (assignApplicationId, assignCorrelationId) =>
+                {
+                    assignCorrelationId(response.ClientId);
+                });
         }
     }
 }

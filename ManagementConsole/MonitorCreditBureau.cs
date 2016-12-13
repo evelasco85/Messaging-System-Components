@@ -108,11 +108,11 @@ namespace ManagementConsole
                 SSN = _ssn
             };
 
-            TMessage requestMessage  = SendTestMessage(request,
-                assignProperty =>
-                    {
-                        assignProperty(ClientInstance.PropertyFields.Priority, _priority);
-                    });
+            TMessage requestMessage = SendTestMessage(request,
+                assignPriority =>
+                {
+                    assignPriority(_priority);
+                });
 
             _correlationId = _extractMessageCorrelationIdFunc(requestMessage);
         }

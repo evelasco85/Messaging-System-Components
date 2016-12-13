@@ -3,7 +3,9 @@ using Messaging.Base.Constructions;
 
 namespace Messaging.Base
 {
-    public delegate void AssignSenderPropertyDelegate(string name, object value);
+    public delegate void AssignApplicationIdDelegate(string applicationId);
+    public delegate void AssignCorrelationIdDelegate(string correlationId);
+    public delegate void AssignPriorityDelegate(object priority);
 
     public interface IMessageSender
     {
@@ -20,9 +22,9 @@ namespace Messaging.Base
     {
         IReturnAddress<TMessage> AsReturnAddress();
         TMessage Send<TEntity>(TEntity message);
-        TMessage Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty);
+        TMessage Send<TEntity>(TEntity entity, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate> AssignProperty);
         TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress);
-        TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignSenderPropertyDelegate> AssignProperty);
+        TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate, AssignPriorityDelegate> AssignProperty);
     }
 
     public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>

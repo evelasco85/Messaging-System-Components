@@ -69,10 +69,10 @@ namespace LoanBroker
                     callback = OnCreditResponse,
                 });
             _creditRequestQueue.Send(quoteRequest, _creditReturnAddress,
-                assignProperty =>
-                    {
-                        assignProperty(ClientInstance.PropertyFields.ApplicationSpecific, appSpecific);
-                    });
+                (assignApplicationId, assignCorrelationId, assignPriority) =>
+                {
+                    assignApplicationId(appSpecific.ToString());
+                });
         }
 
         private void OnCreditResponse(TMessage msg)

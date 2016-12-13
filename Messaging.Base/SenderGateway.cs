@@ -32,9 +32,9 @@ namespace Messaging.Base
         public abstract IReturnAddress<TMessage> AsReturnAddress();
         public abstract TMessage SendRawMessage(TMessage message);
         public abstract TMessage Send<TEntity>(TEntity message);
-        public abstract TMessage Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty);
+        public abstract TMessage Send<TEntity>(TEntity entity, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate> AssignProperty);
         public abstract TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress);
-        public abstract TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignSenderPropertyDelegate> AssignProperty);
+        public abstract TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate, AssignPriorityDelegate> AssignProperty);
         public abstract void SetupSender();
     }
 }

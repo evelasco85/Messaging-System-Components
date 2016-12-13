@@ -27,9 +27,15 @@ namespace Messaging.Base.System_Management
             _controlBusQueue.Send(statusMessage);
         }
 
-        public TMessage SendTestMessage<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty)
+        public TMessage SendTestMessage<TEntity>(TEntity entity, Action<AssignPriorityDelegate> AssignProperty)
         {
-            return _serviceQueue.Send(entity, _monitorQueueReturnAddress, AssignProperty);
+            Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate, AssignPriorityDelegate> assignProperty =
+                (assignApplicationId, assignCorrelationId, assignPriority) =>
+                {
+                    AssignProperty(assignPriority);
+                };
+
+            return _serviceQueue.Send(entity, _monitorQueueReturnAddress, assignProperty);
         }
 
         public override void ProcessMessage(TMessage message)

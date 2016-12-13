@@ -75,9 +75,9 @@ namespace Test
                 req.LoanTerm = random.Next(72) + 12;
 
                 TMessage msg = _requestQueue.Send(req, _loanBroakerReturnAddress,
-                    assignProperty =>
+                    (assignApplicationId, assignCorrelationId, assignPriority) =>
                     {
-                        assignProperty(ClientInstance.PropertyFields.ApplicationSpecific, count);
+                        assignApplicationId(count.ToString());
                     });
 
                 string messageId = _extractMessageIdFunc(msg);

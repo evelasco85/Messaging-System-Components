@@ -128,7 +128,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MQClient.cs" />
-    <Compile Include="SenderPropertyFields.cs" />
     <Compile Include="TestLoanBroker.cs">
       <SubType>Code</SubType>
     </Compile>

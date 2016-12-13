@@ -21,20 +21,20 @@ namespace MsmqGateway.Core
                 IMessageSender<MessageQueue, Message>  replyQueue = new MessageSenderGateway(originalRequestMessage.ResponseQueue);
 
                 replyQueue.Send(responseObject,
-                    assignProperty =>
+                    (assignApplicationId, assignCorrelationId) =>
                     {
-                        assignProperty("CorrelationId", originalRequestMessage.Id);
-                        assignProperty("AppSpecific", originalRequestMessage.AppSpecific);
+                        assignApplicationId(originalRequestMessage.AppSpecific.ToString());
+                        assignCorrelationId(originalRequestMessage.Id);
                     });
             }
             else
             {
                 this.InvalidQueue.Send(responseObject,
-                     assignProperty =>
-                     {
-                         assignProperty("CorrelationId", originalRequestMessage.Id);
-                         assignProperty("AppSpecific", originalRequestMessage.AppSpecific);
-                     });
+                    (assignApplicationId, assignCorrelationId) =>
+                    {
+                        assignApplicationId(originalRequestMessage.AppSpecific.ToString());
+                        assignCorrelationId(originalRequestMessage.Id);
+                    });
             }
         }
     }

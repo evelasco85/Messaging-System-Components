@@ -42,14 +42,19 @@ namespace MsmqGateway.Core
             return SendMessage(message);
         }
 
-        public override Message Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty)
+        public override Message Send<TEntity>(TEntity entity, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate> AssignProperty)
         {
             Message message = GetMessage(entity);
 
-            AssignProperty((name, value) =>
-            {
-                ApplyProperties(ref message, name, value);
-            });
+            AssignProperty(
+                (applicationId) =>
+                {
+                    message.AppSpecific = Convert.ToInt32(applicationId);
+                },
+                (correlationId =>
+                {
+                    message.CorrelationId = correlationId;
+                }));
 
             return SendMessage(message);
         }
@@ -65,14 +70,23 @@ namespace MsmqGateway.Core
 
         public override Message Send<TEntity>(TEntity entity,
             IReturnAddress<Message> returnAddress,
-            Action<AssignSenderPropertyDelegate> AssignProperty)
+             Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate, AssignPriorityDelegate> AssignProperty)
         {
             Message message = GetMessage(entity);
 
-            AssignProperty((name, value) =>
-            {
-                ApplyProperties(ref message, name, value);
-            });
+            AssignProperty(
+                (applicationId) =>
+                {
+                    message.AppSpecific = Convert.ToInt32(applicationId);
+                },
+                (correlationId =>
+                {
+                    message.CorrelationId = correlationId;
+                }),
+                (priority =>
+                {
+                    message.Priority = (MessagePriority) priority;
+                }));
             returnAddress.SetMessageReturnAddress(ref message);
 
             return SendMessage(message);
