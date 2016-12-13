@@ -6,7 +6,7 @@ namespace Messaging.Base.Routing
     public interface IContextBasedRouter<TMessage, TInput> : IMessageConsumer<TMessage>
     {
         bool DestinationIsSet { get; }
-        IContextBasedRouter<TMessage, TInput> AddSender(Func<TInput, bool> triggerFunction, IRawMessageSender<TMessage> destination);
+        IContextBasedRouter<TMessage, TInput> AddSender(Func<TInput, bool> triggerFunction, IMessageSender<TMessage> destination);
         void SwitchDestination(TInput inputToVerify);
     }
 }

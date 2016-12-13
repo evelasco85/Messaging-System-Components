@@ -16,7 +16,7 @@ namespace Messaging.Base
         TMessage SendRawMessage(TMessage message);
     }
 
-    public interface IMessageSender<TMessage> : IMessageSender
+    public interface IMessageSender<TMessage> : IMessageSender, IRawMessageSender<TMessage>
     {
         IReturnAddress<TMessage> AsReturnAddress();
         TMessage Send<TEntity>(TEntity message);
@@ -25,7 +25,7 @@ namespace Messaging.Base
         TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignSenderPropertyDelegate> AssignProperty);
     }
 
-    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>, IRawMessageSender<TMessage>
+    public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>
     {
     }
 }

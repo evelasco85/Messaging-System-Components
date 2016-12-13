@@ -4,14 +4,14 @@ namespace LoanBroker.Bank
 {
     internal abstract class Connection<TMessage>
     {
-        protected IRawMessageSender<TMessage> queue;
+        protected IMessageSender<TMessage> queue;
 
-        public IRawMessageSender<TMessage> Queue
+        public IMessageSender<TMessage> Queue
         {
             get { return queue; }
         }
 
-        public Connection(IRawMessageSender<TMessage> queue)
+        public Connection(IMessageSender<TMessage> queue)
         {
             this.queue = queue;
         }

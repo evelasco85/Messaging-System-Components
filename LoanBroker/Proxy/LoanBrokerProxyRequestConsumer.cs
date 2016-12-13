@@ -12,7 +12,7 @@ namespace LoanBroker
 
         public LoanBrokerProxyRequestConsumer(
             IMessageReceiver<Message> requestReceiver,
-            IRawMessageSender<Message> serviceRequestSender,
+            IMessageSender<Message> serviceRequestSender,
             IReturnAddress<Message> serviceReplyReturnAddress,
             ArrayList queueStats
             )

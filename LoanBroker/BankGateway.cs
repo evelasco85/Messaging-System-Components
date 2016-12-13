@@ -1,11 +1,3 @@
-/* Loan Broker Example with MSMQ
- * from Enterprise Integration Patterns (Addison-Wesley, ISBN 0321200683)
- * 
- * Copyright (c) 2003 Gregor Hohpe 
- *
- * This code is supplied as is. No warranties. 
- */
-
 using System;
 using System.Linq;
 using Bank;
@@ -56,7 +48,7 @@ namespace LoanBroker
             _bankReturnAddress.SetMessageReturnAddress(ref requestMessage);
 
 
-            IRawMessageSender<TMessage>[] eligibleBanks = 
+            IMessageSender<TMessage>[] eligibleBanks = 
                 _connectionManager.GetEligibleBankQueues(quoteRequest.CreditScore, quoteRequest.HistoryLength, 
                 quoteRequest.LoanAmount);
 

@@ -59,7 +59,7 @@ namespace LoanBroker
                         //Client parameter setup completed
                         /*Proxy Setup*/
                         MessageReceiverGateway<LoanQuoteReply> proxyReplyReceiver = new MessageReceiverGateway<LoanQuoteReply>(ToPath(proxyReplyQueue));
-                        IRawMessageSender<Message> proxyRequestSender = new MessageSenderGateway(ToPath(proxyRequestQueue));
+                        IMessageSender<Message> proxyRequestSender = new MessageSenderGateway(ToPath(proxyRequestQueue));
                         MessageReceiverGateway<LoanQuoteRequest> loanRequestReceiver = new MessageReceiverGateway<LoanQuoteRequest>(ToPath(requestQueueName));
                         IMessageSender<Message> controlBus = new MessageSenderGateway(ToPath(controlBusQueue));
 

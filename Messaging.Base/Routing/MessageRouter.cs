@@ -15,14 +15,14 @@ namespace Messaging.Base.Routing
             return s_instance;
         }
 
-        public void SendToRecipent<TMessage>(TMessage message, IList<IRawMessageSender<TMessage>> recipientList)
+        public void SendToRecipent<TMessage>(TMessage message, IList<IMessageSender<TMessage>> recipientList)
         {
             if ((message == null) || (recipientList == null))
                 return;
 
             for (int index = 0; index < recipientList.Count; index++)
             {
-                IRawMessageSender<TMessage> sendTo = recipientList[index];
+                IMessageSender<TMessage> sendTo = recipientList[index];
 
                 if(sendTo == null)
                     continue;

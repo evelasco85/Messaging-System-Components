@@ -19,9 +19,9 @@ namespace LoanBroker.Bank
             );
         static protected Connection<TMessage> catchAll = new Bank5<TMessage>(CreateSender("bank5Queue"));
 
-        public IRawMessageSender<TMessage>[] GetEligibleBankQueues(int CreditScore, int HistoryLength, int LoanAmount)
+        public IMessageSender<TMessage>[] GetEligibleBankQueues(int CreditScore, int HistoryLength, int LoanAmount)
         {
-            IList<IRawMessageSender<TMessage>> recipientList = bankRecipientList
+            IList<IMessageSender<TMessage>> recipientList = bankRecipientList
                 .GetRecipients(recipient => recipient.CanHandleLoanRequest(CreditScore, HistoryLength, LoanAmount));
 
             if (recipientList.Count == 0)
@@ -35,9 +35,9 @@ namespace LoanBroker.Bank
             return ".\\private$\\" + arg;
         }
 
-        public static IRawMessageSender<TMessage> CreateSender(string queueName)
+        public static IMessageSender<TMessage> CreateSender(string queueName)
         {
-            return (IRawMessageSender<TMessage>)new MessageSenderGateway(ToPath(queueName));
+            return (IMessageSender<TMessage>)new MessageSenderGateway(ToPath(queueName));
         }
     }
 }
