@@ -49,7 +49,7 @@ namespace LoanBroker
             IMessageReceiver<TMessage>  bankReplyReceiver,
             ConnectionsManager<TMessage> connectionManager,
             Func<int, BankQuoteRequest, TMessage> constructBankQuoteRequestMessageFunc,
-            Func<TMessage, Tuple<int, bool, BankQuoteReply>> extractBankQuoteReplyFunc
+            Func<TMessage, Tuple<bool, BankQuoteReply>> extractBankQuoteReplyFunc
             )
         {
             _bankInterface = new BankGateway<TMessage>(
@@ -63,7 +63,7 @@ namespace LoanBroker
         public void SetupCreditBureauInterface(
             IMessageSender<TMessage> creditBureauSender,
             IMessageReceiver<TMessage> creditBureauReceiver,
-            Func<TMessage, Tuple<int, bool, CreditBureauReply>> extractCreditBureauReplyFunc
+            Func<TMessage, Tuple<bool, CreditBureauReply>> extractCreditBureauReplyFunc
             )
         {
             _creditBureauInterface = new CreditBureauGatewayImp<TMessage>

@@ -35,6 +35,7 @@ namespace ManagementConsole
         private int _timeoutMillisecondsInterval;
         string _lastStatus = String.Empty;
         IMessageSender<TMessage> _routerControlQueue;
+        private IMessageReceiver<TMessage> _monitorReplyQueue;
 
         public void Dispose()
         {
@@ -52,7 +53,6 @@ namespace ManagementConsole
 
         private Func<TMessage, Tuple<string, bool, string, CreditBureauReply>> _extractCreditBureauReplyFunc;
         private object _priority;
-        private Func<TMessage, string> _extractMessageCorrelationIdFunc;
 
         public MonitorCreditBureau(
             IMessageSender<TMessage> controlBusQueue,
@@ -61,7 +61,6 @@ namespace ManagementConsole
             IMessageSender<TMessage> routerControlQueue,
             int secondsInterval, int timeoutSecondsInterval,
             object priority,
-            Func<TMessage, string> extractMessageCorrelationIdFunc,
             Func<TMessage, Tuple<string, bool, string, CreditBureauReply>> extractCreditBureauReplyFunc
             )
             : base(
@@ -74,8 +73,8 @@ namespace ManagementConsole
             _millisecondsInterval = secondsInterval*1000;
             _timeoutMillisecondsInterval = timeoutSecondsInterval*1000;
             _priority = priority;
-            _extractMessageCorrelationIdFunc = extractMessageCorrelationIdFunc;
             _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
+            _monitorReplyQueue = monitorReplyQueue;
         }
 
         public override bool StartProcessing()
@@ -114,7 +113,7 @@ namespace ManagementConsole
                     assignPriority(_priority);
                 });
 
-            _correlationId = _extractMessageCorrelationIdFunc(requestMessage);
+            _correlationId = _monitorReplyQueue.GetMessageId(requestMessage);
         }
 
         void OnSendTimerEvent(object state)

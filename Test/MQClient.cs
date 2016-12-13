@@ -45,7 +45,6 @@ namespace Test
                             new MessageSenderGateway(ToPath(requestQueue)),
                             loanQuoteReplyReceiver,
                             numMessages,
-                            loanQuoteReplyReceiver.CanonicalDataModel.GetMessageId,
                             (requestObject =>
                             {
                                 Message message = (Message) requestObject;
@@ -57,9 +56,8 @@ namespace Test
                             }),
                             (message =>
                             {
-                                return new Tuple<string, bool, LoanQuoteReply>
+                                return new Tuple<bool, LoanQuoteReply>
                                     (
-                                    loanQuoteReplyReceiver.CanonicalDataModel.GetMessageCorrelationId(message),
                                     loanQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
                                     loanQuoteReplyReceiver.CanonicalDataModel.GetEntity(message)
                                     );

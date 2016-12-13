@@ -19,8 +19,11 @@ namespace Messaging.Base
             set;
         }
 
-
         IReturnAddress<TMessage> AsReturnAddress();
+
+        string GetMessageId(TMessage message);
+        string GetMessageCorrelationId(TMessage message);
+        string GetMessageAppSpecific(TMessage message);
     }
 
     public interface IMessageReceiver<TMessageQueue, TMessage> : IMessageReceiver<TMessage>, IMessageCore<TMessageQueue>

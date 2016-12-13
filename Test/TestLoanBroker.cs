@@ -21,25 +21,22 @@ namespace Test
         protected DateTime startTime;
 
         IReturnAddress<TMessage> _loanBroakerReturnAddress;
-        private Func<TMessage, Tuple<string, bool, LoanQuoteReply>> _extractLoanQuoteReplyFunc;
+        private Func<TMessage, Tuple<bool, LoanQuoteReply>> _extractLoanQuoteReplyFunc;
         private Func<object, Tuple<bool, LoanQuoteRequest>> _extractLoanQueueRequestFunc;
-        private Func<TMessage, string> _extractMessageIdFunc;
 
 
         public TestLoanBroker(
             IMessageSender<TMessage> requestQueue,
             IMessageReceiver<TMessage> replyQueue,
             int numMessages,
-            Func <TMessage, string> extractMessageIdFunc,
             Func<object, Tuple<bool, LoanQuoteRequest>> extractLoanQueueRequestFunc,
-            Func<TMessage, Tuple<string, bool, LoanQuoteReply>> extractLoanQuoteReplyFunc
+            Func<TMessage, Tuple<bool, LoanQuoteReply>> extractLoanQuoteReplyFunc
             )
         {
             _requestQueue = requestQueue;
             _replyQueue = replyQueue;
             _loanBroakerReturnAddress = _replyQueue.AsReturnAddress();
 
-            _extractMessageIdFunc = extractMessageIdFunc;
             _extractLoanQueueRequestFunc = extractLoanQueueRequestFunc;
             _extractLoanQuoteReplyFunc = extractLoanQuoteReplyFunc;
 
@@ -80,7 +77,7 @@ namespace Test
                         assignApplicationId(count.ToString());
                     });
 
-                string messageId = _extractMessageIdFunc(msg);
+                string messageId = _replyQueue.GetMessageId(msg);
 
                 Console.WriteLine("Sent Request {0} {1:c} MsgID = {2}", req.SSN, req.LoanAmount, messageId);
                 messageBuffer.Add(messageId, msg);
@@ -127,11 +124,11 @@ namespace Test
 
         private void OnMessage(TMessage msg)
         {
-            Tuple<string, bool, LoanQuoteReply> replyInfo = _extractLoanQuoteReplyFunc(msg);
+            Tuple<bool, LoanQuoteReply> replyInfo = _extractLoanQuoteReplyFunc(msg);
 
-            bool isLoanQuoteReply = replyInfo.Item2;
-            LoanQuoteReply reply = replyInfo.Item3;
-            string correlationId = replyInfo.Item1;
+            bool isLoanQuoteReply = replyInfo.Item1;
+            LoanQuoteReply reply = replyInfo.Item2;
+            string correlationId = _replyQueue.GetMessageCorrelationId(msg);
 
             try
             {

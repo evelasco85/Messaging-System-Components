@@ -71,7 +71,6 @@ namespace ManagementConsole
                 secondsInterval, //Verify status every n-th second(s)
                 timeoutSecondsInterval, //Set n-th second timeout,
                 MessagePriority.AboveNormal,
-                monitoringReplyReceiver.CanonicalDataModel.GetMessageId,
                 (message =>
                 {
                     string messageBody = string.Empty;

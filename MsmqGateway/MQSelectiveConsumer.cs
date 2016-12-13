@@ -113,5 +113,20 @@ namespace MsmqGateway
         {
             return _returnAddress;
         }
+
+        public override string GetMessageAppSpecific(Message message)
+        {
+            return message.AppSpecific.ToString();
+        }
+
+        public override string GetMessageCorrelationId(Message message)
+        {
+            return message.CorrelationId;
+        }
+
+        public override string GetMessageId(Message message)
+        {
+            return message.Id;
+        }
     }
 }

@@ -16,13 +16,13 @@ namespace LoanBroker
         protected int _aggregationCorrelationID;
         IReturnAddress<TMessage> _bankReturnAddress;
         private Func<int, BankQuoteRequest, TMessage> _constructBankQuoteRequestMessageFunc;
-        private Func<TMessage, Tuple<int, bool, BankQuoteReply>> _extractBankQuoteReplyFunc;
+        private Func<TMessage, Tuple<bool, BankQuoteReply>> _extractBankQuoteReplyFunc;
 
         public BankGateway(
             IMessageReceiver<TMessage> receiver,
             ConnectionsManager<TMessage> connectionManager,
             Func<int, BankQuoteRequest, TMessage> constructBankQuoteRequestMessageFunc,
-            Func<TMessage, Tuple<int, bool, BankQuoteReply>> extractBankQuoteReplyFunc
+            Func<TMessage, Tuple<bool, BankQuoteReply>> extractBankQuoteReplyFunc
             )
         {
             receiver.ReceiveMessageProcessor += new MessageDelegate<TMessage>(OnBankMessage);
@@ -63,11 +63,12 @@ namespace LoanBroker
 
         private void OnBankMessage(TMessage msg)
         {
-            Tuple<int, bool, BankQuoteReply> replyInfo = _extractBankQuoteReplyFunc(msg);
+            Tuple<bool, BankQuoteReply> replyInfo = _extractBankQuoteReplyFunc(msg);
 
-            int aggregationCorrelationId = replyInfo.Item1;
-            bool isBankQuoteReply = replyInfo.Item2;
-            BankQuoteReply replyStruct = replyInfo.Item3;
+            int aggregationCorrelationId = Convert.ToInt32(_bankReplyQueue.GetMessageAppSpecific(msg));
+
+            bool isBankQuoteReply = replyInfo.Item1;
+            BankQuoteReply replyStruct = replyInfo.Item2;
 
             try 
             {

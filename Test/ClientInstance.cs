@@ -12,16 +12,14 @@ namespace Test
             IMessageSender<TMessage> sender,
             IMessageReceiver<TMessage> receiver,
             int numMessages,
-            Func<TMessage, string> extractMessageIdFunc,
             Func<object, Tuple<bool, LoanQuoteRequest>> extractLoanQueueRequestFunc,
-            Func<TMessage, Tuple<string, bool, LoanQuoteReply>> extractLoanQuoteReplyFunc
+            Func<TMessage, Tuple<bool, LoanQuoteReply>> extractLoanQuoteReplyFunc
             )
         {
             test = new TestLoanBroker<TMessage>(
                 sender,
                 receiver,
                 numMessages,
-                extractMessageIdFunc,
                 extractLoanQueueRequestFunc,
                 extractLoanQuoteReplyFunc
                 );

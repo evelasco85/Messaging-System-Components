@@ -92,8 +92,7 @@ namespace LoanBroker
                             }),
                             (message =>
                             {
-                                return new Tuple<int, bool, BankQuoteReply>(
-                                    bankQuoteReplyReceiver.CanonicalDataModel.GetMessageAppSpecific(message),
+                                return new Tuple<bool, BankQuoteReply>(
                                     bankQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
                                     bankQuoteReplyReceiver.CanonicalDataModel.GetEntity(message)
                                     );
@@ -108,8 +107,7 @@ namespace LoanBroker
                             creditBureauReplyReceiver,
                             (message =>
                             {
-                                return new Tuple<int, bool, CreditBureauReply>(
-                                    creditBureauReplyReceiver.CanonicalDataModel.GetMessageAppSpecific(message),
+                                return new Tuple<bool, CreditBureauReply>(
                                     creditBureauReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
                                     creditBureauReplyReceiver.CanonicalDataModel.GetEntity(message)
                                     );
@@ -118,14 +116,15 @@ namespace LoanBroker
 
                         instance.SetupProcessManager();
 
+                        IMessageReceiver<MessageQueue, Message> proxyRequestReceiver = new MessageReceiverGateway<LoanQuoteRequest>(ToPath(proxyRequestQueue));
                         MQRequestReplyService_Asynchronous<LoanQuoteRequest> requestReplyService = new MQRequestReplyService_Asynchronous
                             <LoanQuoteRequest>(
-                            ToPath(proxyRequestQueue),
+                            proxyRequestReceiver,
                             new AsyncProcessMessageDelegate(instance.ProcessManager.ProcessRequestMessage)
                             );
 
                         instance.SetupQueueService(requestReplyService);
-                        instance.HookMessageIdExtractor(requestReplyService.CanonicalDataModel.GetMessageId);
+                        instance.HookMessageIdExtractor(proxyRequestReceiver.GetMessageId);
                         instance.StartProcessingManagerListening();
 
                         Console.WriteLine("Configurations ok!");

@@ -30,12 +30,12 @@ namespace LoanBroker
 
         IReturnAddress<TMessage> _creditReturnAddress;
         ICorrelationManager<int, CreditRequestProcess> _correlationManager = new CorrelationManager<int, CreditRequestProcess>();
-        private Func<TMessage, Tuple<int, bool, CreditBureauReply>> _extractCreditBureauReplyFunc;
+        private Func<TMessage, Tuple<bool, CreditBureauReply>> _extractCreditBureauReplyFunc;
 
         public CreditBureauGatewayImp(
             IMessageSender<TMessage> creditRequestQueue,
             IMessageReceiver<TMessage> creditReplyQueue,
-            Func<TMessage, Tuple<int, bool, CreditBureauReply>> extractCreditBureauReplyFunc
+            Func<TMessage, Tuple<bool, CreditBureauReply>> extractCreditBureauReplyFunc
             )
         {
             _extractCreditBureauReplyFunc = extractCreditBureauReplyFunc;
@@ -77,11 +77,11 @@ namespace LoanBroker
 
         private void OnCreditResponse(TMessage msg)
         {
-            Tuple<int, bool, CreditBureauReply> replyInfo = _extractCreditBureauReplyFunc(msg);
+            Tuple<bool, CreditBureauReply> replyInfo = _extractCreditBureauReplyFunc(msg);
 
-            int CorrelationID = replyInfo.Item1;
-            bool isCreditBureauReply = replyInfo.Item2;
-            CreditBureauReply replyStruct = replyInfo.Item3;
+            int CorrelationID = Convert.ToInt32(_creditReplyQueue.GetMessageAppSpecific(msg));
+            bool isCreditBureauReply = replyInfo.Item1;
+            CreditBureauReply replyStruct = replyInfo.Item2;
 
             try	
             {

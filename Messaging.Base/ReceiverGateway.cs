@@ -46,5 +46,9 @@ namespace Messaging.Base
         public abstract void StartReceivingMessages();
         public abstract void StopReceivingMessages();
         public abstract void SetupReceiver();
+
+        public abstract string GetMessageId(TMessage message);
+        public abstract string GetMessageCorrelationId(TMessage message);
+        public abstract string GetMessageAppSpecific(TMessage message);
     }
 }

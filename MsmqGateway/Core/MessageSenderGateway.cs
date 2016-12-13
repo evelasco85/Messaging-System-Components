@@ -106,14 +106,6 @@ namespace MsmqGateway.Core
             return _cdm.GetMessage(entity);
         }
 
-        void ApplyProperties(ref Message message, string name, object value)
-        {
-            Type propertyType = message.GetType();
-            PropertyInfo propertyInfo = propertyType.GetProperty(name, BindingFlags.Public | BindingFlags.Instance);
-
-            propertyInfo.SetValue(message, value);
-        }
-
         public override void SetupSender()
 	    {
             GetQueue().MessageReadPropertyFilter.ClearAll();
