@@ -49,6 +49,6 @@ namespace Messaging.Base
 
         public abstract string GetMessageId(TMessage message);
         public abstract string GetMessageCorrelationId(TMessage message);
-        public abstract string GetMessageAppSpecific(TMessage message);
+        public abstract string GetMessageApplicationId(TMessage message);
     }
 }

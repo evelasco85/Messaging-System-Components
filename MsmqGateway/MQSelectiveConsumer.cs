@@ -114,7 +114,7 @@ namespace MsmqGateway
             return _returnAddress;
         }
 
-        public override string GetMessageAppSpecific(Message message)
+        public override string GetMessageApplicationId(Message message)
         {
             return message.AppSpecific.ToString();
         }

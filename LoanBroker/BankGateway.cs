@@ -65,7 +65,7 @@ namespace LoanBroker
         {
             Tuple<bool, BankQuoteReply> replyInfo = _extractBankQuoteReplyFunc(msg);
 
-            int aggregationCorrelationId = Convert.ToInt32(_bankReplyQueue.GetMessageAppSpecific(msg));
+            int aggregationCorrelationId = Convert.ToInt32(_bankReplyQueue.GetMessageApplicationId(msg));
 
             bool isBankQuoteReply = replyInfo.Item1;
             BankQuoteReply replyStruct = replyInfo.Item2;

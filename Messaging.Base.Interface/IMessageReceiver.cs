@@ -23,7 +23,7 @@ namespace Messaging.Base
 
         string GetMessageId(TMessage message);
         string GetMessageCorrelationId(TMessage message);
-        string GetMessageAppSpecific(TMessage message);
+        string GetMessageApplicationId(TMessage message);
     }
 
     public interface IMessageReceiver<TMessageQueue, TMessage> : IMessageReceiver<TMessage>, IMessageCore<TMessageQueue>

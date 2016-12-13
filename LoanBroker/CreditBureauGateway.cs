@@ -79,7 +79,7 @@ namespace LoanBroker
         {
             Tuple<bool, CreditBureauReply> replyInfo = _extractCreditBureauReplyFunc(msg);
 
-            int CorrelationID = Convert.ToInt32(_creditReplyQueue.GetMessageAppSpecific(msg));
+            int CorrelationID = Convert.ToInt32(_creditReplyQueue.GetMessageApplicationId(msg));
             bool isCreditBureauReply = replyInfo.Item1;
             CreditBureauReply replyStruct = replyInfo.Item2;
 
