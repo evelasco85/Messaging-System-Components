@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Messaging.Base.Constructions;
 
@@ -27,10 +28,10 @@ namespace Messaging.Base
     {
         IReturnAddress<TMessage> AsReturnAddress();
         TMessage Send<TEntity>(TEntity message);
-        TMessage Send<TEntity>(TEntity entity, IList<SenderProperty> propertiesToSet);
+        TMessage Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty);
         TMessage Send(TMessage message);
         TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress);
-        TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, IList<SenderProperty> propertiesToSet);
+        TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignSenderPropertyDelegate> AssignProperty);
     }
 
     public interface IMessageSender<TMessageQueue, TMessage> : IMessageCore<TMessageQueue>, IMessageSender<TMessage>

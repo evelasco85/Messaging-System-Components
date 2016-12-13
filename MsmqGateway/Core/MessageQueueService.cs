@@ -17,21 +17,25 @@ namespace MsmqGateway.Core
 	
         public override void SendReply(Object responseObject, Message originalRequestMessage)
         {
-            List<SenderProperty> properties = new List<SenderProperty>
-            {
-                new SenderProperty() {Name = "CorrelationId", Value = originalRequestMessage.Id},
-                new SenderProperty() {Name = "AppSpecific", Value = originalRequestMessage.AppSpecific}
-            };
-
             if (originalRequestMessage.ResponseQueue != null) 
             {
                 IMessageSender<MessageQueue, Message>  replyQueue = new MessageSenderGateway(originalRequestMessage.ResponseQueue);
 
-                replyQueue.Send(responseObject, properties);
+                replyQueue.Send(responseObject,
+                    assignProperty =>
+                    {
+                        assignProperty("CorrelationId", originalRequestMessage.Id);
+                        assignProperty("AppSpecific", originalRequestMessage.AppSpecific);
+                    });
             }
             else
             {
-                this.InvalidQueue.Send(responseObject, properties);
+                this.InvalidQueue.Send(responseObject,
+                     assignProperty =>
+                     {
+                         assignProperty("CorrelationId", originalRequestMessage.Id);
+                         assignProperty("AppSpecific", originalRequestMessage.AppSpecific);
+                     });
             }
         }
     }

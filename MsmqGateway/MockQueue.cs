@@ -6,6 +6,7 @@
  * This code is supplied as is. No warranties. 
  */
 
+using System;
 using System.Collections.Generic;
 using Messaging.Base.Constructions;
 
@@ -76,13 +77,13 @@ namespace Gateway.Mock
             return null;
         }
 
-        public Message Send<TEntity>(TEntity entity, IList<SenderProperty> propertiesToSet)
+        public Message Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty)
         {
             return null;
         }
 
         public Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress,
-            IList<SenderProperty> propertiesToSet)
+            Action<AssignSenderPropertyDelegate> AssignProperty)
         {
             return null;
         }

@@ -67,11 +67,11 @@ namespace LoanBroker
                 {
                     callback = OnCreditResponse,
                 });
-            _creditRequestQueue.Send(quoteRequest, _creditReturnAddress, 
-                new List<SenderProperty>()
-                {
-                    new SenderProperty(){Name = "AppSpecific", Value = appSpecific}
-                });
+            _creditRequestQueue.Send(quoteRequest, _creditReturnAddress,
+                assignProperty =>
+                    {
+                        assignProperty("AppSpecific", appSpecific);
+                    });
         }
 
         private void OnCreditResponse(TMessage msg)

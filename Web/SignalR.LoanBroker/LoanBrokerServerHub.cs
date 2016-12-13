@@ -55,10 +55,10 @@ namespace Web.SignalR.LoanBroker
 
             //_replyQueue.AsReturnAddress().SetMessageReturnAddress(ref msg);
             Message msg = _requestQueue.Send(req, 
-                new List<SenderProperty>()
-                {
-                    new SenderProperty() {Name = "AppSpecific", Value = req.SSN}
-                });
+                 assignProperty =>
+                        {
+                            assignProperty("AppSpecific", req.SSN);
+                        });
 
             Thread.Sleep(100);
 

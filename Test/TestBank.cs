@@ -48,10 +48,10 @@ namespace Test
                 req.LoanAmount =  random.Next(100)*10000 + 50000;
                 req.LoanTerm = random.Next(36)+12;
 
-                Message msg = requestQueue.Send(req, _bankReturnAddress, 
-                    new List<SenderProperty>()
+                Message msg = requestQueue.Send(req, _bankReturnAddress,
+                    assignProperty =>
                     {
-                        new SenderProperty(){ Name = "AppSpecific", Value = count}
+                        assignProperty("AppSpecific", count);
                     });
 
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);

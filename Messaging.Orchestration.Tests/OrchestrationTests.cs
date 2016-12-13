@@ -111,9 +111,9 @@ namespace Messaging.Orchestration.Tests
                 (sender, response) =>
                 {
                     sender.Send(response,
-                        new List<SenderProperty>
+                        assignProperty =>
                         {
-                            new SenderProperty {Name = "CorrelationId", Value = response.ClientId}
+                            assignProperty("CorrelationId", response.ClientId);
                         });
                 },
                 request =>

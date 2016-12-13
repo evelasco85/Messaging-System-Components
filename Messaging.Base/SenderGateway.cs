@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Messaging.Base.Constructions;
 
 namespace Messaging.Base
@@ -34,9 +35,9 @@ namespace Messaging.Base
 
         public abstract TMessage Send(TMessage message);
         public abstract TMessage Send<TEntity>(TEntity message);
-        public abstract TMessage Send<TEntity>(TEntity entity, IList<SenderProperty> propertiesToSet);
+        public abstract TMessage Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty);
         public abstract TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress);
-        public abstract TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, IList<SenderProperty> propertiesToSet);
+        public abstract TMessage Send<TEntity>(TEntity entity, IReturnAddress<TMessage> returnAddress, Action<AssignSenderPropertyDelegate> AssignProperty);
         public abstract void SetupSender();
     }
 }

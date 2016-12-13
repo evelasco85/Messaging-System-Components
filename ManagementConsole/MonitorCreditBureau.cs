@@ -109,10 +109,10 @@ namespace ManagementConsole
             };
 
             TMessage requestMessage  = SendTestMessage(request,
-                new List<SenderProperty>()
-                {
-                    new SenderProperty(){Name = "Priority", Value = _priority}
-                });
+                assignProperty =>
+                    {
+                        assignProperty("Priority", _priority);
+                    });
 
             _correlationId = _extractMessageCorrelationIdFunc(requestMessage);
         }

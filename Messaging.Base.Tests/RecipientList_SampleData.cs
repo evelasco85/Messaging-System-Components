@@ -37,12 +37,12 @@ namespace Messaging.Base.Tests
             throw new NotImplementedException();
         }
 
-        public override Message Send<TEntity>(TEntity entity, IList<SenderProperty> propertiesToSet)
+        public override Message Send<TEntity>(TEntity entity, Action<AssignSenderPropertyDelegate> AssignProperty)
         {
             throw new NotImplementedException();
         }
 
-        public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress, IList<SenderProperty> propertiesToSet)
+        public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress, Action<AssignSenderPropertyDelegate> AssignProperty)
         {
             throw new NotImplementedException();
         }

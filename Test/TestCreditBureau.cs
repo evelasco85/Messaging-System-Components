@@ -50,9 +50,9 @@ namespace Test
                     SSN = count
                 };
                 Message msg = requestQueue.Send(req, _creditReturnAddress,
-                    new List<SenderProperty>()
+                    assignProperty =>
                     {
-                        new SenderProperty(){Name = "AppSpecific", Value = random.Next()}
+                        assignProperty("AppSpecific", random.Next());
                     });
 
                 Console.WriteLine("Sent Request{0}  MsgID = {1}", req.SSN, msg.Id);
