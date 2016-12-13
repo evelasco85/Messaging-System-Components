@@ -20,14 +20,10 @@ namespace RabbitMqGateway
                 _channel.Dispose();
         }
 
-        public MessageQueueGateway(string hostname, string queueName)
+        public MessageQueueGateway(ConnectionFactory factory, string queueName)
         {
             _queueName = queueName;
 
-            ConnectionFactory factory = new ConnectionFactory()
-            {
-                HostName = hostname
-            };
             IConnection connection = factory.CreateConnection();
             IModel channel = connection.CreateModel();
 

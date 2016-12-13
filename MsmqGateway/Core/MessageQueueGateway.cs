@@ -42,7 +42,7 @@ namespace MsmqGateway.Core
             msgQueue = queue;
         }
 
-        private static MessageQueue FindQueue(String q)
+        static MessageQueue FindQueue(String q)
 		{
 			if (!MessageQueue.Exists(q))
 			{
