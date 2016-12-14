@@ -9,10 +9,10 @@ using RabbitMQ.Client.Events;
 namespace RabbitMqGateway.Core
 {
     public class MessageReceiverGateway<TEntity> :
-        ReceiverGateway<IModel, RQMessage>
+        ReceiverGateway<IModel, Message>
     {
-        private IReturnAddress<RQMessage> _returnAddress;
-        private MessageDelegate<RQMessage> _receivedMessageProcessor;
+        private IReturnAddress<Message> _returnAddress;
+        private MessageDelegate<Message> _receivedMessageProcessor;
         private CanonicalDataModel<TEntity> _cdm;
         private EventingBasicConsumer _consumer;
         private string _consumerTag = string.Empty;
@@ -40,13 +40,13 @@ namespace RabbitMqGateway.Core
         {
             byte[] messageByte = args.Body;
             string jsonMessage = Encoding.UTF8.GetString(messageByte);
-            RQMessage message = (RQMessage)JsonConvert.DeserializeObject(jsonMessage);
+            Message message = (Message)JsonConvert.DeserializeObject(jsonMessage);
 
             if (_receivedMessageProcessor != null)
                 _receivedMessageProcessor.Invoke(message);
         }
 
-        public override MessageDelegate<RQMessage> ReceiveMessageProcessor
+        public override MessageDelegate<Message> ReceiveMessageProcessor
         {
             get { return _receivedMessageProcessor; }
             set { _receivedMessageProcessor = value; }
@@ -76,22 +76,22 @@ namespace RabbitMqGateway.Core
             Started = false;
         }
 
-        public override IReturnAddress<RQMessage> AsReturnAddress()
+        public override IReturnAddress<Message> AsReturnAddress()
         {
             return _returnAddress;
         }
 
-        public override string GetMessageApplicationId(RQMessage message)
+        public override string GetMessageApplicationId(Message message)
         {
             return message.AppSpecific;
         }
 
-        public override string GetMessageCorrelationId(RQMessage message)
+        public override string GetMessageCorrelationId(Message message)
         {
             return message.CorrelationId;
         }
 
-        public override string GetMessageId(RQMessage message)
+        public override string GetMessageId(Message message)
         {
             return message.Id;
         }

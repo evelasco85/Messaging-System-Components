@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 
 namespace RabbitMqGateway.Core
 {
-    public class MessageQueueService : QueueService<IModel, RQMessage>
+    public class MessageQueueService : QueueService<IModel, Message>
     {
         static protected readonly String InvalidMessageQueueName = "invalidMessageQueue";
 
@@ -12,17 +12,17 @@ namespace RabbitMqGateway.Core
 
         private ConnectionFactory _factory;
 
-        public MessageQueueService(ConnectionFactory factory, IMessageReceiver<IModel, RQMessage> receiver)
+        public MessageQueueService(ConnectionFactory factory, IMessageReceiver<IModel, Message> receiver)
             : base(receiver, new MessageSenderGateway(new MessageQueueGateway(factory, InvalidMessageQueueName)))
         {
             _factory = factory;
         }
 
-        public override void SendReply(Object responseObject, RQMessage originalRequestMessage)
+        public override void SendReply(Object responseObject, Message originalRequestMessage)
         {
             if (originalRequestMessage.ReplyTo != null)
             {
-                IMessageSender<IModel, RQMessage> replyQueue = new MessageSenderGateway(new MessageQueueGateway(_factory, originalRequestMessage.ReplyTo));
+                IMessageSender<IModel, Message> replyQueue = new MessageSenderGateway(new MessageQueueGateway(_factory, originalRequestMessage.ReplyTo));
 
                 replyQueue.Send(responseObject,
                     (assignApplicationId, assignCorrelationId) =>

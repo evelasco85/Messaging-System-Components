@@ -1,6 +1,6 @@
 ﻿namespace RabbitMqGateway.Core
 {
-    public class RQMessage
+    public class Message
     {
         public string Id { get; set; }
         public object Body { get; set; }

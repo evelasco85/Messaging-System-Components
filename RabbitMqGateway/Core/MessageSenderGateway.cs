@@ -7,9 +7,9 @@ using RabbitMQ.Client;
 
 namespace RabbitMqGateway.Core
 {
-    public class MessageSenderGateway : SenderGateway<IModel, RQMessage>
+    public class MessageSenderGateway : SenderGateway<IModel, Message>
     {
-        private IReturnAddress<RQMessage> _returnAddress;
+        private IReturnAddress<Message> _returnAddress;
 
         public MessageSenderGateway(MessageQueueGateway messageQueueGateway)
             : base(messageQueueGateway)
@@ -21,21 +21,21 @@ namespace RabbitMqGateway.Core
         {
         }
 
-        public override IReturnAddress<RQMessage> AsReturnAddress()
+        public override IReturnAddress<Message> AsReturnAddress()
         {
             return _returnAddress;
         }
 
-        public override RQMessage Send<TEntity>(TEntity entity)
+        public override Message Send<TEntity>(TEntity entity)
         {
-            RQMessage message = GetMessage(entity);
+            Message message = GetMessage(entity);
 
             return SendRawMessage(message);
         }
 
-        public override RQMessage Send<TEntity>(TEntity entity, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate> AssignProperty)
+        public override Message Send<TEntity>(TEntity entity, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate> AssignProperty)
         {
-            RQMessage message = GetMessage(entity);
+            Message message = GetMessage(entity);
 
             AssignProperty(
                 (applicationId) =>
@@ -50,18 +50,18 @@ namespace RabbitMqGateway.Core
             return SendRawMessage(message);
         }
 
-        public override RQMessage Send<TEntity>(TEntity entity, IReturnAddress<RQMessage> returnAddress)
+        public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress)
         {
-            RQMessage message = GetMessage(entity);
+            Message message = GetMessage(entity);
 
             returnAddress.SetMessageReturnAddress(ref message);
 
             return SendRawMessage(message);
         }
 
-        public override RQMessage Send<TEntity>(TEntity entity, IReturnAddress<RQMessage> returnAddress, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate, AssignPriorityDelegate> AssignProperty)
+        public override Message Send<TEntity>(TEntity entity, IReturnAddress<Message> returnAddress, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate, AssignPriorityDelegate> AssignProperty)
         {
-            RQMessage message = GetMessage(entity);
+            Message message = GetMessage(entity);
 
             AssignProperty(
                 (applicationId) =>
@@ -81,7 +81,7 @@ namespace RabbitMqGateway.Core
             return SendRawMessage(message);
         }
 
-        public override RQMessage SendRawMessage(RQMessage message)
+        public override Message SendRawMessage(Message message)
         {
             if (string.IsNullOrEmpty(message.Id))
                 message.Id = Guid.NewGuid().ToString();
@@ -107,10 +107,10 @@ namespace RabbitMqGateway.Core
             return message;
         }
 
-        RQMessage GetMessage<TEntity>(TEntity entity)
+        Message GetMessage<TEntity>(TEntity entity)
         {
             CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            RQMessage message =  _cdm.GetMessage(entity);
+            Message message =  _cdm.GetMessage(entity);
 
             message.Id = Guid.NewGuid().ToString();
 
