@@ -17,5 +17,15 @@ namespace RabbitMqGateway.Core
         {
             output = (TEntity) message.Body;
         }
+
+        public Type GetRequestBodyType()
+        {
+            return typeof(TEntity);
+        }
+
+        public bool MatchedDataModel(Message message)
+        {
+            return message.Body is TEntity;
+        }
     }
 }

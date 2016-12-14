@@ -7,9 +7,6 @@ namespace RabbitMqGateway.Core
     public class MessageQueueService : QueueService<IModel, Message>
     {
         static protected readonly String InvalidMessageQueueName = "invalidMessageQueue";
-
-        protected Type requestBodyType;
-
         private ConnectionFactory _factory;
 
         public MessageQueueService(ConnectionFactory factory, IMessageReceiver<IModel, Message> receiver)

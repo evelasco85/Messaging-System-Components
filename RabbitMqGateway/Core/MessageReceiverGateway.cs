@@ -29,6 +29,11 @@ namespace RabbitMqGateway.Core
             _returnAddress = new MQReturnAddress(messageQueueGateway);
         }
 
+        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway)
+            : this(messageQueueGateway, new CanonicalDataModel<TEntity>())
+        {
+        }
+
         public override void SetupReceiver()
         {
             _consumer = new EventingBasicConsumer(GetQueue());
