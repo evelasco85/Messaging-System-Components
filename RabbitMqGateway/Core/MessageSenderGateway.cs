@@ -85,7 +85,7 @@ namespace RabbitMqGateway.Core
         {
             string id = Guid.NewGuid().ToString();
 
-            message.MessageId = id;
+            message.Id = id;
 
             IBasicProperties properties = GetQueue().CreateBasicProperties();
 
@@ -113,7 +113,7 @@ namespace RabbitMqGateway.Core
             CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
             RQMessage message =  _cdm.GetMessage(entity);
 
-            message.MessageId = Guid.NewGuid().ToString();
+            message.Id = Guid.NewGuid().ToString();
 
             return message;
         }
