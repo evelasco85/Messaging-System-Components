@@ -42,21 +42,6 @@ namespace MsmqGateway.Core
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 
-        public MessageReceiverGateway(String q, MessageDelegate<Message> receiveMessageDelegate) : this(q, new CanonicalDataModel<TEntity>())
-        {
-            this._receivedMessageProcessor += receiveMessageDelegate;
-        }
-
-        public MessageReceiverGateway(MessageQueue q) : this(new MessageQueueGateway(q), new CanonicalDataModel<TEntity>())
-        {
-            this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
-        }
-
-        public MessageReceiverGateway(MessageQueue q, MessageDelegate<Message> receiveMessageDelegate) : this(q)
-        {
-            this._receivedMessageProcessor += receiveMessageDelegate;
-        }
-
         public MessageReceiverGateway(String q) : this(q, new CanonicalDataModel<TEntity>())
         {
             GetQueue().Formatter = _cdm.Formatter;
