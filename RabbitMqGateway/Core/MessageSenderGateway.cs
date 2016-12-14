@@ -83,13 +83,12 @@ namespace RabbitMqGateway.Core
 
         public override RQMessage SendRawMessage(RQMessage message)
         {
-            string id = Guid.NewGuid().ToString();
-
-            message.Id = id;
+            if (string.IsNullOrEmpty(message.Id))
+                message.Id = Guid.NewGuid().ToString();
 
             IBasicProperties properties = GetQueue().CreateBasicProperties();
 
-            properties.MessageId = id;
+            properties.MessageId = message.Id;
             properties.Priority = message.Priority;
             properties.CorrelationId = message.CorrelationId;
             properties.AppId = message.AppSpecific;
