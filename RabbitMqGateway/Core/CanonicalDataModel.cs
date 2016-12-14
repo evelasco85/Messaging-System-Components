@@ -7,12 +7,15 @@ namespace RabbitMqGateway.Core
     {
         public override void TranslateToMessage(TEntity entity, out RQMessage output)
         {
-            throw new NotImplementedException();
+            output = new RQMessage()
+            {
+                Body = entity
+            };
         }
 
         public override void TranslateToEntity(RQMessage message, out TEntity output)
         {
-            throw new NotImplementedException();
+            output = (TEntity) message.Body;
         }
     }
 }

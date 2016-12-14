@@ -11,9 +11,7 @@ namespace RabbitMqGateway
             : base(messageReplyQueue,
                 (IModel queue, ref RQMessage message) =>
                 {
-                    IBasicProperties properties = queue.CreateBasicProperties();
-
-                    properties.ReplyTo = messageReplyQueue.QueueName;
+                    message.ReplyTo = messageReplyQueue.QueueName;
                 })
         {
         }

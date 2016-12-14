@@ -26,33 +26,74 @@ namespace RabbitMqGateway.Core
             return _returnAddress;
         }
 
-        public override RQMessage Send<TEntity>(TEntity message)
+        public override RQMessage Send<TEntity>(TEntity entity)
         {
-            throw new System.NotImplementedException();
+            RQMessage message = GetMessage(entity);
+
+            return SendRawMessage(message);
         }
 
         public override RQMessage Send<TEntity>(TEntity entity, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate> AssignProperty)
         {
-            throw new NotImplementedException();
+            RQMessage message = GetMessage(entity);
+
+            AssignProperty(
+                (applicationId) =>
+                {
+                    message.AppSpecific = applicationId;
+                },
+                (correlationId =>
+                {
+                    message.CorrelationId = correlationId;
+                }));
+
+            return SendRawMessage(message);
         }
 
         public override RQMessage Send<TEntity>(TEntity entity, IReturnAddress<RQMessage> returnAddress)
         {
-            throw new NotImplementedException();
+            RQMessage message = GetMessage(entity);
+
+            returnAddress.SetMessageReturnAddress(ref message);
+
+            return SendRawMessage(message);
         }
 
         public override RQMessage Send<TEntity>(TEntity entity, IReturnAddress<RQMessage> returnAddress, Action<AssignApplicationIdDelegate, AssignCorrelationIdDelegate, AssignPriorityDelegate> AssignProperty)
         {
-            throw new NotImplementedException();
+            RQMessage message = GetMessage(entity);
+
+            AssignProperty(
+                (applicationId) =>
+                {
+                    message.AppSpecific = applicationId;
+                },
+                (correlationId =>
+                {
+                    message.CorrelationId = correlationId;
+                }),
+                (priority =>
+                {
+                    message.Priority = (byte)priority;
+                }));
+            returnAddress.SetMessageReturnAddress(ref message);
+
+            return SendRawMessage(message);
         }
 
         public override RQMessage SendRawMessage(RQMessage message)
         {
-            message.MessageId = Guid.NewGuid().ToString();
+            string id = Guid.NewGuid().ToString();
+
+            message.MessageId = id;
 
             IBasicProperties properties = GetQueue().CreateBasicProperties();
 
-            properties.MessageId = message.MessageId;
+            properties.MessageId = id;
+            properties.Priority = message.Priority;
+            properties.CorrelationId = message.CorrelationId;
+            properties.AppId = message.AppSpecific;
+            properties.ReplyTo = message.ReplyTo;
 
             string jsonMessage = JsonConvert.SerializeObject(message);
             
@@ -67,13 +108,14 @@ namespace RabbitMqGateway.Core
             return message;
         }
 
-        byte[] GetMessage<TEntity>(TEntity entity)
+        RQMessage GetMessage<TEntity>(TEntity entity)
         {
             CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            RQMessage message = _cdm.GetMessage(entity);
-            string jsonMessage = JsonConvert.SerializeObject(message);
+            RQMessage message =  _cdm.GetMessage(entity);
 
-            return Encoding.UTF8.GetBytes(jsonMessage); ;
+            message.MessageId = Guid.NewGuid().ToString();
+
+            return message;
         }
     }
 }
