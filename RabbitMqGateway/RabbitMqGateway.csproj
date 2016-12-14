@@ -55,6 +55,7 @@
     <Compile Include="Core\Message.cs" />
     <Compile Include="MQProcessor.cs" />
     <Compile Include="MQRequestReplyService_Asynchronous.cs" />
+    <Compile Include="MQRequestReplyService_Synchronous.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MQReturnAddress.cs" />
   </ItemGroup>
