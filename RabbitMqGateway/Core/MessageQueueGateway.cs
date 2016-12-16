@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using System;
 
-namespace RabbitMqGateway
+namespace RabbitMqGateway.Core
 {
     public class MessageQueueGateway : QueueGateway<IModel>, IDisposable
     {
@@ -17,7 +17,10 @@ namespace RabbitMqGateway
         public void Dispose()
         {
             if (_channel != null)
+            {
+                _channel.Close();
                 _channel.Dispose();
+            }
         }
 
         public MessageQueueGateway(ConnectionFactory factory, string queueName)

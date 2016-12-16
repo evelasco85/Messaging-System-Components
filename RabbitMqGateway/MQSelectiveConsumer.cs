@@ -2,12 +2,13 @@
 using Messaging.Base;
 using Messaging.Base.Constructions;
 using Newtonsoft.Json;
+using RabbitMqGateway.Core;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace RabbitMqGateway.Core
+namespace RabbitMqGateway
 {
-    public class MessageReceiverGateway<TEntity> :
+    public class MQSelectiveConsumer<TEntity> :
         ReceiverGateway<IModel, Message>
     {
         private IReturnAddress<Message> _returnAddress;
@@ -15,26 +16,50 @@ namespace RabbitMqGateway.Core
         private CanonicalDataModel<TEntity> _cdm;
         private EventingBasicConsumer _consumer;
         private string _consumerTag = string.Empty;
+        private string _correlationId = string.Empty;
 
         public CanonicalDataModel<TEntity> CanonicalDataModel
         {
             get { return _cdm; }
         }
 
-        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway, CanonicalDataModel<TEntity> cdm)
+        public MQSelectiveConsumer(MessageQueueGateway messageQueueGateway, CanonicalDataModel<TEntity> cdm)
             : base(messageQueueGateway)
         {
             _cdm = cdm;
             _returnAddress = new MQReturnAddress(messageQueueGateway);
         }
 
-        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway)
+        public MQSelectiveConsumer(
+            MessageQueueGateway messageQueueGateway,
+            CanonicalDataModel<TEntity> cdm,
+            string correlationId
+            )
+            : this(messageQueueGateway, cdm)
+        {
+            _correlationId = correlationId;
+        }
+
+        public MQSelectiveConsumer(MessageQueueGateway messageQueueGateway)
             : this(messageQueueGateway, new CanonicalDataModel<TEntity>())
         {
         }
 
         public override void SetupReceiver()
         {
+            string exchange = "selective_consumer";
+            string type = string.Empty;
+
+            GetQueue().ExchangeDeclare(
+                exchange: exchange,
+                type: ""
+                );
+            GetQueue().QueueBind(
+                queue: QueueName,
+                exchange: exchange,
+                routingKey:""
+                );
+
             _consumer = new EventingBasicConsumer(GetQueue());
 
             _consumer.Received += _consumer_Received;
@@ -76,7 +101,7 @@ namespace RabbitMqGateway.Core
                 return;
 
             GetQueue().BasicCancel(_consumerTag);
-            
+
             Started = false;
         }
 
