@@ -100,9 +100,7 @@ namespace MsmqGateway.Core
 
         Message GetMessage<TEntity>(TEntity entity)
         {
-            CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            
-            return _cdm.GetMessage(entity);
+            return new Message(entity);
         }
 
         public override void SetupSender()

@@ -11,15 +11,12 @@ namespace RabbitMqGateway
     public class MQRequestReplyService_Synchronous<TEntity> : RequestReply_Synchronous<IModel, Message>
     {
         private SyncProcessMessageDelegate _syncProcessMessageInvocator;
-        private CanonicalDataModel<TEntity> _cdm;
 
         MQRequestReplyService_Synchronous(
-            CanonicalDataModel<TEntity> cdm,
             SyncProcessMessageDelegate syncProcessMessageInvocator
             )
         {
             _syncProcessMessageInvocator = syncProcessMessageInvocator;
-            _cdm = cdm;
         }
 
 
@@ -28,7 +25,7 @@ namespace RabbitMqGateway
             IMessageReceiver<IModel, Message> receiver,
             SyncProcessMessageDelegate syncProcessMessageInvocator
             ) :
-            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator)
+            this(syncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(factory, receiver);
         }
@@ -38,7 +35,7 @@ namespace RabbitMqGateway
             String requestQueueName,
             SyncProcessMessageDelegate syncProcessMessageInvocator
             ) :
-            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator)
+            this(syncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(
                 factory,
@@ -49,11 +46,6 @@ namespace RabbitMqGateway
                         )
                     )
                 );
-        }
-
-        public CanonicalDataModel<TEntity> CanonicalDataModel
-        {
-            get { return _cdm; }
         }
 
         public override void OnMessageReceived(Message receivedMessage)
@@ -86,7 +78,7 @@ namespace RabbitMqGateway
         {
             try
             {
-                if (msg.Body.GetType().Equals(_cdm.GetRequestBodyType()))
+                if (msg.Body.GetType() == typeof(TEntity))
                 {
                     return msg.Body;
                 }

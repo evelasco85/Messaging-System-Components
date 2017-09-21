@@ -11,15 +11,12 @@ namespace RabbitMqGateway
     public class MQRequestReplyService_Asynchronous<TEntity> : RequestReply_Asynchronous<IModel, Message>
     {
         private AsyncProcessMessageDelegate _asyncProcessMessageInvocator;
-        private CanonicalDataModel<TEntity> _cdm;
 
         MQRequestReplyService_Asynchronous(
-            CanonicalDataModel<TEntity> cdm,
             AsyncProcessMessageDelegate asyncProcessMessageInvocator
             )
         {
             _asyncProcessMessageInvocator = asyncProcessMessageInvocator;
-            _cdm = cdm;
         }
 
         public MQRequestReplyService_Asynchronous(
@@ -27,7 +24,7 @@ namespace RabbitMqGateway
             IMessageReceiver<IModel, Message> receiver,
             AsyncProcessMessageDelegate asyncProcessMessageInvocator
             )
-            : this(new CanonicalDataModel<TEntity>(), asyncProcessMessageInvocator)
+            : this(asyncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(factory, receiver);
         }
@@ -37,7 +34,7 @@ namespace RabbitMqGateway
             String requestQueueName,
             AsyncProcessMessageDelegate asyncProcessMessageInvocator
             )
-            : this(new CanonicalDataModel<TEntity>(), asyncProcessMessageInvocator)
+            : this(asyncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(
                 factory,
@@ -48,11 +45,6 @@ namespace RabbitMqGateway
                         )
                     )
                 );
-        }
-
-        public CanonicalDataModel<TEntity> CanonicalDataModel
-        {
-            get { return _cdm; }
         }
 
         public override void OnMessageReceived(Message receivedMessage)
@@ -75,7 +67,7 @@ namespace RabbitMqGateway
         {
             try
             {
-                if (msg.Body.GetType().Equals(_cdm.GetRequestBodyType()))
+                if (msg.Body.GetType() == typeof(TEntity))
                 {
                     return msg.Body;
                 }

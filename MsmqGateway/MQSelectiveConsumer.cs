@@ -12,18 +12,16 @@ namespace MsmqGateway
         private IReturnAddress<Message> _returnAddress;
         private MessageDelegate<Message> _receivedMessageProcessor;
         private string _correlationId;
-        bool _continueReceivingMessages = true;
-        private CanonicalDataModel<TEntity> _cdm;
+        private bool _continueReceivingMessages = true;
+        private IMessageFormatter _formatter = new XmlMessageFormatter(new Type[] { typeof(TEntity) });
 
         public MQSelectiveConsumer(
             MessageQueueGateway messageQueueGateway, 
-            string correlationId,
-            CanonicalDataModel<TEntity> cdm
+            string correlationId
             ) : base(messageQueueGateway)
         {
             _returnAddress = new MQReturnAddress(messageQueueGateway);
             _correlationId = correlationId;
-            _cdm = cdm;
         }
 
         public override void SetupReceiver()
@@ -41,9 +39,9 @@ namespace MsmqGateway
         public MQSelectiveConsumer(
             String q,
             string correlationId)
-            : this(new MessageQueueGateway(q), correlationId, new CanonicalDataModel<TEntity>())
+            : this(new MessageQueueGateway(q), correlationId)
         {
-            GetQueue().Formatter = _cdm.Formatter;
+            GetQueue().Formatter = _formatter;
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
 
@@ -55,7 +53,7 @@ namespace MsmqGateway
         }
 
         public MQSelectiveConsumer(MessageQueue q, string correlationId)
-            : this(new MessageQueueGateway(q), correlationId, new CanonicalDataModel<TEntity>())
+            : this(new MessageQueueGateway(q), correlationId)
         {
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
@@ -71,11 +69,6 @@ namespace MsmqGateway
         {
             get { return _receivedMessageProcessor; }
             set { _receivedMessageProcessor = value; }
-        }
-
-        public CanonicalDataModel<TEntity> CanonicalDataModel
-        {
-            get { return _cdm; }
         }
 
         private void NullImpl(Message msg)
@@ -99,7 +92,6 @@ namespace MsmqGateway
                 }
                 catch (InvalidOperationException e)
                 {
-
                 }
             }
         }

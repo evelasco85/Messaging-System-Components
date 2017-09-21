@@ -11,15 +11,13 @@ namespace MsmqGateway
     public class MQRequestReplyService_Synchronous<TEntity> : RequestReply_Synchronous<MessageQueue, Message>
     {
         private SyncProcessMessageDelegate _syncProcessMessageInvocator;
-        private CanonicalDataModel<TEntity> _cdm;
+        private IMessageFormatter _formatter = new XmlMessageFormatter(new Type[] { typeof(TEntity) });
 
         MQRequestReplyService_Synchronous(
-            CanonicalDataModel<TEntity> cdm,
             SyncProcessMessageDelegate syncProcessMessageInvocator
             )
         {
             _syncProcessMessageInvocator = syncProcessMessageInvocator;
-            _cdm = cdm;
         }
 
 
@@ -27,7 +25,7 @@ namespace MsmqGateway
             IMessageReceiver<MessageQueue, Message> receiver,
             SyncProcessMessageDelegate syncProcessMessageInvocator
             ) :
-                this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator)
+                this(syncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(receiver);
         }
@@ -36,19 +34,14 @@ namespace MsmqGateway
             String requestQueueName,
             SyncProcessMessageDelegate syncProcessMessageInvocator
             ):
-            this(new CanonicalDataModel<TEntity>(), syncProcessMessageInvocator)
+            this(syncProcessMessageInvocator)
         {
             QueueService = new MessageQueueService(new MessageReceiverGateway<TEntity>(requestQueueName));
         }
 
-        public CanonicalDataModel<TEntity> CanonicalDataModel
-        {
-            get { return _cdm; }
-        }
-
         public override void OnMessageReceived(Message receivedMessage)
         {
-            receivedMessage.Formatter = _cdm.Formatter;
+            receivedMessage.Formatter = _formatter;
             Object inBody = GetTypedMessageBody(receivedMessage);
 
             if (inBody != null)
@@ -77,7 +70,7 @@ namespace MsmqGateway
         {
             try
             {
-                if (msg.Body.GetType().Equals(_cdm.GetRequestBodyType()))
+                if (msg.Body.GetType() == typeof(TEntity))
                 {
                     return msg.Body;
                 }

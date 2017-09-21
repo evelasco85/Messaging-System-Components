@@ -12,25 +12,13 @@ namespace RabbitMqGateway.Core
     {
         private IReturnAddress<Message> _returnAddress;
         private MessageDelegate<Message> _receivedMessageProcessor;
-        private CanonicalDataModel<TEntity> _cdm;
         private EventingBasicConsumer _consumer;
         private string _consumerTag = string.Empty;
 
-        public CanonicalDataModel<TEntity> CanonicalDataModel
-        {
-            get { return _cdm; }
-        }
-
-        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway, CanonicalDataModel<TEntity> cdm)
+        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway)
             : base(messageQueueGateway)
         {
-            _cdm = cdm;
             _returnAddress = new MQReturnAddress(messageQueueGateway);
-        }
-
-        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway)
-            : this(messageQueueGateway, new CanonicalDataModel<TEntity>())
-        {
         }
 
         public override void SetupReceiver()

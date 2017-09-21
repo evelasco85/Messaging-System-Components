@@ -9,7 +9,6 @@ namespace RabbitMqGateway
     {
         protected IMessageReceiver<IModel, Message> inputQueue;
         protected IMessageSender<IModel, Message> outputQueue;
-        private CanonicalDataModel<string> _cdm = new CanonicalDataModel<string>();
 
         public Processor(IMessageReceiver<IModel, Message> receiver, IMessageSender<IModel, Message> sender)
         {

@@ -109,8 +109,10 @@ namespace RabbitMqGateway.Core
 
         Message GetMessage<TEntity>(TEntity entity)
         {
-            CanonicalDataModel<TEntity> _cdm = new CanonicalDataModel<TEntity>();
-            Message message =  _cdm.GetMessage(entity);
+            Message message = new Message
+            {
+                Body = entity
+            };
 
             message.Id = Guid.NewGuid().ToString();
 

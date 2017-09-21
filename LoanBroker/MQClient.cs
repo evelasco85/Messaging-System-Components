@@ -92,9 +92,11 @@ namespace LoanBroker
                             }),
                             (message =>
                             {
+                                message.Formatter = new XmlMessageFormatter(new Type[] { typeof(BankQuoteReply) });
+
                                 return new Tuple<bool, BankQuoteReply>(
-                                    bankQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
-                                    bankQuoteReplyReceiver.CanonicalDataModel.GetEntity(message)
+                                    message.Body is BankQuoteReply,
+                                    (BankQuoteReply)message.Body
                                     );
                             }));
                         /********************/
@@ -107,9 +109,11 @@ namespace LoanBroker
                             creditBureauReplyReceiver,
                             (message =>
                             {
+                                message.Formatter = new XmlMessageFormatter(new Type[] { typeof(CreditBureauReply) });
+
                                 return new Tuple<bool, CreditBureauReply>(
-                                    creditBureauReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
-                                    creditBureauReplyReceiver.CanonicalDataModel.GetEntity(message)
+                                    message.Body is CreditBureauReply,
+                                    (CreditBureauReply)message.Body
                                     );
                             }));
                         /*********************/

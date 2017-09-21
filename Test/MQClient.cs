@@ -56,10 +56,12 @@ namespace Test
                             }),
                             (message =>
                             {
+                                message.Formatter = new XmlMessageFormatter(new Type[] { typeof(LoanQuoteReply) });
+
                                 return new Tuple<bool, LoanQuoteReply>
                                     (
-                                    loanQuoteReplyReceiver.CanonicalDataModel.MatchedDataModel(message),
-                                    loanQuoteReplyReceiver.CanonicalDataModel.GetEntity(message)
+                                    message.Body is LoanQuoteReply,
+                                    (LoanQuoteReply)message.Body
                                     );
                             })
                             );

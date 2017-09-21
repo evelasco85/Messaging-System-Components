@@ -13,36 +13,23 @@ namespace RabbitMqGateway
     {
         private IReturnAddress<Message> _returnAddress;
         private MessageDelegate<Message> _receivedMessageProcessor;
-        private CanonicalDataModel<TEntity> _cdm;
         private EventingBasicConsumer _consumer;
         private string _consumerTag = string.Empty;
         private string _correlationId = string.Empty;
 
-        public CanonicalDataModel<TEntity> CanonicalDataModel
-        {
-            get { return _cdm; }
-        }
-
-        public MQSelectiveConsumer(MessageQueueGateway messageQueueGateway, CanonicalDataModel<TEntity> cdm)
+        public MQSelectiveConsumer(MessageQueueGateway messageQueueGateway)
             : base(messageQueueGateway)
         {
-            _cdm = cdm;
             _returnAddress = new MQReturnAddress(messageQueueGateway);
         }
 
         public MQSelectiveConsumer(
             MessageQueueGateway messageQueueGateway,
-            CanonicalDataModel<TEntity> cdm,
             string correlationId
             )
-            : this(messageQueueGateway, cdm)
+            : this(messageQueueGateway)
         {
             _correlationId = correlationId;
-        }
-
-        public MQSelectiveConsumer(MessageQueueGateway messageQueueGateway)
-            : this(messageQueueGateway, new CanonicalDataModel<TEntity>())
-        {
         }
 
         public override void SetupReceiver()

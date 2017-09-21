@@ -9,7 +9,7 @@ namespace MsmqGateway
 	{
 		protected IMessageReceiver<MessageQueue, Message> inputQueue;
 		protected IMessageSender<MessageQueue, Message>  outputQueue;
-	    private CanonicalDataModel<string> _cdm = new CanonicalDataModel<string>();
+        private IMessageFormatter _formatter = new XmlMessageFormatter(new Type[] { typeof(System.String) });
 		
 		public Processor(IMessageReceiver<MessageQueue, Message> receiver, IMessageSender<MessageQueue, Message>  sender)
 		{
@@ -43,7 +43,7 @@ namespace MsmqGateway
 
         private void OnMessage(Message inMsg)
         {
-            inMsg.Formatter =  _cdm.Formatter;
+            inMsg.Formatter = _formatter;
             Message outMsg = ProcessMessage(inMsg);
             if (outMsg != null) 
             {

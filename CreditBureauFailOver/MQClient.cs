@@ -42,6 +42,12 @@ namespace CreditBureauFailOver
                     {
                         MessageReceiverGateway<FailOverRouteEnum> failOverRouteReceiver =
                             new MessageReceiverGateway<FailOverRouteEnum>(ToPath(routerControlQueueName));
+                        Func<Message, FailOverRouteEnum> getEntityFunc = msg =>
+                        {
+                            msg.Formatter = new XmlMessageFormatter(new Type[] { typeof(FailOverRouteEnum) });
+
+                            return (FailOverRouteEnum) msg.Body;
+                        };
 
                         instance.SetupFailOver(
                             new FailOverRouter<Message>(
@@ -49,8 +55,9 @@ namespace CreditBureauFailOver
                                 new MessageSenderGateway(ToPath(primaryCreditQueueName)),
                                 new MessageSenderGateway(ToPath(secondaryCreditQueueName))
                                 ),
-                            new FailOverControlReceiver<Message>(failOverRouteReceiver,
-                                failOverRouteReceiver.CanonicalDataModel.GetEntity
+                            new FailOverControlReceiver<Message>(
+                                failOverRouteReceiver,
+                                getEntityFunc
                                 )
                             );
 

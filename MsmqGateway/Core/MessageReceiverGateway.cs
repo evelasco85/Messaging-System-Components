@@ -11,17 +11,11 @@ namespace MsmqGateway.Core
     {
         private IReturnAddress<Message> _returnAddress;
         private MessageDelegate<Message> _receivedMessageProcessor;
-        private CanonicalDataModel<TEntity> _cdm;
+        private IMessageFormatter _formatter = new XmlMessageFormatter(new Type[] {typeof(TEntity)});
 
-        public CanonicalDataModel<TEntity> CanonicalDataModel
-        {
-            get { return _cdm; }
-        }
-
-        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway, CanonicalDataModel<TEntity> cdm)
+        public MessageReceiverGateway(MessageQueueGateway messageQueueGateway)
             : base(messageQueueGateway)
         {
-            _cdm = cdm;
             _returnAddress = new MQReturnAddress(messageQueueGateway);
         }
 
@@ -37,14 +31,10 @@ namespace MsmqGateway.Core
             GetQueue().MessageReadPropertyFilter.SentTime = true;
         }
 
-        public MessageReceiverGateway(String q, CanonicalDataModel<TEntity> cdm) : this(new MessageQueueGateway(q), cdm)
+        public MessageReceiverGateway(String q)
+            : this(new MessageQueueGateway(q))
         {
-            this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
-        }
-
-        public MessageReceiverGateway(String q) : this(q, new CanonicalDataModel<TEntity>())
-        {
-            GetQueue().Formatter = _cdm.Formatter;
+            GetQueue().Formatter = _formatter;
 
             this._receivedMessageProcessor = new MessageDelegate<Message>(NullImpl);
         }
@@ -64,7 +54,7 @@ namespace MsmqGateway.Core
             if(Started)
                 return;
 
-            GetQueue().Formatter = _cdm.Formatter;
+            GetQueue().Formatter = _formatter;
             GetQueue().ReceiveCompleted += new ReceiveCompletedEventHandler(OnReceiveCompleted);
 
             GetQueue().BeginReceive();
@@ -88,7 +78,7 @@ namespace MsmqGateway.Core
             MessageQueue mq = (MessageQueue) source;
             Message m = mq.EndReceive(asyncResult.AsyncResult);
 
-            m.Formatter = _cdm.Formatter;
+            m.Formatter = _formatter;
 
             if (_receivedMessageProcessor != null)
                 _receivedMessageProcessor.Invoke(m);
